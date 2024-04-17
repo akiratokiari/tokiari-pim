@@ -15,15 +15,17 @@ const Page: FC<Props> = async ({ params }) => {
   return (
     <div className={style.body}>
       <div className={style.series}>{decodeURI(params.id)}</div>
+      <div className={style.infoWrapper}>
+        <div>値段　：{product?.model[0].sellingPrice}</div>
+        <div>素材　：{product?.model[0].material}</div>
+        <div>発売日：{product?.model[0].salesStartedAt}</div>
+      </div>
       <div className={style.modelWrapper}>
         {product?.model?.map((m) => {
           return (
             <div className={style.model}>
               <div>モデル：{m.modelNumber}</div>
               <div>サイズ：{m.size}</div>
-              <div>値段　：{m.sellingPrice}</div>
-              <div>素材　：{m.material}</div>
-              <div>発売日：{m.salesStartedAt}</div>
             </div>
           )
         })}
