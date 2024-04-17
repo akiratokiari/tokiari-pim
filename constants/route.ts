@@ -1,0 +1,1 @@
+export const PRODUCT_DETAIL_ROUTE = '/brand/tokiari/product/[id]'
