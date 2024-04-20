@@ -27,7 +27,6 @@ export const FilterForm: FC<Props> = ({ searchParams }) => {
   const router = useRouter()
   const { register, handleSubmit, reset } = useForm<FormValue>()
   const onSubmit: SubmitHandler<FormValue> = async (data) => {
-    console.log(data)
     const params: FormValue = {}
     if (data.category) {
       params.category = data.category
@@ -44,7 +43,6 @@ export const FilterForm: FC<Props> = ({ searchParams }) => {
     if (data.keyword) {
       params.keyword = data.keyword
     }
-    console.log(params)
     router.push(PRODUCT_ROUTE + toQuery({ ...params }))
   }
 
