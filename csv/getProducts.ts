@@ -5,7 +5,6 @@ import Papa from 'papaparse'
 type searchParams = {
   keyword?: string
   size?: string
-  title?: string
   color?: string
   category?: string
 }
@@ -18,7 +17,6 @@ const englishCsvHeader =
 export async function getProducts({
   keyword,
   size,
-  title,
   color,
   category
 }: searchParams): Promise<Product[] | []> {
@@ -42,12 +40,35 @@ export async function getProducts({
     formattedProductSeries.push(value)
   })
   // シリーズ(親) - モデル(子)[]の配列を作成、フォーマット
-  const formattedProducts: Product[] = formattedProductSeries.map((fps) => {
-    return { id: fps, series: fps, model: [] }
-  })
-  formattedProducts.map((p) => {
-    return (p.model = productData.filter((pd) => pd.seriesNumber === p.series))
+  const formattedProducts = formattedProductSeries.map((fps) => {
+    return {
+      id: fps,
+      series: fps,
+      model: productData.filter((pd) => pd.seriesNumber === fps)
+    }
   })
 
-  return formattedProducts
+  let filteredProducts = formattedProducts
+
+  if (keyword) {
+    filteredProducts = filteredProducts.filter((p) => p.model[0].titleAuto.includes(keyword))
+  }
+  if (size) {
+    filteredProducts = filteredProducts.filter((p) => {
+      const isColor = p.model.find((m) => {
+        if (String(m.size) === size) {
+          return m
+        }
+      })
+      return isColor ? true : false
+    })
+  }
+  if (color) {
+    filteredProducts = filteredProducts.filter((p) => p.model[0].title.includes(color))
+  }
+  if (category) {
+    filteredProducts = filteredProducts.filter((p) => p.model[0].category === category)
+  }
+
+  return filteredProducts
 }

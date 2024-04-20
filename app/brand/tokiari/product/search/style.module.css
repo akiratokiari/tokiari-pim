@@ -1,0 +1,17 @@
+.body {
+  min-width: 600px;
+  display: flex;
+}
+
+.searchSection {
+}
+.search {
+  width: 100%;
+  position: sticky;
+  top: 0;
+  left: 0;
+}
+
+.productSection {
+  width: 100%;
+}
