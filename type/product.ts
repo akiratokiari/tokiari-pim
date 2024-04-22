@@ -11,7 +11,7 @@ export type Model = {
   productGroupCode: string // 商品グループコード
   seriesNumber: string // 品番（自社シリーズ）
   modelNumber: string // 型番（自社SKU)
-  size: number // サイズ
+  size: string // サイズ
   GTINCode: number // GTIN（JANコード）
   salesStartedAt: string // 発売日
   sellingPrice: string // 販売価格
