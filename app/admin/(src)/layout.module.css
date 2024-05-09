@@ -1,0 +1,22 @@
+.sider {
+  overflow: auto;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.header {
+  padding: 0;
+  background-color: rgb(214, 214, 214);
+}
+
+.content {
+  margin: 24px 16px 0;
+  overflow: initial;
+}
+
+.footer {
+  text-align: center;
+}
