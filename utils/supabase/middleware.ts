@@ -5,8 +5,11 @@ import {
   WHOLESALE_LOGIN_ROUTE,
   WHOLESALE_REGISTER_COMPLETE_ROUTE,
   WHOLESALE_REGISTER_ROUTE,
-  WHOLESALE_ROUTE
+  WHOLESALE_RESET_PASSWORD,
+  WHOLESALE_ROUTE,
+  WHOLESALE_UPDATE_PASSWORD
 } from '@/constants/route'
+import { getBaseUrl } from '@/helper/getBaseUrl'
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
@@ -64,6 +67,11 @@ export async function updateSession(request: NextRequest) {
   )
 
   const loginUser = await supabase.auth.getUser()
+  const loginUserData = await supabase
+    .from('users')
+    .select('company')
+    .eq('id', loginUser.data.user?.id)
+
   const url = new URL(request.url)
 
   if (
@@ -71,7 +79,9 @@ export async function updateSession(request: NextRequest) {
     url.pathname === WHOLESALE_LOGIN_ROUTE ||
     url.pathname === WHOLESALE_REGISTER_ROUTE ||
     url.pathname === WHOLESALE_REGISTER_COMPLETE_ROUTE ||
-    url.pathname === WHOLESALE_AUTH_ROUTE
+    url.pathname === WHOLESALE_AUTH_ROUTE ||
+    url.pathname === WHOLESALE_RESET_PASSWORD ||
+    url.pathname === WHOLESALE_UPDATE_PASSWORD
   ) {
     return response
   }
@@ -87,9 +97,16 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
-  // 卸販売-認証
   if (url.pathname.includes(WHOLESALE_ROUTE) && (!loginUser.data || !loginUser.data.user)) {
+    // 卸販売-認証
     return redirectToLogin('wholesale')
+  }
+  if (
+    loginUserData.data &&
+    !loginUserData.data[0].company &&
+    !url.pathname.includes('/wholesale/account/welcome')
+  ) {
+    return NextResponse.redirect(`${getBaseUrl()}/wholesale/account/welcome`)
   }
 
   return response

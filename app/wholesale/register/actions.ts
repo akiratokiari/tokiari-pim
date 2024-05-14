@@ -7,14 +7,14 @@ import { redirect } from 'next/navigation'
 
 export async function register(_: string | null, formData: FormData) {
   const supabase = createClient()
-  const data = {
+  const signUpData = {
     email: formData.get('email') as string,
     password: formData.get('password') as string
   }
 
   const { error } = await supabase.auth.signUp({
-    email: data.email,
-    password: data.password,
+    email: signUpData.email,
+    password: signUpData.password,
     options: {
       emailRedirectTo: `${getBaseUrl() + WHOLESALE_AUTH_ROUTE}`
     }

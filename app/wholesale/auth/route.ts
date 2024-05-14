@@ -28,5 +28,5 @@ export async function GET(request: NextRequest) {
   }
 
   // return the user to an error page with some instructions
-  return NextResponse.redirect(`${getBaseUrl() + WHOLESALE_AUTH_COMPLETE_ROUTE}`)
+  return NextResponse.redirect(new URL(WHOLESALE_AUTH_COMPLETE_ROUTE, getBaseUrl()))
 }

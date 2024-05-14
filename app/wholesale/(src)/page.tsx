@@ -1,3 +1,3 @@
-export default function Page() {
-  return <h1>Page</h1>
+export default async function Page() {
+  return <div></div>
 }

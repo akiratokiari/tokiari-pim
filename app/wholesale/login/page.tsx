@@ -2,10 +2,10 @@
 import { useFormState } from 'react-dom'
 import { login } from './actions'
 import Link from 'next/link'
+import { WHOLESALE_REGISTER_ROUTE, WHOLESALE_RESET_PASSWORD } from '@/constants/route'
 
 export default function Page() {
   const [state, formAction] = useFormState(login, null)
-
   return (
     <div>
       <form action={formAction}>
@@ -16,8 +16,11 @@ export default function Page() {
         <input id="password" name="password" type="password" required />
         <button>Log in</button>
       </form>
-      <Link href={'/wholesale/register'}>
+      <Link href={WHOLESALE_REGISTER_ROUTE}>
         <p>登録する</p>
+      </Link>
+      <Link href={WHOLESALE_RESET_PASSWORD}>
+        <p>パスワードを忘れた方</p>
       </Link>
     </div>
   )
