@@ -17,7 +17,7 @@ export const Form: FC<Props> = ({ formData, setFormData }) => {
       prefecture: formData.get('prefecture') as string,
       city: formData.get('city') as string,
       street_address: formData.get('street_address') as string,
-      address_option: formData.get('address_option') as string,
+      building_name: formData.get('building_name') as string,
       company: formData.get('company') as string,
       phone: formData.get('phone') as string,
       contact_name: formData.get('contact_name') as string,
@@ -93,11 +93,11 @@ export const Form: FC<Props> = ({ formData, setFormData }) => {
         type="text"
         required
       />
-      <label htmlFor="address_option">建物名・部屋番号</label>
+      <label htmlFor="building_name">建物名・部屋番号</label>
       <input
-        defaultValue={formData ? formData.address_option : ''}
-        id="address_option"
-        name="address_option"
+        defaultValue={formData ? formData.building_name : ''}
+        id="building_name"
+        name="building_name"
         type="text"
         required
       />

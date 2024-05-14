@@ -7,16 +7,19 @@ import {
   WHOLESALE_ACCOUNT_EDIT_PASSWORD_ROUTE,
   WHOLESALE_ACCOUNT_EDIT_ROUTE
 } from '@/constants/route'
+import { toStringPlan } from '@/helper/toStringPlan'
 
 export type UserType = {
   id?: string
   email?: string
 
+  plan?: number
+
   postal_code?: string
   prefecture?: string
   city?: string
   street_address?: string
-  address_option?: string
+  building_name?: string
 
   company?: string
   phone?: string
@@ -47,6 +50,8 @@ export default async function Page() {
         <Link href={WHOLESALE_ACCOUNT_EDIT_PASSWORD_ROUTE}>パスワード変更</Link>
       </div>
       <div className={style.body}>
+        <div>===現在のプラン===</div>
+        <div>プラン：{toStringPlan(userData.plan)}</div>
         <div>===会社===</div>
         <div>会社名：{userData.company}</div>
         <div>サイト{userData.site_url}</div>
@@ -58,7 +63,7 @@ export default async function Page() {
         <div>都道府県:{userData.prefecture}</div>
         <div>市区町村:{userData.city}</div>
         <div>番地:{userData.street_address}</div>
-        <div>ビル名・部屋番号(任意):{userData.address_option}</div>
+        <div>ビル名・部屋番号(任意):{userData.building_name}</div>
       </div>
     </div>
   )

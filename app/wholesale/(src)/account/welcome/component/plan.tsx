@@ -7,6 +7,7 @@ import { createClient } from '@/utils/supabase/client'
 import { AccountContext } from '@/contexts/account/context'
 import { useRouter } from 'next/navigation'
 import { WHOLESALE_ROUTE } from '@/constants/route'
+import { toStringPlan } from '@/helper/toStringPlan'
 
 export const Plan = () => {
   const { account, refresh } = useContext(AccountContext)
@@ -16,16 +17,8 @@ export const Plan = () => {
   const [_formData, _setFormData] = useState<UserType | undefined>(formData)
   const [step, setStep] = useState<number>(0)
 
-  const toStringPlan = (plan: number) => {
-    if (plan === PLAN_ZERO_SHIRT) {
-      return 'A-1（TKR_ZERO SHIRT）在庫ゼロ可能のシャツライン'
-    }
-    if (plan === PLAN_COLLABORATION_SHIRT) {
-      return 'A-2（TKR_COLLABORATION SHIRT）TOKIARI＋御社様コラボシャツ'
-    }
-  }
-
   useEffect(() => {
+    refresh()
     if (formData) {
       _setFormData(formData)
     }
@@ -43,7 +36,7 @@ export const Plan = () => {
     if (account) {
       supabase
         .from('users')
-        .update(formData)
+        .update({ ...formData, plan: plan })
         .eq('email', account.email)
         .then((res) => {
           if (res.error) {
@@ -119,7 +112,7 @@ export const Plan = () => {
           <div>都道府県:{formData.prefecture}</div>
           <div>市区町村:{formData.city}</div>
           <div>番地:{formData.street_address}</div>
-          <div>ビル名・部屋番号(任意):{formData.address_option}</div>
+          <div>ビル名・部屋番号(任意):{formData.building_name}</div>
           <button onClick={onSubmit}>登録</button>
         </div>
       )}
