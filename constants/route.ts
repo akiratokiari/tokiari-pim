@@ -3,6 +3,10 @@ export const PRODUCT_DETAIL_ROUTE = '/brand/tokiari/product/[id]'
 
 export const ADMIN_ROUTE = '/admin'
 export const ADMIN_LOGIN_ROUTE = '/admin/login'
+export const ADMIN_USERS_ROUTE = '/admin/users'
+export const ADMIN_USERS_DETAIL_ROUTE = '/admin/users/[id]'
+export const ADMIN_SHIPPING_ROUTE = '/admin/shipping'
+export const ADMIN_PURCHASE_LOG_ROUTE = '/admin/purchase-log'
 
 export const WHOLESALE_ROUTE = '/wholesale'
 export const WHOLESALE_ACCOUNT_ROUTE = '/wholesale/account'

@@ -65,12 +65,12 @@ h4 {
 /* classを持たないa要素はデフォルトのスタイルを継承 */
 a:not([class]) {
   text-decoration-skip-ink: auto;
-  color: currentColor;
+  /* color: currentColor; */
 }
 
 a {
   text-decoration: none;
-  color: var(--black);
+  /* color: var(--black); */
 }
 
 /* 画像の扱いを簡単にする */

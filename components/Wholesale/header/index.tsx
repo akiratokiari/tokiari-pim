@@ -2,13 +2,17 @@
 import { WHOLESALE_ACCOUNT_ROUTE } from '@/constants/route'
 import { AccountContext } from '@/contexts/account/context'
 import Link from 'next/link'
-import { FC, useContext } from 'react'
+import { FC, useContext, useEffect } from 'react'
 import { LogoutButton } from '../logoutButton'
 
 type Props = {}
 
 export const Header: FC<Props> = () => {
-  const { account } = useContext(AccountContext)
+  const { account, refresh } = useContext(AccountContext)
+  useEffect(() => {
+    refresh()
+  }, [])
+
   return (
     <div style={{ marginBottom: 20, backgroundColor: 'lightgray' }}>
       <div style={{ marginBottom: 20 }}>

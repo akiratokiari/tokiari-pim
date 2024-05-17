@@ -49,7 +49,7 @@ export const Plan = () => {
   }
 
   return (
-    <div style={{ marginBottom: 20 }}>
+    <div style={{ marginBottom: 20, padding: 20 }}>
       <div style={{ marginBottom: 20 }}>
         <div style={{ marginBottom: 10 }}>
           STEP 1 {plan ? toStringPlan(plan) : 'プランを選択してください'}
@@ -85,14 +85,41 @@ export const Plan = () => {
       {step === 0 && (
         <div>
           <div style={{ marginBottom: 20 }}>
-            <button onClick={() => setPlan(PLAN_ZERO_SHIRT)}>
+            <button
+              onClick={() => setPlan(PLAN_ZERO_SHIRT)}
+              style={{ border: 'solid 1px black', padding: 10 }}
+            >
               A-1（TKR_ZERO SHIRT）在庫ゼロ可能のシャツライン
+              <div style={{ marginTop: 10, color: 'gray' }}>
+                ・御社店頭でサンプル展示で受注オーダー可能
+                <br />
+                ・新作、バージョン更新モデルをすぐオーダー可能　→　HPで詳細ページ用意 ・ミニマム　０
+                <br />
+                ・１ヶ月後納品 ・追加オーダー可能　→　１ヶ月後納品 ・掛率60
+                <br />
+                ・支払方法　卸専用オンラインショップにてカード決済
+              </div>
             </button>
-            <button disabled>B-1（TKR_COLLECTION）</button>
-            <button disabled>B-2 （TKR_FULL COLLECTION）</button>
+
+            {/* <button disabled>B-1（TKR_COLLECTION）</button>
+            <button disabled>B-2 （TKR_FULL COLLECTION）</button> */}
           </div>
-          <button onClick={() => setPlan(PLAN_COLLABORATION_SHIRT)}>
+          <button
+            onClick={() => setPlan(PLAN_COLLABORATION_SHIRT)}
+            style={{ border: 'solid 1px black', padding: 10 }}
+          >
             A-2（TKR_COLLABORATION SHIRT）TOKIARI＋御社様コラボシャツ
+            <div style={{ marginTop: 10, color: 'gray' }}>
+              ・オボイストさん方式 ・ミニマム　上代５０ ・追加オーダー可能　→　１ヶ月後納品
+              <br />
+              ・カスタムOK　→　弊社担当と打ち合わせ、または卸専用ECにて
+              <br />
+              ・御社ネームタグ製作（別途料金）
+              <br />
+              ・新作、バージョン更新モデルをすぐオーダー可能　→　HPで詳細ページ用意
+              <br />
+              ・支払方法　初回COD、その末締、翌月末支払い
+            </div>
           </button>
         </div>
       )}

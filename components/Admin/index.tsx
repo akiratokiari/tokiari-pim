@@ -1,1 +1,1 @@
-export * from './logoutButton'
+export * from './LogoutButton'

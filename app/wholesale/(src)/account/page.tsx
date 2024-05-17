@@ -14,6 +14,7 @@ export type UserType = {
   email?: string
 
   plan?: number
+  is_admin?: boolean
 
   postal_code?: string
   prefecture?: string

@@ -94,6 +94,8 @@ export async function updateSession(request: NextRequest) {
   if (url.pathname.includes(ADMIN_ROUTE)) {
     if (!loginUser.data || loginUser.data.user?.app_metadata.userrole !== 'ADMIN') {
       return redirectToLogin('admin')
+    } else {
+      return response
     }
   }
 

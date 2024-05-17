@@ -18,6 +18,9 @@ CREATE TABLE public.users (
 
   -- 卸販売プラン
   plan INT,
+  
+  -- Admin
+  role INT,
 
   -- カート
   cart_items JSON,

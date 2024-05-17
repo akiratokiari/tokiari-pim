@@ -1,7 +1,6 @@
 'use client'
 import { ADMIN_LOGIN_ROUTE } from '@/constants/route'
 import { createClient } from '@/utils/supabase/client'
-import { Button } from 'antd'
 import { useRouter } from 'next/navigation'
 import { FC } from 'react'
 
@@ -19,5 +18,9 @@ export const LogoutButton: FC = () => {
       })
   }
 
-  return <Button onClick={signOut}>ログアウト</Button>
+  return (
+    <a style={{ textAlign: 'center' }} onClick={signOut}>
+      ログアウト
+    </a>
+  )
 }

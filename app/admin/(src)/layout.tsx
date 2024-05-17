@@ -1,10 +1,18 @@
 import { LogoutButton } from '@/components/Admin'
+import {
+  ADMIN_PURCHASE_LOG_ROUTE,
+  ADMIN_ROUTE,
+  ADMIN_SHIPPING_ROUTE,
+  ADMIN_USERS_ROUTE
+} from '@/constants/route'
 import { createClient } from '@/utils/supabase/server'
 import { AntdRegistry } from '@ant-design/nextjs-registry'
-import { Layout, Menu } from 'antd'
+import { Dropdown, Layout, Menu, MenuProps, Space } from 'antd'
 import { Content, Footer, Header } from 'antd/es/layout/layout'
 import Sider from 'antd/es/layout/Sider'
 import MenuItem from 'antd/es/menu/MenuItem'
+import { DownOutlined } from '@ant-design/icons'
+import Link from 'next/link'
 
 export default async function AdminLayout({
   children
@@ -13,6 +21,12 @@ export default async function AdminLayout({
 }>) {
   const supabase = createClient()
   const { data } = await supabase.auth.getUser()
+  const items: MenuProps['items'] = [
+    {
+      key: '1',
+      label: <LogoutButton />
+    }
+  ]
   return (
     <AntdRegistry>
       <Layout hasSider>
@@ -39,16 +53,39 @@ export default async function AdminLayout({
             PIM - 卸管理画面
           </div>
           <Menu theme="dark" mode="inline">
-            <MenuItem>ダッシュボード</MenuItem>
+            <MenuItem>
+              <Link href={ADMIN_ROUTE}>ダッシュボード</Link>
+            </MenuItem>
+            <MenuItem>
+              <Link href={ADMIN_USERS_ROUTE}>ユーザー</Link>
+            </MenuItem>
+            <MenuItem>
+              <Link href={ADMIN_SHIPPING_ROUTE}>発送待ち</Link>
+            </MenuItem>
+            <MenuItem>
+              <Link href={ADMIN_PURCHASE_LOG_ROUTE}>購入履歴</Link>
+            </MenuItem>
           </Menu>
         </Sider>
         <Layout style={{ marginLeft: 200 }}>
-          <Header style={{ padding: 0, background: 'white' }}>
-            {data.user?.email}
-            <LogoutButton />
+          <Header
+            style={{
+              padding: 0,
+              background: 'white',
+              display: 'flex',
+              justifyContent: 'right',
+              paddingRight: 16
+            }}
+          >
+            <Dropdown menu={{ items }} overlayStyle={{ cursor: 'pointer' }}>
+              <a>
+                {data.user?.email}
+                <DownOutlined style={{ marginLeft: 8 }} />
+              </a>
+            </Dropdown>
           </Header>
           <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>{children}</Content>
-          <Footer style={{ textAlign: 'center' }}>TOKIARI ©{new Date().getFullYear()}</Footer>
+          <Footer style={{ textAlign: 'center' }}>TOKIARI PIM©{new Date().getFullYear()}</Footer>
         </Layout>
       </Layout>
     </AntdRegistry>
