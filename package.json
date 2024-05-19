@@ -9,11 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ant-design/nextjs-registry": "^1.0.0",
+    "@supabase/ssr": "^0.3.0",
+    "@supabase/supabase-js": "^2.43.1",
+    "@types/react": "npm:types-react@alpha",
+    "@types/react-dom": "npm:types-react-dom@alpha",
+    "antd": "^5.17.0",
     "next": "14.2.1",
     "papaparse": "^5.4.1",
     "react": "^18",
     "react-dom": "^18",
-    "react-hook-form": "^7.51.3"
+    "react-hook-form": "^7.51.3",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^20",
