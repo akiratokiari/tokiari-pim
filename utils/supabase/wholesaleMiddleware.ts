@@ -1,0 +1,71 @@
+import { USER_ROLE } from '@/constants/app'
+import { WHOLESALE_ROUTE, WHOLESALE_WELCOME_ROUTE } from '@/constants/route'
+
+import { createServerClient, type CookieOptions } from '@supabase/ssr'
+import { NextResponse, type NextRequest } from 'next/server'
+
+export async function wholesaleMiddleware(request: NextRequest) {
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers
+    }
+  })
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          response.cookies.set({
+            name,
+            value,
+            ...options
+          })
+        },
+        remove(name: string, options: CookieOptions) {
+          response.cookies.set({
+            name,
+            value: '',
+            ...options
+          })
+        }
+      }
+    }
+  )
+
+  const url = new URL(request.url)
+
+  const { data, error } = await supabase.auth.getUser()
+  if (error) {
+    return NextResponse.redirect(new URL(WHOLESALE_WELCOME_ROUTE, request.url), 302)
+  }
+
+  const { data: userData, error: userError } = await supabase
+    .from('users')
+    .select('user_role, plan')
+    .eq('id', data.user.id)
+    .single()
+
+  if (userError || !userData) {
+    return NextResponse.redirect(new URL(WHOLESALE_ROUTE, request.url), 302)
+  }
+
+  const loginUser = {
+    user_role: userData.user_role,
+    plan: userData.plan
+  }
+
+  if (!loginUser.plan && url.pathname !== WHOLESALE_WELCOME_ROUTE) {
+    return NextResponse.redirect(new URL(WHOLESALE_WELCOME_ROUTE, request.url), 302)
+  }
+
+  if (loginUser.user_role === USER_ROLE.Buyer) {
+    return response
+  }
+
+  return response
+}
