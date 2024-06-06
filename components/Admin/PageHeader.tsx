@@ -11,8 +11,8 @@ type Props = {
 
 type DescriptionsType = {
   id: number | string
-  updatedAt: Date
-  createdAt: Date
+  updatedAt: string
+  createdAt: string
 }
 
 type Routes = {

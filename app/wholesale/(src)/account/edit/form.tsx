@@ -13,12 +13,6 @@ export const Form: FC = () => {
 
   return (
     <form action={formAction} className={style.form}>
-      <div>===プラン===</div>
-      <label htmlFor="plan">プラン:</label>
-      <select id="plan" name='plan' defaultValue={account?.plan}>
-        <option value={PLAN_ZERO_SHIRT}>{toStringPlan(PLAN_ZERO_SHIRT)}</option>
-        <option value={PLAN_COLLABORATION_SHIRT}>{toStringPlan(PLAN_COLLABORATION_SHIRT)}</option>
-      </select>
       <div>===会社情報===</div>
       <label htmlFor="company">会社名:</label>
       <input id="company" defaultValue={account?.company} name="company" type="text" required />

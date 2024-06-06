@@ -1,4 +1,6 @@
 'use server'
+
+import { USER_ROLE } from '@/constants/app'
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
@@ -14,10 +16,12 @@ export async function login(_: string | null, formData: FormData) {
   if (error) {
     return '予期せぬエラーが発生しました'
   }
-  const userData = await supabase.from('users').select('company').eq('id', data.user.id)
-  if (userData.data && !userData.data[0].company) {
-    revalidatePath('/', 'layout')
-    redirect('http://localhost:3000/wholesale/account/welcome')
+
+  const userData = await supabase.from('users').select('user_role').eq('id', data.user.id).single()
+
+  if (userData.data && userData.data.user_role !== USER_ROLE.Buyer) {
+    await supabase.auth.signOut()
+    return '予期せぬエラーが発生しました'
   }
 
   revalidatePath('/', 'layout')

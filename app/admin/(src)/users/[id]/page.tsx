@@ -4,8 +4,8 @@ import { Button, Card, Col, Descriptions, DescriptionsProps, Row } from 'antd'
 import Link from 'next/link'
 import toHref from '@/helper/toHref'
 import { createClient } from '@/utils/supabase/server'
-import { UserType } from '@/app/wholesale/(src)/account/page'
 import { ExternalLink } from '@/components/externalLink'
+import { formatDateTime } from '@/helper/dateFormat'
 
 type Props = {
   params: {
@@ -19,11 +19,10 @@ export default async function Page({ params }: Props) {
     { title: <Link href={ADMIN_USERS_ROUTE}>ユーザ一覧</Link> },
     { title: <Link href={toHref(ADMIN_USERS_DETAIL_ROUTE, { id: params.id })}>ユーザー詳細</Link> }
   ]
-
+  if (!params.id) return
   const supabase = createClient()
-  const { data } = await supabase.from('users').select().eq('id', params.id).returns<UserType[]>()
-
-  const userData = data && data[0]
+  const { data: userData } = await supabase.from('users').select().eq('id', params.id).single()
+  if (!userData) return
   const descriptions = {
     id: userData.id,
     updatedAt: userData.created_at,
@@ -83,18 +82,30 @@ export default async function Page({ params }: Props) {
     }
   ]
 
+  const systemItems: DescriptionsProps['items'] = [
+    {
+      key: '1',
+      label: '登録日時',
+      children: formatDateTime(userData?.permission_at || new Date()),
+      span: 3
+    }
+  ]
+
   return (
     <Row gutter={[24, 24]}>
       <Col span={18}>
         <PageHeader title="ユーザー詳細" routes={routes} descriptions={descriptions} />
-        <Card>
+        <Card style={{ marginBottom: 16 }}>
           <Descriptions bordered title="会社情報" items={items} />
+        </Card>
+        <Card>
+          <Descriptions bordered title="システム情報" items={systemItems} />
         </Card>
       </Col>
       <Col span={6}>
         <Card>
           <Button block danger>
-            削除
+            削除する
           </Button>
         </Card>
       </Col>

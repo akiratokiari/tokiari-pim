@@ -1,6 +1,5 @@
 import { createClient } from '@/utils/supabase/server'
 import style from './style.module.css'
-import { PostgrestSingleResponse } from '@supabase/supabase-js'
 import Link from 'next/link'
 import {
   WHOLESALE_ACCOUNT_EDIT_EMAIL_ROUTE,
@@ -9,37 +8,11 @@ import {
 } from '@/constants/route'
 import { toStringPlan } from '@/helper/toStringPlan'
 
-export type UserType = {
-  id?: string
-  email?: string
-
-  plan?: number
-  is_admin?: boolean
-
-  postal_code?: string
-  prefecture?: string
-  city?: string
-  street_address?: string
-  building_name?: string
-
-  company?: string
-  phone?: string
-  contact_name?: string
-  site_url?: string
-
-  card_item?: JSON
-
-  created_at?: Date
-  updated_at?: Date
-}
-
 export default async function Page() {
   const supabase = createClient()
   const userId = (await supabase.auth.getUser()).data.user?.id
-  const { data }: PostgrestSingleResponse<UserType[]> = await supabase
-    .from('users')
-    .select()
-    .eq('id', userId)
+  if (!userId) return <div>データの取得に失敗しました</div>
+  const { data } = await supabase.from('users').select().eq('id', userId)
   if (!data) return <div>データの取得に失敗しました</div>
   const userData = data[0]
 
@@ -52,7 +25,7 @@ export default async function Page() {
       </div>
       <div className={style.body}>
         <div>===現在のプラン===</div>
-        <div>プラン：{toStringPlan(userData.plan)}</div>
+        {userData.plan && <div>プラン：{toStringPlan(userData.plan)}</div>}
         <div>===会社===</div>
         <div>会社名：{userData.company}</div>
         <div>サイト{userData.site_url}</div>

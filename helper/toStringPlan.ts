@@ -7,5 +7,5 @@ export const toStringPlan = (plan?: number) => {
   if (plan === PLAN_COLLABORATION_SHIRT) {
     return 'A-2（TKR_COLLABORATION SHIRT）TOKIARI＋御社様コラボシャツ'
   }
-  return ''
+  return '未選択'
 }

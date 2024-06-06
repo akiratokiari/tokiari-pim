@@ -14,16 +14,20 @@ export async function GET(request: NextRequest) {
   redirectTo.pathname = next
   redirectTo.searchParams.delete('token_hash')
   redirectTo.searchParams.delete('type')
+  const supabase = createClient()
+
+  const { data } = await supabase.auth.getUser()
+  if (data.user) {
+    await supabase.auth.signOut()
+  }
 
   if (token_hash && type) {
-    const supabase = createClient()
-
     const { error } = await supabase.auth.verifyOtp({
       type,
       token_hash
     })
-    if (!error) {
-      return NextResponse.redirect('/error')
+    if (error) {
+      return NextResponse.redirect(new URL('/error', getBaseUrl()))
     }
   }
 
