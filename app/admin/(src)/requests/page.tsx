@@ -3,7 +3,7 @@ import { ADMIN_REQUESTS_ROUTE, ADMIN_ROUTE } from '@/constants/route'
 import { Col, Row } from 'antd'
 import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
-import { UsersTable } from './UserTable'
+import { RequestTable } from '@/components/Admin/RequestTable'
 
 type Props = {
   searchParams: {
@@ -37,9 +37,9 @@ export default async function Page({ searchParams }: Props) {
 
   return (
     <Row gutter={[24, 24]}>
-      <Col span={18}>
+      <Col span={24}>
         <PageHeader title="リクエスト一覧" routes={routes} />
-        <UsersTable dataSource={data || []} pagination={pagination} searchParams={searchParams} />
+        <RequestTable dataSource={data || []} pagination={pagination} searchParams={searchParams} />
       </Col>
     </Row>
   )

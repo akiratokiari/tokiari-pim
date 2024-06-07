@@ -128,10 +128,10 @@ export const ImageUpload: FC<Props> = ({ onChange, file, type = 'gallery' }) => 
             strategy={rectSortingStrategy}
           >
             <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-              {items.map((id) => (
-                <span key={id.uid} style={{ padding: 8 }}>
+              {items.map((id, index) => (
+                <span key={index} style={{ padding: 8 }}>
                   <EditableItem
-                    key={id.uid}
+                    key={index}
                     id={id.uid}
                     url={id.url}
                     isSelected={activeId === id.uid ? true : false}

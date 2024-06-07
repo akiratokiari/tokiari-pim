@@ -41,7 +41,7 @@ export async function middleware(request: NextRequest) {
   if (url.pathname.includes(WHOLESALE_ROUTE)) {
     return await wholesaleMiddleware(request)
   }
-  // return response
+  return response
 }
 
 export const config = {

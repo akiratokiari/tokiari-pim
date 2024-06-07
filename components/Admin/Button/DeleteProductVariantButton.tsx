@@ -8,10 +8,10 @@ import { FC } from 'react'
 
 type Props = {
   id: string
-  seriesId: string
+  variantId: string
 }
 
-export const DeleteProductVariantButton: FC<Props> = ({ id, seriesId }) => {
+export const DeleteProductVariantButton: FC<Props> = ({ id, variantId }) => {
   const supabase = createClient()
   const router = useRouter()
   const { message, modal } = App.useApp()
@@ -22,7 +22,7 @@ export const DeleteProductVariantButton: FC<Props> = ({ id, seriesId }) => {
       icon: null,
       content: '',
       async onOk() {
-        const { error } = await supabase.from('product_variants').delete().eq('id', seriesId)
+        const { error } = await supabase.from('product_variants').delete().eq('id', variantId)
         if (error) {
           message.error('予期せぬエラーが発生しました')
         }

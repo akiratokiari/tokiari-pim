@@ -1,24 +1,38 @@
 'use client'
-import { Button, Card, Col, Form, Input, Row } from 'antd'
+import { Button, Card, Col, Form, Input, message, Row } from 'antd'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { FC, useState } from 'react'
-import { ADMIN_PRODUCTS_CREATE_ROUTE, ADMIN_PRODUCTS_ROUTE, ADMIN_ROUTE } from '@/constants/route'
+import {
+  ADMIN_PRODUCT_VARIANT_DETAIL_ROUTE,
+  ADMIN_PRODUCTS_DETAIL_ROUTE,
+  ADMIN_PRODUCTS_DETAIL_VARIANT_CREATE_ROUTE,
+  ADMIN_PRODUCTS_ROUTE,
+  ADMIN_ROUTE
+} from '@/constants/route'
 import { PageHeader } from './PageHeader'
 import { createClient } from '@/utils/supabase/client'
+import toHref from '@/helper/toHref'
 
 type Props = {
   productId: string
 }
 
-export const ProductSeriesCreateForm: FC<Props> = ({ productId }) => {
+export const ProductVariantCreateForm: FC<Props> = ({ productId }) => {
   const router = useRouter()
   const supabase = createClient()
   const [form] = Form.useForm<any>()
   const routes = [
     { title: <Link href={ADMIN_ROUTE}>ダッシュボード</Link> },
     { title: <Link href={ADMIN_PRODUCTS_ROUTE}>商品一覧</Link> },
-    { title: <Link href={ADMIN_PRODUCTS_CREATE_ROUTE}>作成</Link> }
+    { title: <Link href={toHref(ADMIN_PRODUCTS_DETAIL_ROUTE, { id: productId })}>詳細</Link> },
+    {
+      title: (
+        <Link href={toHref(ADMIN_PRODUCTS_DETAIL_VARIANT_CREATE_ROUTE, { id: productId })}>
+          カラーバリエーション作成
+        </Link>
+      )
+    }
   ]
   const [isSending, setIsSending] = useState<boolean>(false)
 
@@ -32,15 +46,19 @@ export const ProductSeriesCreateForm: FC<Props> = ({ productId }) => {
       series_number: values.series_number
     }
 
-    const productVariant = await supabase
+    const { data: productVariant, error } = await supabase
       .from('product_variants')
       .insert({ ..._productVariant })
       .select()
-    if (productVariant.error) return
+      .single()
+
+    if (error) {
+      return message.error('予期せぬエラーが発生しました')
+    }
 
     const _size = values.variant.map((v: any) => {
       return {
-        product_variant_id: productVariant.data[0].id,
+        product_variant_id: productVariant.id,
         product_size: v.product_size,
         model_number: v.model_number,
         gtin_code: v.gtin_code
@@ -54,6 +72,9 @@ export const ProductSeriesCreateForm: FC<Props> = ({ productId }) => {
         .select()
     })
 
+    router.push(
+      toHref(ADMIN_PRODUCT_VARIANT_DETAIL_ROUTE, { id: productId, variantId: productVariant.id })
+    )
     router.refresh()
   }
 
@@ -61,21 +82,12 @@ export const ProductSeriesCreateForm: FC<Props> = ({ productId }) => {
     <Form form={form} layout={'vertical'} onFinish={onFinish}>
       <Row gutter={[24, 24]}>
         <Col span={18}>
-          <PageHeader routes={routes} title="商品作成" />
-          <Card title="商品情報" style={{ marginBottom: '16px' }}>
+          <PageHeader routes={routes} title="カラーバリエーションの作成" />
+          <Card title="基本情報" style={{ marginBottom: '16px' }}>
             <Form.Item name="color" label="色" rules={[{ required: true }]}>
               <Input />
             </Form.Item>
-          </Card>
-          <Card title="コード情報" style={{ marginBottom: '16px' }}>
             <Form.Item name="series_number" label="シリーズ番号" rules={[{ required: true }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="product_group_code"
-              label="商品グループコード"
-              rules={[{ required: true }]}
-            >
               <Input />
             </Form.Item>
           </Card>

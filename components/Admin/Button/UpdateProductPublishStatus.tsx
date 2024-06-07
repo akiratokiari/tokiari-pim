@@ -1,6 +1,5 @@
 'use client'
 import { PRODUCT_PUBLISH_STATUS } from '@/constants/app'
-import { ADMIN_PRODUCTS_ROUTE } from '@/constants/route'
 import { createClient } from '@/utils/supabase/client'
 import { App, Button } from 'antd'
 import { useRouter } from 'next/navigation'
@@ -37,7 +36,7 @@ export const UpdateProductPublishStatusButton: FC<Props> = ({ productId, publish
         }
         if (!error) {
           message.success('変更しました')
-          router.push(ADMIN_PRODUCTS_ROUTE)
+          router.refresh()
         }
       },
       okText: '変更する',
@@ -46,10 +45,8 @@ export const UpdateProductPublishStatusButton: FC<Props> = ({ productId, publish
   }
 
   return (
-    <>
-      <Button block onClick={updateConfirm} style={{ marginBottom: 16 }}>
-        {isPublished ? '商品を非公開にする' : '商品を公開する'}
-      </Button>
-    </>
+    <Button block onClick={updateConfirm}>
+      {isPublished ? '商品を非公開にする' : '商品を公開する'}
+    </Button>
   )
 }

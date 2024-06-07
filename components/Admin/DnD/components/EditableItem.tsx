@@ -1,11 +1,10 @@
-import React, { FC, ReactNode, useState } from "react"
-import { useSortable } from "@dnd-kit/sortable"
-import { CSS } from "@dnd-kit/utilities"
-import { Modal, Popconfirm, message } from "antd"
-import { DeleteOutlined, EyeOutlined } from "@ant-design/icons"
+import React, { FC, ReactNode, useState } from 'react'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import { Modal, Popconfirm, message } from 'antd'
+import { DeleteOutlined, EyeOutlined } from '@ant-design/icons'
 
 type Props = {
-  key: string
   id: string
   url?: string
   isSelected: boolean | null
@@ -13,11 +12,11 @@ type Props = {
   onRemove?: (e: any) => void
 }
 
-export const EditableItem: FC<Props> = ({ key, id, isSelected, children, onRemove, url }) => {
+export const EditableItem: FC<Props> = ({ id, isSelected, children, onRemove, url }) => {
   const [previewOpen, setPreviewOpen] = useState(false)
-  const [previewImage, setPreviewImage] = useState("")
+  const [previewImage, setPreviewImage] = useState('')
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
-    id: id,
+    id: id
   })
 
   let bg = {}
@@ -27,35 +26,35 @@ export const EditableItem: FC<Props> = ({ key, id, isSelected, children, onRemov
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    cursor: "move",
-    "--translate-x": `${transform?.x ?? 0}px`,
-    "--translate-y": `${transform?.y ?? 0}px`,
-    ...bg,
+    cursor: 'move',
+    '--translate-x': `${transform?.x ?? 0}px`,
+    '--translate-y': `${transform?.y ?? 0}px`,
+    ...bg
   }
 
   const handleCancel = () => setPreviewOpen(false)
 
   const handlePreview = () => {
-    setPreviewImage(url ? url : "")
+    setPreviewImage(url ? url : '')
     setPreviewOpen(true)
   }
 
   const confirm = () => {
     onRemove && onRemove(id)
-    void message.success("削除しました")
+    void message.success('削除しました')
   }
 
   return (
-    <div style={{ display: "column" }}>
+    <div style={{ display: 'column' }}>
       <div
-        key={key}
+        key={id}
         id={String(id)}
         aria-label="Draggable"
         data-cypress="draggable-item"
         ref={setNodeRef}
         style={
           {
-            ...style,
+            ...style
           } as React.CSSProperties
         }
         {...attributes}
@@ -65,9 +64,9 @@ export const EditableItem: FC<Props> = ({ key, id, isSelected, children, onRemov
           style={{
             width: 100,
             height: 30,
-            display: "flex",
-            justifyContent: "space-around",
-            cursor: "pointer",
+            display: 'flex',
+            justifyContent: 'space-around',
+            cursor: 'pointer'
           }}
         >
           <EyeOutlined onClick={handlePreview} />
@@ -84,7 +83,7 @@ export const EditableItem: FC<Props> = ({ key, id, isSelected, children, onRemov
         </div>
       </div>
       <Modal open={previewOpen} title={<br />} footer={null} onCancel={handleCancel}>
-        <img alt="example" style={{ width: "100%" }} src={previewImage} />
+        <img alt="example" style={{ width: '100%' }} src={previewImage} />
       </Modal>
     </div>
   )

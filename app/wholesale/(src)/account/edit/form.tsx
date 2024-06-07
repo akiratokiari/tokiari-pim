@@ -4,8 +4,6 @@ import { updateUser } from './actions'
 import style from './style.module.css'
 import { FC, useContext } from 'react'
 import { AccountContext } from '@/contexts/account/context'
-import { PLAN_COLLABORATION_SHIRT, PLAN_ZERO_SHIRT } from '@/constants/app'
-import { toStringPlan } from '@/helper/toStringPlan'
 
 export const Form: FC = () => {
   const { account } = useContext(AccountContext)
@@ -25,6 +23,14 @@ export const Form: FC = () => {
         id="contact_name"
         defaultValue={account?.contact_name}
         name="contact_name"
+        type="text"
+        required
+      />
+      <label htmlFor="contact_name">担当者(ふりがな):</label>
+      <input
+        id="contact_kana"
+        defaultValue={account?.contact_kana}
+        name="contact_kana"
         type="text"
         required
       />

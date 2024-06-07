@@ -1,16 +1,10 @@
 'use client'
-import { UserType } from '@/app/wholesale/(src)/account/page'
-import {
-  ADMIN_REQUESTS_DETAIL_ROUTE,
-  ADMIN_USERS_DETAIL_ROUTE,
-  ADMIN_USERS_ROUTE
-} from '@/constants/route'
-import { formatDate, formatDateTime } from '@/helper/dateFormat'
+import { ADMIN_REQUESTS_DETAIL_ROUTE, ADMIN_USERS_ROUTE } from '@/constants/route'
+import { formatDateTime } from '@/helper/dateFormat'
 import toHref from '@/helper/toHref'
 import { toQuery } from '@/helper/toQuery'
-import { toStringPlan } from '@/helper/toStringPlan'
-import { toStringStatus } from '@/helper/toStringStatus'
-import { Card, Table, Typography } from 'antd'
+
+import { Card, Empty, Table, Typography } from 'antd'
 import { ColumnsType, TablePaginationConfig } from 'antd/es/table'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -19,7 +13,7 @@ import { FC } from 'react'
 const { Text } = Typography
 
 type Props = {
-  dataSource: UserType[] | []
+  dataSource: any[] | []
   pagination: {
     current: number
     total: number
@@ -39,16 +33,18 @@ type columnType = {
   email: string
 }
 
-export const UsersTable: FC<Props> = ({ dataSource, pagination, searchParams }) => {
+export const RequestTable: FC<Props> = ({ dataSource, pagination, searchParams }) => {
   const router = useRouter()
-  const tableData: columnType[] = dataSource.map((user) => {
-    return {
-      id: user.id || '',
-      company: user.company || '',
-      status: user.status || 0,
-      email: user.email || ''
-    }
-  })
+
+  const tableData: columnType[] =
+    dataSource.map((user) => {
+      return {
+        id: user.id,
+        company: user.company,
+        status: user.status,
+        email: user.email
+      }
+    }) || []
 
   const columns: ColumnsType<columnType> = [
     {
@@ -92,12 +88,16 @@ export const UsersTable: FC<Props> = ({ dataSource, pagination, searchParams }) 
 
   return (
     <Card>
-      <Table
-        columns={columns}
-        dataSource={tableData}
-        pagination={pagination}
-        onChange={onPaginationChange}
-      />
+      {dataSource.length !== 0 ? (
+        <Table
+          columns={columns}
+          dataSource={tableData}
+          pagination={pagination}
+          onChange={onPaginationChange}
+        />
+      ) : (
+        <Empty/>
+      )}
     </Card>
   )
 }

@@ -1,5 +1,5 @@
 'use client'
-import { Button, Card, Col, Form, Row } from 'antd'
+import { Button, Card, Col, Form, message, Row } from 'antd'
 import Link from 'next/link'
 import { FC, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -7,18 +7,19 @@ import { v4 as uuid } from 'uuid'
 
 import { ImageUpload } from '@/components/Admin/DnD/ImageUpload'
 import {
-  ADMIN_PRODUCT_SERIES_DETAIL_ROUTE,
+  ADMIN_PRODUCT_VARIANT_DETAIL_ROUTE,
   ADMIN_PRODUCTS_DETAIL_ROUTE,
   ADMIN_PRODUCTS_ROUTE,
   ADMIN_ROUTE
 } from '@/constants/route'
 import toHref from '@/helper/toHref'
 import { createClient } from '@/utils/supabase/client'
+import { PageHeader } from '@/components/Admin/PageHeader'
 
 type Props = {
   params: {
     id: string
-    seriesId: string
+    variantId: string
   }
 }
 
@@ -32,7 +33,7 @@ const MakerGalleryEdit: FC<Props> = ({ params }) => {
     const { data } = await supabase
       .from('product_images')
       .select()
-      .eq('product_variant_id', params.seriesId)
+      .eq('product_variant_id', params.variantId)
     if (data) {
       const _data = data.map((v) => {
         if (v.image_url)
@@ -46,7 +47,6 @@ const MakerGalleryEdit: FC<Props> = ({ params }) => {
       setFile(_data)
     }
   }
-  console.log(file)
 
   useEffect(() => {
     getImages()
@@ -56,14 +56,14 @@ const MakerGalleryEdit: FC<Props> = ({ params }) => {
     { title: <Link href={ADMIN_ROUTE}>ダッシュボード</Link> },
     { title: <Link href={ADMIN_PRODUCTS_ROUTE}>商品一覧</Link> },
     {
-      title: <Link href={toHref(ADMIN_PRODUCTS_DETAIL_ROUTE, { id: params.seriesId })}>詳細</Link>
+      title: <Link href={toHref(ADMIN_PRODUCTS_DETAIL_ROUTE, { id: params.variantId })}>詳細</Link>
     },
     {
       title: (
         <Link
-          href={toHref(ADMIN_PRODUCT_SERIES_DETAIL_ROUTE, {
+          href={toHref(ADMIN_PRODUCT_VARIANT_DETAIL_ROUTE, {
             id: params.id,
-            seriesId: params.seriesId
+            variantId: params.variantId
           })}
         >
           シリーズ詳細
@@ -73,19 +73,33 @@ const MakerGalleryEdit: FC<Props> = ({ params }) => {
   ]
 
   const onFinish = async (e: any) => {
-    await supabase.from('product_images').delete().eq('product_variant_id', params.seriesId)
+    // Delete the existing images for the given product_variant_id
+    const { error: deleteError } = await supabase
+      .from('product_images')
+      .delete()
+      .eq('product_variant_id', params.variantId)
 
-    const _params = e.images.map((image: any) => {
-      return { product_variant_id: params.seriesId, image_url: image }
-    })
+    if (deleteError) {
+      return message.error('エラーが発生しました')
+    }
 
-    _params.map(async (p: any) => {
-      await supabase.from('product_images').insert({ ...p })
-    })
+    const _params = e.images.map((image: any) => ({
+      product_variant_id: params.variantId,
+      image_url: image
+    }))
+
+    for (const p of _params) {
+      const { error } = await supabase.from('product_images').insert(p)
+      if (error) {
+        return message.error('エラーが発生しました')
+      }
+    }
 
     router.push(
-      toHref(ADMIN_PRODUCT_SERIES_DETAIL_ROUTE, { id: params.id, seriesId: params.seriesId })
+      toHref(ADMIN_PRODUCT_VARIANT_DETAIL_ROUTE, { id: params.id, variantId: params.variantId })
     )
+    router.refresh()
+    return message.success('編集しました')
   }
 
   return (

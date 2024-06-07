@@ -3,10 +3,11 @@ import {
   ADMIN_ROUTE,
   ADMIN_PRODUCTS_ROUTE,
   ADMIN_PRODUCTS_DETAIL_ROUTE,
-  ADMIN_PRODUCT_SERIES_DETAIL_ROUTE,
-  ADMIN_PRODUCT_SERIES_DETAIL_EDIT_IMAGE_ROUTE
+  ADMIN_PRODUCT_VARIANT_DETAIL_ROUTE,
+  ADMIN_PRODUCT_VARIANT_DETAIL_EDIT_IMAGE_ROUTE,
+  ADMIN_PRODUCT_VARIANT_DETAIL_EDIT_ROUTE
 } from '@/constants/route'
-import { Card, Col, Descriptions, DescriptionsProps, Image, Row, Tag } from 'antd'
+import { Button, Card, Col, Descriptions, DescriptionsProps, Image, Row, Tag } from 'antd'
 import Link from 'next/link'
 import toHref from '@/helper/toHref'
 import { createClient } from '@/utils/supabase/server'
@@ -15,7 +16,7 @@ import { DeleteProductVariantButton } from '@/components/Admin/Button/DeleteProd
 type Props = {
   params: {
     id: string
-    seriesId: string
+    variantId: string
   }
 }
 
@@ -24,30 +25,32 @@ export default async function Page({ params }: Props) {
     { title: <Link href={ADMIN_ROUTE}>ダッシュボード</Link> },
     { title: <Link href={ADMIN_PRODUCTS_ROUTE}>商品一覧</Link> },
     {
-      title: <Link href={toHref(ADMIN_PRODUCTS_DETAIL_ROUTE, { id: params.seriesId })}>詳細</Link>
+      title: (
+        <Link href={toHref(ADMIN_PRODUCTS_DETAIL_ROUTE, { id: params.variantId })}>商品詳細</Link>
+      )
     },
     {
       title: (
         <Link
-          href={toHref(ADMIN_PRODUCT_SERIES_DETAIL_ROUTE, {
+          href={toHref(ADMIN_PRODUCT_VARIANT_DETAIL_ROUTE, {
             id: params.id,
-            seriesId: params.seriesId
+            variantId: params.variantId
           })}
         >
-          シリーズ詳細
+          バリエーション詳細
         </Link>
       )
     }
   ]
 
   const supabase = createClient()
-  const { data, error } = await supabase
+  const { data: productData } = await supabase
     .from('product_variants')
     .select('*, product_images(*), product_variants_size(*)')
-    .eq('id', params.seriesId)
+    .eq('id', params.variantId)
+    .single()
+  if (!productData) return
 
-  if (!data) return
-  const productData = data && data[0]
   const descriptions = {
     id: productData.id,
     updatedAt: productData.updated_at,
@@ -96,35 +99,48 @@ export default async function Page({ params }: Props) {
   return (
     <Row gutter={[24, 24]}>
       <Col span={18}>
-        <PageHeader title="商品(シリーズ)詳細" routes={routes} descriptions={descriptions} />
-        <Card style={{ marginBottom: 16 }}>
+        <PageHeader title="バリエーション詳細" routes={routes} descriptions={descriptions} />
+        <Card
+          title="基本情報"
+          style={{ marginBottom: 16 }}
+          extra={[
+            <Button
+              href={toHref(ADMIN_PRODUCT_VARIANT_DETAIL_EDIT_ROUTE, {
+                id: params.id,
+                variantId: params.variantId
+              })}
+            >
+              編集する
+            </Button>
+          ]}
+        >
           <Descriptions
+            size="small"
             labelStyle={{ width: 180 }}
             style={{ marginBottom: 16 }}
             bordered
-            title="商品情報"
             items={items}
           />
           <Descriptions
+            size="small"
             labelStyle={{ width: 180 }}
             style={{ marginBottom: 16 }}
             bordered
-            title="コード情報"
             items={codeInfoItems}
           />
         </Card>
         <Card
           style={{ marginBottom: 16 }}
           extra={[
-            <Link
-              href={toHref(ADMIN_PRODUCT_SERIES_DETAIL_EDIT_IMAGE_ROUTE, {
+            <Button
+              href={toHref(ADMIN_PRODUCT_VARIANT_DETAIL_EDIT_IMAGE_ROUTE, {
                 id: params.id,
-                seriesId: params.seriesId
+                variantId: params.variantId
               })}
               key="edit"
             >
               編集する
-            </Link>
+            </Button>
           ]}
           title="ギャラリー"
         >
@@ -137,7 +153,7 @@ export default async function Page({ params }: Props) {
       </Col>
       <Col span={6}>
         <Card>
-          <DeleteProductVariantButton id={params.id} seriesId={params.seriesId} />
+          <DeleteProductVariantButton id={params.id} variantId={params.variantId} />
         </Card>
       </Col>
     </Row>

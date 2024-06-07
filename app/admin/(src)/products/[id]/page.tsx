@@ -3,7 +3,8 @@ import {
   ADMIN_ROUTE,
   ADMIN_PRODUCTS_ROUTE,
   ADMIN_PRODUCTS_DETAIL_ROUTE,
-  ADMIN_PRODUCTS_DETAIL_SERIES_CREATE_ROUTE
+  ADMIN_PRODUCTS_DETAIL_VARIANT_CREATE_ROUTE,
+  ADMIN_PRODUCTS_DETAIL_EDIT_ROUTE
 } from '@/constants/route'
 import { Button, Card, Col, Descriptions, DescriptionsProps, Row } from 'antd'
 import Link from 'next/link'
@@ -15,7 +16,7 @@ import { UpdateProductPublishStatusButton } from '@/components/Admin/Button/Upda
 
 type Props = {
   params: {
-    id?: string
+    id: string
   }
 }
 
@@ -26,15 +27,14 @@ export default async function Page({ params }: Props) {
     { title: <Link href={toHref(ADMIN_PRODUCTS_DETAIL_ROUTE, { id: params.id })}>詳細</Link> }
   ]
 
-  if (!params.id) return
   const supabase = createClient()
-  const { data } = await supabase
+  const { data: productData } = await supabase
     .from('products')
     .select('*, product_variants(*, product_variants_size(*), product_images(*))')
     .eq('id', params.id)
+    .single()
 
-  if (!data) return
-  const productData = data && data[0]
+  if (!productData) return
 
   const descriptions = {
     id: productData.id,
@@ -112,13 +112,6 @@ export default async function Page({ params }: Props) {
       label: '素材',
       children: productData.material,
       span: 3
-    },
-
-    {
-      key: 'price',
-      label: '販売価格',
-      children: `${productData.price}円`,
-      span: 3
     }
   ]
   const priceItems: DescriptionsProps['items'] = [
@@ -142,29 +135,38 @@ export default async function Page({ params }: Props) {
     <Row gutter={[24, 24]}>
       <Col span={18}>
         <PageHeader title="商品詳細" routes={routes} descriptions={descriptions} />
-        <Card style={{ marginBottom: 16 }}>
+        <Card
+          title="商品情報"
+          style={{ marginBottom: 16 }}
+          extra={[
+            <Button href={toHref(ADMIN_PRODUCTS_DETAIL_EDIT_ROUTE, { id: params.id })}>
+              編集する
+            </Button>
+          ]}
+        >
           <Descriptions
+            size="small"
             labelStyle={{ width: 180 }}
             style={{ marginBottom: 16 }}
             bordered
-            title="商品情報"
             items={items}
           />
           <Descriptions
+            size="small"
             labelStyle={{ width: 180 }}
             style={{ marginBottom: 16 }}
             bordered
-            title="価格情報"
             items={priceItems}
           />
           <Descriptions
+            size="small"
             labelStyle={{ width: 180 }}
             style={{ marginBottom: 16 }}
             bordered
-            title="コード情報"
             items={codeInfoItems}
           />
           <Descriptions
+            size="small"
             labelStyle={{ width: 180 }}
             style={{ marginBottom: 16 }}
             bordered
@@ -173,9 +175,10 @@ export default async function Page({ params }: Props) {
           />
         </Card>
         <Card
+          title="カラーバリエーション"
           extra={[
-            <Link href={toHref(ADMIN_PRODUCTS_DETAIL_SERIES_CREATE_ROUTE, { id: params.id })}>
-              <Button block>シリーズを追加する</Button>
+            <Link href={toHref(ADMIN_PRODUCTS_DETAIL_VARIANT_CREATE_ROUTE, { id: params.id })}>
+              <Button block>カラーバリエーションを追加する</Button>
             </Link>
           ]}
         >
