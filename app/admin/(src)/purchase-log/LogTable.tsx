@@ -1,19 +1,15 @@
 'use client'
-import { UserType } from '@/app/wholesale/(src)/account/page'
 import { ADMIN_REQUESTS_DETAIL_ROUTE, ADMIN_USERS_ROUTE } from '@/constants/route'
-import { formatDateTime } from '@/helper/dateFormat'
 import toHref from '@/helper/toHref'
 import { toQuery } from '@/helper/toQuery'
-import { Card, Table, Typography } from 'antd'
+import { Card, Table } from 'antd'
 import { ColumnsType, TablePaginationConfig } from 'antd/es/table'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { FC } from 'react'
 
-const { Text } = Typography
-
 type Props = {
-  dataSource: UserType[] | []
+  dataSource: any[] | []
   pagination: {
     current: number
     total: number
@@ -40,7 +36,7 @@ export const LogTable: FC<Props> = ({ dataSource, pagination, searchParams }) =>
       id: user.id || '',
       company: user.company || '',
       status: user.status || 0,
-      amount: user.amount,
+      amount: user.amount
     }
   })
 

@@ -6,11 +6,11 @@ import { useRouter } from 'next/navigation'
 import { FC } from 'react'
 
 type Props = {
-  productId: string
+  variantId: string
   publish_status: number
 }
 
-export const UpdateProductPublishStatusButton: FC<Props> = ({ productId, publish_status }) => {
+export const UpdateVariantPublishStatusButton: FC<Props> = ({ variantId, publish_status }) => {
   const isPublished = publish_status === PRODUCT_PUBLISH_STATUS.Public ? true : false
   const supabase = createClient()
   const router = useRouter()
@@ -18,18 +18,18 @@ export const UpdateProductPublishStatusButton: FC<Props> = ({ productId, publish
 
   const updateConfirm = () => {
     modal.confirm({
-      title: `${isPublished ? '商品を非公開にする' : '商品を公開する'}`,
+      title: `${isPublished ? '非公開にする' : '公開する'}`,
       icon: null,
       content: '',
       async onOk() {
         const { error } = await supabase
-          .from('products')
+          .from('product_variants')
           .update({
             publish_status: isPublished
               ? PRODUCT_PUBLISH_STATUS.Private
               : PRODUCT_PUBLISH_STATUS.Public
           })
-          .eq('id', productId)
+          .eq('id', variantId)
 
         if (error) {
           message.error('予期せぬエラーが発生しました')
@@ -46,7 +46,7 @@ export const UpdateProductPublishStatusButton: FC<Props> = ({ productId, publish
 
   return (
     <Button block onClick={updateConfirm}>
-      {isPublished ? '商品を非公開にする' : '商品を公開する'}
+      {isPublished ? '非公開にする' : '公開する'}
     </Button>
   )
 }

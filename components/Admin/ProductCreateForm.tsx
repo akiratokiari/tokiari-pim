@@ -1,5 +1,5 @@
 'use client'
-import { Button, Card, Col, DatePicker, Form, Input, InputNumber, Row } from 'antd'
+import { Button, Card, Col, DatePicker, Form, Input, Row, Select } from 'antd'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { FC, useState } from 'react'
@@ -12,6 +12,7 @@ import {
 import { PageHeader } from './PageHeader'
 import { createClient } from '@/utils/supabase/client'
 import toHref from '@/helper/toHref'
+import { CategoryArray } from '@/constants/category'
 
 export const ProductCreateForm: FC = () => {
   const router = useRouter()
@@ -30,13 +31,11 @@ export const ProductCreateForm: FC = () => {
 
     const _product = {
       // =============================
-      publish_status: values.publish_status,
       title: values.title,
       description: values.description,
-      furigana: values.furigana,
+      kana: values.kana,
       material: values.material,
       category: values.category,
-      price: values.price,
       // =============================
       product_code: values.product_code,
       jicfs_code: values.jicfs_code,
@@ -64,24 +63,24 @@ export const ProductCreateForm: FC = () => {
             <Form.Item name="title" label="商品名" rules={[{ required: true }]}>
               <Input />
             </Form.Item>
-            <Form.Item name="furigana" label="商品名(フリガナ)" rules={[{ required: true }]}>
+            <Form.Item name="kana" label="商品名(カナ)" rules={[{ required: true }]}>
               <Input />
             </Form.Item>
             <Form.Item name="description" label="説明" rules={[{ required: true }]}>
               <Input.TextArea rows={6} style={{ width: '100%', height: '60px' }} />
             </Form.Item>
             <Form.Item name="category" label="カテゴリー" rules={[{ required: true }]}>
-              <Input />
+              <Select>
+                {CategoryArray.map((c) => {
+                  return <Select.Option value={c}>{c}</Select.Option>
+                })}
+              </Select>
             </Form.Item>
             <Form.Item name="material" label="素材" rules={[{ required: true }]}>
               <Input />
             </Form.Item>
           </Card>
-          <Card title="値段情報" style={{ marginBottom: '16px' }}>
-            <Form.Item name="price" label="販売価格" rules={[{ required: true }]}>
-              <InputNumber />
-            </Form.Item>
-          </Card>
+
           <Card title="コード情報" style={{ marginBottom: '16px' }}>
             <Form.Item name="product_code" label="商品コード" rules={[{ required: true }]}>
               <Input />

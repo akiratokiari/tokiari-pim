@@ -12,7 +12,6 @@ import toHref from '@/helper/toHref'
 import { createClient } from '@/utils/supabase/server'
 import { DisplayVariants } from '@/components/Admin/DisplayVariants'
 import { DeleteProductButton } from '@/components/Admin/Button/DeleteProductButton'
-import { UpdateProductPublishStatusButton } from '@/components/Admin/Button/UpdateProductPublishStatus'
 
 type Props = {
   params: {
@@ -70,12 +69,6 @@ export default async function Page({ params }: Props) {
   ]
   const systemInfoItems: DescriptionsProps['items'] = [
     {
-      key: 'publishStatus',
-      label: '公開ステータス',
-      children: productData.publish_status === 1 ? '公開' : '非公開',
-      span: 3
-    },
-    {
       key: 'salesStartedAt',
       label: '販売開始日時',
       children: productData.sales_started_at,
@@ -90,9 +83,9 @@ export default async function Page({ params }: Props) {
       span: 3
     },
     {
-      key: 'furigana',
+      key: 'kana',
       label: 'フリガナ',
-      children: productData.furigana,
+      children: productData.kana,
       span: 3
     },
     {
@@ -111,14 +104,6 @@ export default async function Page({ params }: Props) {
       key: 'material',
       label: '素材',
       children: productData.material,
-      span: 3
-    }
-  ]
-  const priceItems: DescriptionsProps['items'] = [
-    {
-      key: 'price',
-      label: '販売価格',
-      children: `${productData.price}円`,
       span: 3
     }
   ]
@@ -151,13 +136,7 @@ export default async function Page({ params }: Props) {
             bordered
             items={items}
           />
-          <Descriptions
-            size="small"
-            labelStyle={{ width: 180 }}
-            style={{ marginBottom: 16 }}
-            bordered
-            items={priceItems}
-          />
+
           <Descriptions
             size="small"
             labelStyle={{ width: 180 }}
@@ -186,12 +165,6 @@ export default async function Page({ params }: Props) {
         </Card>
       </Col>
       <Col span={6}>
-        <Card style={{ marginBottom: 16 }}>
-          <UpdateProductPublishStatusButton
-            publish_status={productData.publish_status}
-            productId={params.id}
-          />
-        </Card>
         <Card>
           <DeleteProductButton productId={params.id} />
         </Card>

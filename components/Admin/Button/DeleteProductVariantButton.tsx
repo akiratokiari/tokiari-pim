@@ -29,6 +29,7 @@ export const DeleteProductVariantButton: FC<Props> = ({ id, variantId }) => {
         if (!error) {
           message.success('削除しました')
           router.push(toHref(ADMIN_PRODUCTS_DETAIL_ROUTE, { id: id }))
+          router.refresh()
         }
       },
       okText: '削除する',

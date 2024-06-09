@@ -3,7 +3,6 @@ import { ADMIN_REQUESTS_ROUTE, ADMIN_ROUTE } from '@/constants/route'
 import { Col, Row } from 'antd'
 import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
-import { UserType } from '@/app/wholesale/(src)/account/page'
 import { LogTable } from './LogTable'
 
 type Props = {
@@ -28,7 +27,7 @@ export default async function Page({ searchParams }: Props) {
 
   const from = (currentPage - 1) * PAGE_SIZE
   const to = from + PAGE_SIZE - 1
-  const { data, count } = await query.range(from, to).returns<UserType[]>()
+  const { data, count } = await query.range(from, to)
 
   const pagination = {
     current: currentPage,

@@ -115,7 +115,9 @@ export type Database = {
           created_at: string
           deleted_at: string | null
           id: string
+          price: number
           product_id: string
+          publish_status: number
           series_number: string
           updated_at: string
         }
@@ -124,7 +126,9 @@ export type Database = {
           created_at?: string
           deleted_at?: string | null
           id?: string
+          price: number
           product_id: string
+          publish_status?: number
           series_number: string
           updated_at?: string
         }
@@ -133,7 +137,9 @@ export type Database = {
           created_at?: string
           deleted_at?: string | null
           id?: string
+          price?: number
           product_id?: string
+          publish_status?: number
           series_number?: string
           updated_at?: string
         }
@@ -194,15 +200,13 @@ export type Database = {
           created_at: string
           deleted_at: string | null
           description: string
-          furigana: string
           gpc_code: string
           id: string
           jicfs_code: string
+          kana: string
           material: string
-          price: number
           product_code: string
           product_group_code: string
-          publish_status: number
           sales_started_at: string
           title: string
           updated_at: string
@@ -212,15 +216,13 @@ export type Database = {
           created_at?: string
           deleted_at?: string | null
           description: string
-          furigana: string
           gpc_code: string
           id?: string
           jicfs_code: string
+          kana: string
           material: string
-          price: number
           product_code: string
           product_group_code: string
-          publish_status?: number
           sales_started_at: string
           title: string
           updated_at?: string
@@ -230,15 +232,13 @@ export type Database = {
           created_at?: string
           deleted_at?: string | null
           description?: string
-          furigana?: string
           gpc_code?: string
           id?: string
           jicfs_code?: string
+          kana?: string
           material?: string
-          price?: number
           product_code?: string
           product_group_code?: string
-          publish_status?: number
           sales_started_at?: string
           title?: string
           updated_at?: string

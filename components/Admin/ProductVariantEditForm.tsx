@@ -1,9 +1,10 @@
 'use client'
-import { Button, Card, Col, Form, Input, message, Row } from 'antd'
+import { Button, Card, Col, Form, Input, InputNumber, message, Row, Select } from 'antd'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { FC, useEffect, useState } from 'react'
 import {
+  ADMIN_PRODUCT_VARIANT_DETAIL_EDIT_ROUTE,
   ADMIN_PRODUCT_VARIANT_DETAIL_ROUTE,
   ADMIN_PRODUCTS_DETAIL_ROUTE,
   ADMIN_PRODUCTS_ROUTE,
@@ -12,17 +13,24 @@ import {
 import { PageHeader } from './PageHeader'
 import { createClient } from '@/utils/supabase/client'
 import toHref from '@/helper/toHref'
+import { ColorArray } from '@/constants/color'
+import { SizeArray } from '@/constants/size'
+import { ProductVariantsRowType, ProductVariantsSizeRowType } from '@/utils/supabase/type'
 
 type Props = {
   productId: string
   variantId: string
 }
 
+export type ProductVariantWithRelation = ProductVariantsRowType & {
+  product_variants_size: ProductVariantsSizeRowType[]
+}
+
 export const ProductVariantEditForm: FC<Props> = ({ variantId, productId }) => {
   const router = useRouter()
   const supabase = createClient()
   const [form] = Form.useForm<any>()
-  const [productData, setProductData] = useState<any | null>()
+  const [productData, setProductData] = useState<ProductVariantWithRelation | null>()
   const routes = [
     { title: <Link href={ADMIN_ROUTE}>ダッシュボード</Link> },
     { title: <Link href={ADMIN_PRODUCTS_ROUTE}>商品一覧</Link> },
@@ -31,8 +39,22 @@ export const ProductVariantEditForm: FC<Props> = ({ variantId, productId }) => {
     },
     {
       title: (
+        <Link href={toHref(ADMIN_PRODUCTS_DETAIL_ROUTE, { id: productId })}>
+          バリエーション一覧
+        </Link>
+      )
+    },
+    {
+      title: (
         <Link href={toHref(ADMIN_PRODUCT_VARIANT_DETAIL_ROUTE, { id: productId, variantId })}>
-          {productData?.title ? productData.title : 'カラーバリエーション編集'}
+          詳細
+        </Link>
+      )
+    },
+    {
+      title: (
+        <Link href={toHref(ADMIN_PRODUCT_VARIANT_DETAIL_EDIT_ROUTE, { id: productId, variantId })}>
+          編集
         </Link>
       )
     }
@@ -57,6 +79,7 @@ export const ProductVariantEditForm: FC<Props> = ({ variantId, productId }) => {
       form.setFieldsValue({
         color: productData.color,
         series_number: productData.series_number,
+        price: productData.price,
         variant:
           productData.product_variants_size.map((pvs: any) => ({
             product_size: pvs.product_size,
@@ -68,28 +91,33 @@ export const ProductVariantEditForm: FC<Props> = ({ variantId, productId }) => {
   }, [productData, form, setProductData])
 
   const onFinish = async (values: any) => {
+    if (!productData) return
     if (isSending) return
     setIsSending(true)
 
+    // variantのupdate
     const _productVariant = {
       product_id: productId,
       color: values.color,
+      price: values.price,
       series_number: values.series_number
     }
-
-    const { data: productVariant, error } = await supabase
+    const { error } = await supabase
       .from('product_variants')
-      .insert({ ..._productVariant })
+      .update({ ..._productVariant })
+      .eq('id', productData.id)
       .select()
-      .single()
 
     if (error) {
       return message.error('予期せぬエラーが発生しました')
     }
 
+    await supabase.from('product_variants_size').delete().eq('product_variant_id', productData.id)
+
+    // variant_sizeのupdate
     const _size = values.variant.map((v: any) => {
       return {
-        product_variant_id: productVariant.id,
+        product_variant_id: productData.id,
         product_size: v.product_size,
         model_number: v.model_number,
         gtin_code: v.gtin_code
@@ -100,11 +128,11 @@ export const ProductVariantEditForm: FC<Props> = ({ variantId, productId }) => {
       await supabase
         .from('product_variants_size')
         .insert({ ...vs })
-        .select()
+        .eq('model_number', vs.model_number)
     })
 
     router.push(
-      toHref(ADMIN_PRODUCT_VARIANT_DETAIL_ROUTE, { id: productId, variantId: productVariant.id })
+      toHref(ADMIN_PRODUCT_VARIANT_DETAIL_ROUTE, { id: productId, variantId: productData.id })
     )
     router.refresh()
   }
@@ -113,13 +141,26 @@ export const ProductVariantEditForm: FC<Props> = ({ variantId, productId }) => {
     <Form form={form} layout={'vertical'} onFinish={onFinish}>
       <Row gutter={[24, 24]}>
         <Col span={18}>
-          <PageHeader routes={routes} title="カラーバリエーションの作成" />
+          <PageHeader routes={routes} title="バリエーションの編集" />
           <Card title="基本情報" style={{ marginBottom: '16px' }}>
             <Form.Item name="color" label="色" rules={[{ required: true }]}>
-              <Input />
+              <Select placeholder="色">
+                {ColorArray.map((c, index) => {
+                  return (
+                    <Select.Option key={index} value={c.value}>
+                      {c.value}
+                    </Select.Option>
+                  )
+                })}
+              </Select>
             </Form.Item>
             <Form.Item name="series_number" label="シリーズ番号" rules={[{ required: true }]}>
               <Input />
+            </Form.Item>
+          </Card>
+          <Card title="値段情報" style={{ marginBottom: '16px' }}>
+            <Form.Item name="price" label="販売価格" rules={[{ required: true }]}>
+              <InputNumber style={{ width: '100%' }} />
             </Form.Item>
           </Card>
           <Card title="サイズ展開">
@@ -134,7 +175,15 @@ export const ProductVariantEditForm: FC<Props> = ({ variantId, productId }) => {
                           rules={[{ required: true, message: 'サイズは必須項目です' }]}
                           style={{ width: '33.3%' }}
                         >
-                          <Input placeholder="サイズ" />
+                          <Select placeholder="サイズ">
+                            {SizeArray.map((s, index) => {
+                              return (
+                                <Select.Option key={index} value={s}>
+                                  {s}
+                                </Select.Option>
+                              )
+                            })}
+                          </Select>
                         </Form.Item>
                         <Form.Item
                           name={[field.name, 'model_number']}
@@ -170,7 +219,7 @@ export const ProductVariantEditForm: FC<Props> = ({ variantId, productId }) => {
         <Col span={6}>
           <Card>
             <Button type="primary" htmlType="submit" block>
-              作成する
+              編集する
             </Button>
           </Card>
         </Col>

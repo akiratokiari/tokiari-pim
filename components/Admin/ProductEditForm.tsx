@@ -1,10 +1,9 @@
 'use client'
-import { Button, Card, Col, DatePicker, Form, Input, InputNumber, message, Row } from 'antd'
+import { Button, Card, Col, DatePicker, Form, Input,  message, Row, Select } from 'antd'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { FC, useEffect, useState } from 'react'
 import {
-  ADMIN_PRODUCTS_CREATE_ROUTE,
   ADMIN_PRODUCTS_DETAIL_EDIT_ROUTE,
   ADMIN_PRODUCTS_DETAIL_ROUTE,
   ADMIN_PRODUCTS_ROUTE,
@@ -14,6 +13,7 @@ import { PageHeader } from './PageHeader'
 import { createClient } from '@/utils/supabase/client'
 import toHref from '@/helper/toHref'
 import moment from 'moment'
+import { CategoryArray } from '@/constants/category'
 
 type Props = {
   productId: string
@@ -46,11 +46,10 @@ export const ProductEditForm: FC<Props> = ({ productId }) => {
     if (productData) {
       form.setFieldsValue({
         title: productData.title,
-        furigana: productData.furigana,
+        kana: productData.kana,
         description: productData.description,
         category: productData.category,
         material: productData.material,
-        price: productData.price,
         product_code: productData.product_code,
         jicfs_code: productData.jicfs_code,
         gpc_code: productData.gpc_code,
@@ -71,13 +70,11 @@ export const ProductEditForm: FC<Props> = ({ productId }) => {
 
     const _product = {
       // =============================
-      publish_status: values.publish_status,
       title: values.title,
       description: values.description,
-      furigana: values.furigana,
+      kana: values.kana,
       material: values.material,
       category: values.category,
-      price: values.price,
       // =============================
       product_code: values.product_code,
       jicfs_code: values.jicfs_code,
@@ -107,22 +104,21 @@ export const ProductEditForm: FC<Props> = ({ productId }) => {
             <Form.Item name="title" label="商品名" rules={[{ required: true }]}>
               <Input />
             </Form.Item>
-            <Form.Item name="furigana" label="商品名(フリガナ)" rules={[{ required: true }]}>
+            <Form.Item name="kana" label="商品名(フリガナ)" rules={[{ required: true }]}>
               <Input />
             </Form.Item>
             <Form.Item name="description" label="説明" rules={[{ required: true }]}>
               <Input.TextArea rows={6} style={{ width: '100%', height: '60px' }} />
             </Form.Item>
             <Form.Item name="category" label="カテゴリー" rules={[{ required: true }]}>
-              <Input />
+              <Select>
+                {CategoryArray.map((c) => {
+                  return <Select.Option value={c}>{c}</Select.Option>
+                })}
+              </Select>
             </Form.Item>
             <Form.Item name="material" label="素材" rules={[{ required: true }]}>
               <Input />
-            </Form.Item>
-          </Card>
-          <Card title="値段情報" style={{ marginBottom: '16px' }}>
-            <Form.Item name="price" label="販売価格" rules={[{ required: true }]}>
-              <InputNumber />
             </Form.Item>
           </Card>
           <Card title="コード情報" style={{ marginBottom: '16px' }}>

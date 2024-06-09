@@ -96,7 +96,7 @@ const Page: FC = () => {
   const [stripeClientSecret, setStripeClientSecret] = useState(null)
   const [orderId, setOrderId] = useState<string | null>(null)
   const [purchasedProducts, setPurchasedProducts] = useState([
-    { id: '161aace1-e5e4-47be-a83e-2f890d862677', quantity: 2 }
+    { id: '71939724-7137-4c9b-9a61-152eb9586006', quantity: 1 }
   ])
   const router = useRouter()
 
@@ -135,7 +135,7 @@ const Page: FC = () => {
         is_delivered: false,
         payment_status: ORDER_PAYMENT_STATUS.Hold
       })
-      .select('*')
+      .select()
     if (error || !data) {
       return
     }
@@ -162,6 +162,7 @@ const Page: FC = () => {
       payment_method_types: ['card'],
       statement_descriptor_suffix: 'TICKET',
       metadata: {
+        type: 'order',
         order_id: data[0].id
       }
     }

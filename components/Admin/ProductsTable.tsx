@@ -1,15 +1,14 @@
 'use client'
 import { ProductsSearchParams } from '@/app/admin/(src)/products/page'
 import { ADMIN_PRODUCTS_DETAIL_ROUTE, ADMIN_PRODUCTS_ROUTE } from '@/constants/route'
-import { getSeason } from '@/helper/getSeason'
 import toHref from '@/helper/toHref'
 import { toQuery } from '@/helper/toQuery'
-import { Image, Table } from 'antd'
+import { Table } from 'antd'
 import { ColumnsType, TablePaginationConfig } from 'antd/es/table'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { FC } from 'react'
-import { DisplayPublishStatus } from './DisplayPublishStatus'
+import { formatDate } from '@/helper/dateFormat'
 
 type Props = {
   dataSource: any[]
@@ -24,9 +23,8 @@ type Props = {
 type columnType = {
   id: string
   title: string
-  season: string
-  price: string
-  publish_status: number
+  category: string
+  sales_started_at: string
   // thumbnail_image?: string
 }
 
@@ -37,9 +35,7 @@ export const ProductsTable: FC<Props> = ({ dataSource, pagination, searchParams 
       id: product.id,
       title: product.title,
       category: product.category,
-      price: product.price,
-      season: product.sales_started_at,
-      publish_status: product.publish_status
+      sales_started_at: product.sales_started_at
       // thumbnail: product.product_images.find((image: any) => image.image_order === 1) || ''
     }
   })
@@ -49,12 +45,6 @@ export const ProductsTable: FC<Props> = ({ dataSource, pagination, searchParams 
       title: '商品名',
       dataIndex: 'title',
       key: 'title'
-    },
-    {
-      title: 'ステータス',
-      dataIndex: 'publish_status',
-      key: 'publish_status',
-      render: (publish_status) => DisplayPublishStatus(publish_status)
     },
     // {
     //   title: 'サムネイル',
@@ -68,16 +58,10 @@ export const ProductsTable: FC<Props> = ({ dataSource, pagination, searchParams 
       key: 'category'
     },
     {
-      title: '値段',
-      dataIndex: 'price',
-      key: 'price',
-      render: (price) => `${price.toLocaleString()}円`
-    },
-    {
-      title: 'シーズン',
-      dataIndex: 'season',
-      key: 'season',
-      render: (arrowed_at: Date) => getSeason(arrowed_at)
+      title: '販売開始日時',
+      dataIndex: 'sales_started_at',
+      key: 'sales_started_at',
+      render: (sales_started_at) => formatDate(sales_started_at)
     },
     {
       title: '詳細',

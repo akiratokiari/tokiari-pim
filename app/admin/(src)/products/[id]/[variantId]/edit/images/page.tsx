@@ -7,6 +7,7 @@ import { v4 as uuid } from 'uuid'
 
 import { ImageUpload } from '@/components/Admin/DnD/ImageUpload'
 import {
+  ADMIN_PRODUCT_VARIANT_DETAIL_EDIT_IMAGE_ROUTE,
   ADMIN_PRODUCT_VARIANT_DETAIL_ROUTE,
   ADMIN_PRODUCTS_DETAIL_ROUTE,
   ADMIN_PRODUCTS_ROUTE,
@@ -56,7 +57,14 @@ const MakerGalleryEdit: FC<Props> = ({ params }) => {
     { title: <Link href={ADMIN_ROUTE}>ダッシュボード</Link> },
     { title: <Link href={ADMIN_PRODUCTS_ROUTE}>商品一覧</Link> },
     {
-      title: <Link href={toHref(ADMIN_PRODUCTS_DETAIL_ROUTE, { id: params.variantId })}>詳細</Link>
+      title: <Link href={toHref(ADMIN_PRODUCTS_DETAIL_ROUTE, { id: params.id })}>詳細</Link>
+    },
+    {
+      title: (
+        <Link href={toHref(ADMIN_PRODUCTS_DETAIL_ROUTE, { id: params.id })}>
+          バリエーション一覧
+        </Link>
+      )
     },
     {
       title: (
@@ -66,7 +74,19 @@ const MakerGalleryEdit: FC<Props> = ({ params }) => {
             variantId: params.variantId
           })}
         >
-          シリーズ詳細
+          詳細
+        </Link>
+      )
+    },
+    {
+      title: (
+        <Link
+          href={toHref(ADMIN_PRODUCT_VARIANT_DETAIL_EDIT_IMAGE_ROUTE, {
+            id: params.id,
+            variantId: params.variantId
+          })}
+        >
+          ギャラリー編集
         </Link>
       )
     }

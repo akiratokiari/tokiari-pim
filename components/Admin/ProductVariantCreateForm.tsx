@@ -1,5 +1,5 @@
 'use client'
-import { Button, Card, Col, Form, Input, message, Row } from 'antd'
+import { Button, Card, Col, Form, Input, InputNumber, message, Row, Select } from 'antd'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { FC, useState } from 'react'
@@ -13,6 +13,8 @@ import {
 import { PageHeader } from './PageHeader'
 import { createClient } from '@/utils/supabase/client'
 import toHref from '@/helper/toHref'
+import { ColorArray } from '@/constants/color'
+import { SizeArray } from '@/constants/size'
 
 type Props = {
   productId: string
@@ -43,7 +45,8 @@ export const ProductVariantCreateForm: FC<Props> = ({ productId }) => {
     const _productVariant = {
       product_id: productId,
       color: values.color,
-      series_number: values.series_number
+      series_number: values.series_number,
+      price: values.price
     }
 
     const { data: productVariant, error } = await supabase
@@ -85,10 +88,19 @@ export const ProductVariantCreateForm: FC<Props> = ({ productId }) => {
           <PageHeader routes={routes} title="カラーバリエーションの作成" />
           <Card title="基本情報" style={{ marginBottom: '16px' }}>
             <Form.Item name="color" label="色" rules={[{ required: true }]}>
-              <Input />
+              <Select placeholder="色">
+                {ColorArray.map((c) => {
+                  return <Select.Option value={c.value}>{c.value}</Select.Option>
+                })}
+              </Select>
             </Form.Item>
             <Form.Item name="series_number" label="シリーズ番号" rules={[{ required: true }]}>
               <Input />
+            </Form.Item>
+          </Card>
+          <Card title="値段情報" style={{ marginBottom: '16px' }}>
+            <Form.Item name="price" label="販売価格" rules={[{ required: true }]}>
+              <InputNumber style={{ width: '100%' }} />
             </Form.Item>
           </Card>
           <Card title="サイズ展開">
@@ -103,7 +115,11 @@ export const ProductVariantCreateForm: FC<Props> = ({ productId }) => {
                           rules={[{ required: true, message: 'サイズは必須項目です' }]}
                           style={{ width: '33.3%' }}
                         >
-                          <Input placeholder="サイズ" />
+                          <Select placeholder="サイズ">
+                            {SizeArray.map((s) => {
+                              return <Select.Option value={s}>{s}</Select.Option>
+                            })}
+                          </Select>
                         </Form.Item>
                         <Form.Item
                           name={[field.name, 'model_number']}

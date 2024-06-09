@@ -59,6 +59,7 @@ Deno.serve(async (request) => {
           .update({ payment_status: ORDER_PAYMENT_STATUS.Buy })
           .eq('id', metadata.order_id)
           .select()
+        console.log('========payment_intent.succeeded===========', error)
       } else if (eventType === 'payment_intent.payment_failed') {
         const ticketPaymentLogId = metadata.order_id
         const { data, error } = await supabaseClient

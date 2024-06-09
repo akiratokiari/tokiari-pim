@@ -7,11 +7,9 @@ import { ProductsTable } from '@/components/Admin/ProductsTable'
 import { ProductsSearchForm } from '@/components/Admin/ProductsSearchForm'
 
 export type ProductsSearchParams = {
-  id?: string
   title?: string
   category?: string
   publish_status?: number
-  season?: string
   current?: string
 }
 type Props = {
@@ -30,9 +28,6 @@ export default async function Page({ searchParams }: Props) {
 
   let query = supabase.from('products').select(`*`)
 
-  if (searchParams.id) {
-    query = query.eq('id', searchParams.id)
-  }
   if (searchParams.title) {
     query = query.eq('title', searchParams.title)
   }
@@ -41,9 +36,6 @@ export default async function Page({ searchParams }: Props) {
   }
   if (searchParams.publish_status) {
     query = query.eq('publish_status', searchParams.publish_status)
-  }
-  if (searchParams.season) {
-    query = query.eq('season', searchParams.season)
   }
 
   const from = (currentPage - 1) * PAGE_SIZE
@@ -70,11 +62,9 @@ export default async function Page({ searchParams }: Props) {
       </Col>
       <Col span={6}>
         <ProductsSearchForm
-          id={searchParams.id}
           title={searchParams.title}
           category={searchParams.category}
           publish_status={searchParams.publish_status}
-          season={searchParams.season}
         />
       </Col>
     </Row>

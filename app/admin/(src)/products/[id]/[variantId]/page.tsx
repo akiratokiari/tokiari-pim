@@ -12,6 +12,7 @@ import Link from 'next/link'
 import toHref from '@/helper/toHref'
 import { createClient } from '@/utils/supabase/server'
 import { DeleteProductVariantButton } from '@/components/Admin/Button/DeleteProductVariantButton'
+import { UpdateVariantPublishStatusButton } from '@/components/Admin/Button/UpdateVariantPublishStatusButton'
 
 type Props = {
   params: {
@@ -25,9 +26,7 @@ export default async function Page({ params }: Props) {
     { title: <Link href={ADMIN_ROUTE}>ダッシュボード</Link> },
     { title: <Link href={ADMIN_PRODUCTS_ROUTE}>商品一覧</Link> },
     {
-      title: (
-        <Link href={toHref(ADMIN_PRODUCTS_DETAIL_ROUTE, { id: params.variantId })}>商品詳細</Link>
-      )
+      title: <Link href={toHref(ADMIN_PRODUCTS_DETAIL_ROUTE, { id: params.id })}>商品詳細</Link>
     },
     {
       title: (
@@ -71,6 +70,12 @@ export default async function Page({ params }: Props) {
         return <Tag>{pvs.product_size}</Tag>
       }),
       span: 3
+    },
+    {
+      key: 'publishStatus',
+      label: '公開ステータス',
+      children: productData.publish_status === 1 ? '公開' : '非公開',
+      span: 3
     }
   ]
 
@@ -92,6 +97,14 @@ export default async function Page({ params }: Props) {
           </>
         )
       }),
+      span: 3
+    }
+  ]
+  const priceItems: DescriptionsProps['items'] = [
+    {
+      key: 'price',
+      label: '販売価格',
+      children: `${productData.price}円`,
       span: 3
     }
   ]
@@ -128,7 +141,15 @@ export default async function Page({ params }: Props) {
             bordered
             items={codeInfoItems}
           />
+          <Descriptions
+            size="small"
+            labelStyle={{ width: 180 }}
+            style={{ marginBottom: 16 }}
+            bordered
+            items={priceItems}
+          />
         </Card>
+
         <Card
           style={{ marginBottom: 16 }}
           extra={[
@@ -152,6 +173,12 @@ export default async function Page({ params }: Props) {
         </Card>
       </Col>
       <Col span={6}>
+        <Card style={{ marginBottom: 16 }}>
+          <UpdateVariantPublishStatusButton
+            publish_status={productData.publish_status}
+            variantId={params.variantId}
+          />
+        </Card>
         <Card>
           <DeleteProductVariantButton id={params.id} variantId={params.variantId} />
         </Card>
