@@ -247,33 +247,39 @@ export type Database = {
       }
       purchased_products: {
         Row: {
-          amount: number | null
+          amount: number
           created_at: string
           deleted_at: string | null
           id: string
+          model_number: string
           order_id: string
-          product_id: string
-          quantity: number | null
+          price: number
+          product_group_code: string
+          series_number: string
           updated_at: string
         }
         Insert: {
-          amount?: number | null
+          amount: number
           created_at?: string
           deleted_at?: string | null
           id?: string
+          model_number: string
           order_id: string
-          product_id: string
-          quantity?: number | null
+          price: number
+          product_group_code: string
+          series_number: string
           updated_at?: string
         }
         Update: {
-          amount?: number | null
+          amount?: number
           created_at?: string
           deleted_at?: string | null
           id?: string
+          model_number?: string
           order_id?: string
-          product_id?: string
-          quantity?: number | null
+          price?: number
+          product_group_code?: string
+          series_number?: string
           updated_at?: string
         }
         Relationships: [
@@ -282,13 +288,6 @@ export type Database = {
             columns: ['order_id']
             isOneToOne: false
             referencedRelation: 'orders'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'purchased_products_product_id_fkey'
-            columns: ['product_id']
-            isOneToOne: false
-            referencedRelation: 'products'
             referencedColumns: ['id']
           }
         ]

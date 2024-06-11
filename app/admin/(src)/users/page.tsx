@@ -4,7 +4,7 @@ import { Col, Row } from 'antd'
 import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
 import { USER_ROLE } from '@/constants/app'
-import { UsersTable } from '@/components/Admin/UserTable'
+import { UsersTable } from '@/components/Admin/Table/UserTable'
 import { UserSearchForm } from '@/components/Admin/UserSearchForm'
 
 type Props = {

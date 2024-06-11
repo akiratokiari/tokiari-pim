@@ -24,9 +24,9 @@ export const ProductGallery: FC<Props> = ({ data }) => {
       loop
       style={{ width: '100px', height: '150px', aspectRatio: '3/2' }}
     >
-      {data.map((i) => {
+      {data.map((i, index) => {
         return (
-          <SwiperSlide>
+          <SwiperSlide key={index}>
             <Image src={i.image_url} width={100} height={150} alt="" />
           </SwiperSlide>
         )

@@ -1,11 +1,13 @@
 import { PageHeader } from '@/components/Admin/PageHeader'
 import { ADMIN_ROUTE, ADMIN_USERS_ROUTE, ADMIN_USERS_DETAIL_ROUTE } from '@/constants/route'
-import { Button, Card, Col, Descriptions, DescriptionsProps, Row } from 'antd'
+import { Button, Card, Col, Descriptions, DescriptionsProps, Empty, Row } from 'antd'
 import Link from 'next/link'
 import toHref from '@/helper/toHref'
 import { createClient } from '@/utils/supabase/server'
 import { ExternalLink } from '@/components/externalLink'
 import { formatDateTime } from '@/helper/dateFormat'
+import { OrderTable } from '@/components/Admin/Table/OrderTable'
+import { UserOrdersTable } from '@/components/Admin/Table/UserOrdersTable'
 
 type Props = {
   params: {
@@ -28,6 +30,11 @@ export default async function Page({ params }: Props) {
     updatedAt: userData.created_at,
     createdAt: userData.updated_at
   }
+
+  const { data: orders } = await supabase
+    .from('orders')
+    .select('*, purchased_products(*)')
+    .eq('user_id', params.id)
 
   const items: DescriptionsProps['items'] = [
     {
@@ -96,11 +103,10 @@ export default async function Page({ params }: Props) {
       <Col span={18}>
         <PageHeader title="ユーザー詳細" routes={routes} descriptions={descriptions} />
         <Card style={{ marginBottom: 16 }}>
-          <Descriptions bordered title="会社情報" items={items} />
-        </Card>
-        <Card>
+          <Descriptions style={{ marginBottom: 16 }} bordered title="会社情報" items={items} />
           <Descriptions bordered title="システム情報" items={systemItems} />
         </Card>
+        <Card title="注文履歴">{orders ? <UserOrdersTable dataSource={orders} /> : <Empty />}</Card>
       </Col>
       <Col span={6}>
         <Card>

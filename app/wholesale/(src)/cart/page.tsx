@@ -7,7 +7,8 @@ import { WHOLESALE_ROUTE } from '@/constants/route'
 import { createClient } from '@/utils/supabase/client'
 import { AccountContext } from '@/contexts/account/context'
 import { ORDER_PAYMENT_STATUS } from '@/constants/app'
-import Stripe from 'stripe'
+import { CartContext, CartItemTypeWithAmount } from '@/contexts/cart/context'
+import { message } from 'antd'
 
 const StripeElement = ({ orderId, setOrderId, setStripeClientSecret }: any) => {
   const supabase = createClient()
@@ -54,7 +55,7 @@ const StripeElement = ({ orderId, setOrderId, setStripeClientSecret }: any) => {
         redirect: 'if_required',
         confirmParams: { return_url: window.location.href }
       })
-      .then((result) => {
+      .then(async (result) => {
         if (result.error) {
           window.alert(
             '入力いただいたカードでは、お支払いができませんでした。再度お試しいただくか、または他のカードでお試しください。'
@@ -62,6 +63,11 @@ const StripeElement = ({ orderId, setOrderId, setStripeClientSecret }: any) => {
           setLoading(false)
           onBackNotCancel()
         }
+        await supabase
+          .from('orders')
+          .update({ payment_intent: result.paymentIntent?.id })
+          .eq('id', orderId)
+
         router.push(WHOLESALE_ROUTE)
       })
   }
@@ -81,7 +87,20 @@ const StripeElement = ({ orderId, setOrderId, setStripeClientSecret }: any) => {
     </div>
   )
 }
+
+type InsertDataType = {
+  order_id: string
+  product_group_code: string
+  series_number: string
+  model_number: string
+  price: number // 必要なフィールドを追加
+  amount: number // 必要なフィールドを追加
+}
+
 const Page: FC = () => {
+  const [cartItems, setCartItems] = useState<CartItemTypeWithAmount[]>([])
+  const [totalAmount, setTotalAmount] = useState<number | undefined>(undefined)
+  const { cart } = useContext(CartContext)
   const supabase = createClient()
   const { account } = useContext(AccountContext)
   const stripe = require('stripe')(
@@ -95,10 +114,40 @@ const Page: FC = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [stripeClientSecret, setStripeClientSecret] = useState(null)
   const [orderId, setOrderId] = useState<string | null>(null)
-  const [purchasedProducts, setPurchasedProducts] = useState([
-    { id: '71939724-7137-4c9b-9a61-152eb9586006', quantity: 1 }
-  ])
   const router = useRouter()
+
+  const checkPrice = async () => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/check-price`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json, text/plain',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ cart })
+    })
+    const result = await response.json()
+    return result.data
+  }
+
+  useEffect(() => {
+    if (cart) {
+      checkPrice().then((res) => {
+        let _totalAmount = 0
+        const data = JSON.stringify(res, null, 2)
+        const pared = JSON.parse(data)
+        pared.map((ci: any) => {
+          ci.series.map((s: any) => {
+            s.variants.map((v: any) => {
+              const addAmount = v.amount * v.quantity
+              _totalAmount = _totalAmount + addAmount
+            })
+          })
+        })
+        setCartItems(pared)
+        setTotalAmount(_totalAmount)
+      })
+    }
+  }, [cart])
 
   useEffect(() => {
     // 販売情報とバイヤー情報を取得・保存
@@ -112,15 +161,16 @@ const Page: FC = () => {
   const onSubmit = async (values: any) => {
     setIsLoading(true)
 
-    // 販売情報をDBに叩きこむ & StripeCreate
+    // 販売情報をDBに& StripeCreate
     // 追記　初期値は'card' status 'hold
     if (!account) return
+    if (!totalAmount) return
 
     const { data, error } = await supabase
       .from('orders')
       .insert({
         user_id: account.id,
-        amount: 1000,
+        amount: totalAmount,
         // 配送情報
         postal_code: account.postal_code,
         prefecture: account.prefecture,
@@ -143,13 +193,22 @@ const Page: FC = () => {
     setOrderId(_orderId)
 
     // Prepare data for insertion
-    const dataToInsert = purchasedProducts.map((product) => ({
-      order_id: data[0].id,
-      product_id: product.id,
-      quantity: product.quantity
-    }))
+    const dataToInsert: InsertDataType[] = cartItems.reduce((acc: InsertDataType[], cartItem) => {
+      cartItem.series.forEach((item) => {
+        item.variants.forEach((v) => {
+          acc.push({
+            order_id: _orderId,
+            product_group_code: cartItem.product_group_code,
+            series_number: item.seriesNumber,
+            model_number: v.modelNumber,
+            price: v.amount,
+            amount: v.quantity
+          })
+        })
+      })
+      return acc
+    }, [])
 
-    // Insert data into Supabase
     const purchasedProductsData = await supabase.from('purchased_products').insert(dataToInsert)
 
     if (purchasedProductsData.error) {
@@ -160,7 +219,7 @@ const Page: FC = () => {
       amount: 1000,
       currency: 'jpy',
       payment_method_types: ['card'],
-      statement_descriptor_suffix: 'TICKET',
+      statement_descriptor_suffix: 'ORDER',
       metadata: {
         type: 'order',
         order_id: data[0].id
@@ -172,17 +231,57 @@ const Page: FC = () => {
     setStripeClientSecret(intent.client_secret)
   }
 
+  console.log(
+    cartItems.reduce((acc: InsertDataType[], cartItem) => {
+      cartItem.series.forEach((item) => {
+        item.variants.forEach((v) => {
+          acc.push({
+            order_id: '_orderId',
+            product_group_code: cartItem.product_group_code,
+            series_number: item.seriesNumber,
+            model_number: v.modelNumber,
+            price: v.amount,
+            amount: v.quantity
+          })
+        })
+      })
+      return acc
+    }, [])
+  )
+
   return (
     <div>
+      {cartItems.map((ci) => {
+        return (
+          <div key={ci.id}>
+            <div>{ci.product_group_code}</div>
+            <div>
+              {ci.series.map((cis) => {
+                return (
+                  <div key={cis.id}>
+                    {cis.color}
+                    <br />
+                    {cis.variants.map((v) => {
+                      return (
+                        <div key={v.id}>
+                          <div>
+                            サイズ {v.size}| 販売価格 {v.amount}円 | 個数 {v.quantity}個 | 小計
+                            {v.amount * v.quantity}円
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )
+      })}
+
+      {totalAmount && <div style={{ margin: '20px 0' }}>合計　{totalAmount}円</div>}
       <div>
-        <form
-          onSubmit={(values) => {
-            values.preventDefault()
-            onSubmit(values)
-          }}
-        >
-          <button type="submit">支払い画面に進む</button>
-        </form>
+        <button onClick={onSubmit}>支払い画面に進む</button>
       </div>
       {!!stripePromise && !!stripeClientSecret && (
         <Elements stripe={stripePromise} options={{ clientSecret: stripeClientSecret }}>

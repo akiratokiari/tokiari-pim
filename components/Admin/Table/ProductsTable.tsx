@@ -9,9 +9,11 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { FC } from 'react'
 import { formatDate } from '@/helper/dateFormat'
+import { ProductsRowType, ProductVariantsRowType } from '@/utils/supabase/type'
+import { DisplayProductColor } from '../DisplayProductColor'
 
 type Props = {
-  dataSource: any[]
+  dataSource: ProductType[]
   pagination: {
     current: number
     total: number
@@ -20,22 +22,30 @@ type Props = {
   searchParams: ProductsSearchParams
 }
 
+type ProductType = ProductsRowType & {
+  product_variants: ProductVariantsRowType[]
+}
+
 type columnType = {
+  key: number
   id: string
   title: string
   category: string
   sales_started_at: string
+  variationCount: ProductVariantsRowType[]
   // thumbnail_image?: string
 }
 
 export const ProductsTable: FC<Props> = ({ dataSource, pagination, searchParams }) => {
   const router = useRouter()
-  const tableData: columnType[] = dataSource.map((product) => {
+  const tableData: columnType[] = dataSource.map((product, index) => {
     return {
+      key: index,
       id: product.id,
       title: product.title,
       category: product.category,
-      sales_started_at: product.sales_started_at
+      sales_started_at: product.sales_started_at,
+      variationCount: product.product_variants
       // thumbnail: product.product_images.find((image: any) => image.image_order === 1) || ''
     }
   })
@@ -56,6 +66,15 @@ export const ProductsTable: FC<Props> = ({ dataSource, pagination, searchParams 
       title: 'カテゴリー',
       dataIndex: 'category',
       key: 'category'
+    },
+    {
+      title: 'バリエーション',
+      dataIndex: 'variationCount',
+      key: 'variationCount',
+      render: (variationCount: ProductVariantsRowType[]) =>
+        variationCount.map((v, index) => {
+          return <span key={index}>{DisplayProductColor(v.color)}</span>
+        })
     },
     {
       title: '販売開始日時',

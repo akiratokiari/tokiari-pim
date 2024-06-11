@@ -31,7 +31,7 @@ export const ProductVariantCreateForm: FC<Props> = ({ productId }) => {
     {
       title: (
         <Link href={toHref(ADMIN_PRODUCTS_DETAIL_VARIANT_CREATE_ROUTE, { id: productId })}>
-          カラーバリエーション作成
+          バリエーション作成
         </Link>
       )
     }
@@ -85,7 +85,7 @@ export const ProductVariantCreateForm: FC<Props> = ({ productId }) => {
     <Form form={form} layout={'vertical'} onFinish={onFinish}>
       <Row gutter={[24, 24]}>
         <Col span={18}>
-          <PageHeader routes={routes} title="カラーバリエーションの作成" />
+          <PageHeader routes={routes} title="バリエーションの作成" />
           <Card title="基本情報" style={{ marginBottom: '16px' }}>
             <Form.Item name="color" label="色" rules={[{ required: true }]}>
               <Select placeholder="色">

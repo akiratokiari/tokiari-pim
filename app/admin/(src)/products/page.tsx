@@ -1,10 +1,10 @@
 import { PageHeader } from '@/components/Admin/PageHeader'
-import { ADMIN_ROUTE, ADMIN_USERS_ROUTE } from '@/constants/route'
+import { ADMIN_PRODUCTS_ROUTE, ADMIN_ROUTE } from '@/constants/route'
 import { Card, Col, Empty, Row } from 'antd'
 import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
-import { ProductsTable } from '@/components/Admin/ProductsTable'
-import { ProductsSearchForm } from '@/components/Admin/ProductsSearchForm'
+import { ProductsTable } from '@/components/Admin/Table/ProductsTable'
+import { ProductsSearchForm } from '@/components/Admin/SearchForm/ProductsSearchForm'
 
 export type ProductsSearchParams = {
   title?: string
@@ -19,14 +19,14 @@ type Props = {
 export default async function Page({ searchParams }: Props) {
   const routes = [
     { title: <Link href={ADMIN_ROUTE}>ダッシュボード</Link> },
-    { title: <Link href={ADMIN_USERS_ROUTE}>ユーザ一覧</Link> }
+    { title: <Link href={ADMIN_PRODUCTS_ROUTE}>ユーザ一覧</Link> }
   ]
 
   const PAGE_SIZE = 10
   const currentPage = Number(searchParams.current) || 1
   const supabase = createClient()
 
-  let query = supabase.from('products').select(`*`)
+  let query = supabase.from('products').select(`*,product_variants(*)`)
 
   if (searchParams.title) {
     query = query.eq('title', searchParams.title)
@@ -40,7 +40,7 @@ export default async function Page({ searchParams }: Props) {
 
   const from = (currentPage - 1) * PAGE_SIZE
   const to = from + PAGE_SIZE - 1
-  const { data, count, error } = await query.range(from, to)
+  const { data, count } = await query.range(from, to)
 
   const pagination = {
     current: currentPage,

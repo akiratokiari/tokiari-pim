@@ -154,10 +154,10 @@ export default async function Page({ params }: Props) {
           />
         </Card>
         <Card
-          title="カラーバリエーション"
+          title="バリエーション"
           extra={[
             <Link href={toHref(ADMIN_PRODUCTS_DETAIL_VARIANT_CREATE_ROUTE, { id: params.id })}>
-              <Button block>カラーバリエーションを追加する</Button>
+              <Button block>バリエーションを追加する</Button>
             </Link>
           ]}
         >

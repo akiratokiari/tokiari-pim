@@ -1,0 +1,109 @@
+import { DisplayPaymentStatus } from '@/components/Admin/DisplayPaymentStatus'
+import { PageHeader } from '@/components/Admin/PageHeader'
+import { ADMIN_ORDERS_DETAIL_ROUTE, ADMIN_ORDERS_ROUTE, ADMIN_ROUTE } from '@/constants/route'
+import { formatDateTime } from '@/helper/dateFormat'
+import toHref from '@/helper/toHref'
+import { createClient } from '@/utils/supabase/server'
+import { Card, Col, Descriptions, DescriptionsProps, Row } from 'antd'
+import Link from 'next/link'
+
+type Props = {
+  params: {
+    id: string
+  }
+}
+
+export default async function Page({ params }: Props) {
+  const supabase = createClient()
+  const { data: order } = await supabase
+    .from('orders')
+    .select('*, purchased_products(*)', { count: 'exact' })
+    .eq('id', params.id)
+    .single()
+  if (!order) return
+
+  const routes = [
+    { title: <Link href={ADMIN_ROUTE}>ダッシュボード</Link> },
+    { title: <Link href={ADMIN_ORDERS_ROUTE}>注文一覧</Link> },
+    {
+      title: <Link href={toHref(ADMIN_ORDERS_DETAIL_ROUTE, { id: params.id })}>詳細</Link>
+    }
+  ]
+  if (!params.id) return
+
+  const items: DescriptionsProps['items'] = [
+    {
+      key: '1',
+      label: '会社',
+      children: order.company,
+      span: 3
+    },
+    {
+      key: 'phone',
+      label: '電話番号',
+      children: order.phone,
+      span: 3
+    },
+    {
+      key: 'address',
+      label: '住所',
+      children: (
+        <div>
+          〒 {order.postal_code}
+          <br />
+          {order.prefecture}
+          {order.city}
+          {order.street_address}
+          {order.building_name && (
+            <>
+              <br />
+              {order.building_name}
+            </>
+          )}
+        </div>
+      ),
+      span: 3
+    },
+    {
+      key: 'contactName',
+      label: '担当者',
+      children: order.contact_name,
+      span: 3
+    },
+    {
+      key: 'contactKana',
+      label: '担当者(フリガナ)',
+      children: order.contact_kana,
+      span: 3
+    }
+  ]
+
+  const systemItems: DescriptionsProps['items'] = [
+    {
+      label: '決済時刻',
+      key: 'created_at',
+      children: formatDateTime(order.created_at),
+      span: 3
+    },
+    {
+      label: '決済ステータス',
+      key: 'payment_status',
+      children: DisplayPaymentStatus(order.payment_status),
+      span: 3
+    }
+  ]
+
+  return (
+    <Row gutter={[24, 24]}>
+      <Col span={24}>
+        <PageHeader title="購入履歴詳細" routes={routes} />
+        <Card style={{ marginBottom: 16 }}>
+          <Descriptions bordered title="購入者情報" items={items} />
+        </Card>
+        <Card>
+          <Descriptions bordered title="システム情報" items={systemItems} />
+        </Card>
+      </Col>
+    </Row>
+  )
+}

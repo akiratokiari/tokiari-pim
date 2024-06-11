@@ -37,10 +37,10 @@ export const UsersTable: FC<Props> = ({ dataSource, pagination, searchParams }) 
   const router = useRouter()
   const tableData: columnType[] = dataSource.map((user) => {
     return {
-      id: user.id || '',
-      company: user.company || '',
+      id: user.id,
+      company: user.company,
       plan: user.plan || 0,
-      email: user.email || ''
+      email: user.email
     }
   })
 

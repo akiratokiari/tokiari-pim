@@ -2,9 +2,9 @@
 import { FC } from 'react'
 import { Menu, MenuProps } from 'antd'
 import {
+  ADMIN_ORDERS_ROUTE,
   ADMIN_PRODUCTS_CREATE_ROUTE,
   ADMIN_PRODUCTS_ROUTE,
-  ADMIN_PURCHASE_LOG_ROUTE,
   ADMIN_REQUESTS_ROUTE,
   ADMIN_ROUTE,
   ADMIN_SHIPPING_ROUTE,
@@ -38,13 +38,13 @@ export const MenuSider: FC = () => {
 
   const menuItems: MenuItem[] = [
     getItem('ダッシュボード', ADMIN_ROUTE),
+    getItem('ユーザー', ADMIN_USERS_ROUTE),
     getItem('商品', 'makers', null, [
       getItem('商品一覧', ADMIN_PRODUCTS_ROUTE),
       getItem('新規作成', ADMIN_PRODUCTS_CREATE_ROUTE)
     ]),
-    getItem('ユーザー', ADMIN_USERS_ROUTE),
+    getItem('注文一覧', ADMIN_ORDERS_ROUTE),
     getItem('発送待ち', ADMIN_SHIPPING_ROUTE),
-    getItem('購入履歴', ADMIN_PURCHASE_LOG_ROUTE),
     getItem('バイヤー申請', ADMIN_REQUESTS_ROUTE)
   ]
 

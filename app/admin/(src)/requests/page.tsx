@@ -3,7 +3,7 @@ import { ADMIN_REQUESTS_ROUTE, ADMIN_ROUTE } from '@/constants/route'
 import { Col, Row } from 'antd'
 import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
-import { RequestTable } from '@/components/Admin/RequestTable'
+import { RequestTable } from '@/components/Admin/Table/RequestTable'
 
 type Props = {
   searchParams: {

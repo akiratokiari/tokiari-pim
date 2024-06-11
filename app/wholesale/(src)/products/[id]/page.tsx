@@ -29,7 +29,15 @@ export default async function Page({ params }: Props) {
           return <ProductGallery data={pv.product_images} />
         })}
       </div>
-      {variants && <ProductVariantSelector variants={variants} />}
+      {variants && (
+        <ProductVariantSelector
+          product={{
+            id: products.id,
+            product_group_code: products.product_group_code
+          }}
+          variants={variants}
+        />
+      )}
     </div>
   )
 }

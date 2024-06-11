@@ -1,15 +1,15 @@
 'use client'
 import { ProductsSearchParams } from '@/app/admin/(src)/products/page'
-import { ADMIN_USERS_ROUTE } from '@/constants/route'
-
+import { CategoryArray } from '@/constants/category'
+import { ADMIN_PRODUCTS_ROUTE } from '@/constants/route'
 import { toQuery } from '@/helper/toQuery'
-import { Button, Card, Form, Input } from 'antd'
+import { Button, Card, Form, Input, Select } from 'antd'
 import { useRouter } from 'next/navigation'
 import { FC, useEffect } from 'react'
 
 type Props = ProductsSearchParams
 
-export const ProductsSearchForm: FC<Props> = ({ title, category, publish_status }) => {
+export const ProductsSearchForm: FC<Props> = ({ title, category }) => {
   const router = useRouter()
   const [searchForm] = Form.useForm()
 
@@ -24,12 +24,7 @@ export const ProductsSearchForm: FC<Props> = ({ title, category, publish_status 
         category: String(category)
       })
     }
-    if (publish_status) {
-      searchForm.setFieldsValue({
-        publish_status: String(publish_status)
-      })
-    }
-  }, [title, category, publish_status])
+  }, [title, category])
 
   const onSearchSubmit = (values: Props) => {
     const params: Props = {}
@@ -40,11 +35,8 @@ export const ProductsSearchForm: FC<Props> = ({ title, category, publish_status 
     if (values.category) {
       params.category = values.category
     }
-    if (values.publish_status) {
-      params.publish_status = values.publish_status
-    }
 
-    router.push(ADMIN_USERS_ROUTE + toQuery(params))
+    router.push(ADMIN_PRODUCTS_ROUTE + toQuery(params))
   }
   return (
     <Card>
@@ -53,10 +45,15 @@ export const ProductsSearchForm: FC<Props> = ({ title, category, publish_status 
           <Input placeholder="商品名" allowClear />
         </Form.Item>
         <Form.Item name="category">
-          <Input placeholder="カテゴリー" allowClear />
-        </Form.Item>
-        <Form.Item name="publish_status">
-          <Input placeholder="ステータス" allowClear />
+          <Select placeholder="カテゴリー" allowClear>
+            {CategoryArray.map((c, index) => {
+              return (
+                <Select.Option key={index} value={c}>
+                  {c}
+                </Select.Option>
+              )
+            })}
+          </Select>
         </Form.Item>
         <Button htmlType="submit" block type="primary">
           検索する

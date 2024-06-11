@@ -1,5 +1,4 @@
 import { ProductCard } from '@/components/Wholesale/productCard'
-import { PRODUCT_PUBLISH_STATUS } from '@/constants/app'
 import { WHOLESALE_PRODUCTS_DETAIL_ROUTE } from '@/constants/route'
 import toHref from '@/helper/toHref'
 import { createClient } from '@/utils/supabase/server'
