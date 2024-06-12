@@ -1,5 +1,6 @@
 import { DisplayPaymentStatus } from '@/components/Admin/DisplayPaymentStatus'
 import { PageHeader } from '@/components/Admin/PageHeader'
+import { PurchasedProductTable } from '@/components/Admin/Table/PurchasedProductTable'
 import { ADMIN_ORDERS_DETAIL_ROUTE, ADMIN_ORDERS_ROUTE, ADMIN_ROUTE } from '@/constants/route'
 import { formatDateTime } from '@/helper/dateFormat'
 import toHref from '@/helper/toHref'
@@ -80,15 +81,27 @@ export default async function Page({ params }: Props) {
 
   const systemItems: DescriptionsProps['items'] = [
     {
-      label: '決済時刻',
-      key: 'created_at',
-      children: formatDateTime(order.created_at),
+      label: '決済ID',
+      key: 'payment_intent',
+      children: order.payment_intent,
       span: 3
     },
     {
       label: '決済ステータス',
       key: 'payment_status',
       children: DisplayPaymentStatus(order.payment_status),
+      span: 3
+    },
+    {
+      label: '決済金額',
+      key: '',
+      children: `${order.amount.toLocaleString()}円`,
+      span: 3
+    },
+    {
+      label: '決済時刻',
+      key: 'created_at',
+      children: formatDateTime(order.created_at),
       span: 3
     }
   ]
@@ -99,6 +112,9 @@ export default async function Page({ params }: Props) {
         <PageHeader title="購入履歴詳細" routes={routes} />
         <Card style={{ marginBottom: 16 }}>
           <Descriptions bordered title="購入者情報" items={items} />
+        </Card>
+        <Card title="購入商品" style={{ marginBottom: 16 }}>
+          <PurchasedProductTable products={order.purchased_products} />
         </Card>
         <Card>
           <Descriptions bordered title="システム情報" items={systemItems} />

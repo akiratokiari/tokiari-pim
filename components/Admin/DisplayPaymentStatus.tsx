@@ -6,7 +6,7 @@ export const DisplayPaymentStatus = (payment_status: number) => {
     return <Tag>決済前</Tag>
   }
   if (payment_status === ORDER_PAYMENT_STATUS.Buy) {
-    return <Tag color="success">購入成功</Tag>
+    return <Tag color="success">決済完了</Tag>
   }
   if (payment_status === ORDER_PAYMENT_STATUS.Cancel) {
     return <Tag>キャンセル</Tag>
