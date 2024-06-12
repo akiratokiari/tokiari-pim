@@ -1,9 +1,12 @@
 import { Form } from './form'
 
-export default async function Page() {
-  return (
-    <div>
-      <Form />
-    </div>
-  )
+type Props = {
+  searchParams: {
+    error: string
+    error_description: string
+  }
+}
+
+export default async function Page({ searchParams }: Props) {
+  return <div>{searchParams.error_description ? searchParams.error_description : <Form />}</div>
 }

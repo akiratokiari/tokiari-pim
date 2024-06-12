@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Header } from '@/components/Wholesale/header'
 
-
 export const metadata: Metadata = {
   title: 'tokiari-pim',
   description: 'tokiari-pim'

@@ -1,6 +1,5 @@
 import { createClient } from '@/utils/supabase/server'
 import style from './style.module.css'
-import { PostgrestSingleResponse } from '@supabase/supabase-js'
 import Link from 'next/link'
 import {
   WHOLESALE_ACCOUNT_EDIT_EMAIL_ROUTE,
@@ -9,63 +8,50 @@ import {
 } from '@/constants/route'
 import { toStringPlan } from '@/helper/toStringPlan'
 
-export type UserType = {
-  id?: string
-  email?: string
-
-  plan?: number
-  is_admin?: boolean
-
-  postal_code?: string
-  prefecture?: string
-  city?: string
-  street_address?: string
-  building_name?: string
-
-  company?: string
-  phone?: string
-  contact_name?: string
-  site_url?: string
-
-  card_item?: JSON
-
-  created_at?: Date
-  updated_at?: Date
-}
-
 export default async function Page() {
   const supabase = createClient()
-  const userId = (await supabase.auth.getUser()).data.user?.id
-  const { data }: PostgrestSingleResponse<UserType[]> = await supabase
-    .from('users')
-    .select()
-    .eq('id', userId)
-  if (!data) return <div>データの取得に失敗しました</div>
-  const userData = data[0]
 
-  return (
-    <div>
+  try {
+    const { data, error: userError } = await supabase.auth.getUser()
+    if (userError) throw new Error('ユーザーの取得に失敗しました')
+
+    const userId = data.user.id
+    if (!userId) throw new Error('ユーザーIDが見つかりません')
+
+    const { data: userData, error: dataError } = await supabase
+      .from('users')
+      .select()
+      .eq('id', userId)
+      .single()
+    if (dataError || !userData) throw new Error('データの取得に失敗しました')
+
+    return (
       <div>
-        <Link href={WHOLESALE_ACCOUNT_EDIT_ROUTE}>アカウント編集</Link>
-        <Link href={WHOLESALE_ACCOUNT_EDIT_EMAIL_ROUTE}>メールアドレス変更</Link>
-        <Link href={WHOLESALE_ACCOUNT_EDIT_PASSWORD_ROUTE}>パスワード変更</Link>
+        <div>
+          <Link href={WHOLESALE_ACCOUNT_EDIT_ROUTE}>アカウント編集</Link>
+          <Link href={WHOLESALE_ACCOUNT_EDIT_EMAIL_ROUTE}>メールアドレス変更</Link>
+          <Link href={WHOLESALE_ACCOUNT_EDIT_PASSWORD_ROUTE}>パスワード変更</Link>
+        </div>
+        <div className={style.body}>
+          <div>===現在のプラン===</div>
+          {userData.plan && <div>プラン：{toStringPlan(userData.plan)}</div>}
+          <div>===会社===</div>
+          <div>会社名：{userData.company}</div>
+          <div>サイト：{userData.site_url}</div>
+          <div>メールアドレス：{userData.email}</div>
+          <div>電話番号：{userData.phone}</div>
+          <div>担当者(お名前)：{userData.contact_name}</div>
+          <div>担当者(フリガナ)：{userData.contact_kana}</div>
+          <div>===住所情報===</div>
+          <div>郵便番号：{userData.postal_code}</div>
+          <div>都道府県：{userData.prefecture}</div>
+          <div>市区町村：{userData.city}</div>
+          <div>番地：{userData.street_address}</div>
+          <div>ビル名・部屋番号(任意)：{userData.building_name}</div>
+        </div>
       </div>
-      <div className={style.body}>
-        <div>===現在のプラン===</div>
-        <div>プラン：{toStringPlan(userData.plan)}</div>
-        <div>===会社===</div>
-        <div>会社名：{userData.company}</div>
-        <div>サイト{userData.site_url}</div>
-        <div>メールアドレス:{userData.email}</div>
-        <div>電話番号：{userData.phone}</div>
-        <div>担当者(お名前){userData.contact_name}</div>
-        <div>===住所情報===</div>
-        <div>郵便番号:{userData.postal_code}</div>
-        <div>都道府県:{userData.prefecture}</div>
-        <div>市区町村:{userData.city}</div>
-        <div>番地:{userData.street_address}</div>
-        <div>ビル名・部屋番号(任意):{userData.building_name}</div>
-      </div>
-    </div>
-  )
+    )
+  } catch (error: any) {
+    return <div>{error.message}</div>
+  }
 }

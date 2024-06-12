@@ -1,11 +1,13 @@
 import { PageHeader } from '@/components/Admin/PageHeader'
 import { ADMIN_ROUTE, ADMIN_USERS_ROUTE, ADMIN_USERS_DETAIL_ROUTE } from '@/constants/route'
-import { Button, Card, Col, Descriptions, DescriptionsProps, Row } from 'antd'
+import { Button, Card, Col, Descriptions, DescriptionsProps, Empty, Row } from 'antd'
 import Link from 'next/link'
 import toHref from '@/helper/toHref'
 import { createClient } from '@/utils/supabase/server'
-import { UserType } from '@/app/wholesale/(src)/account/page'
 import { ExternalLink } from '@/components/externalLink'
+import { formatDateTime } from '@/helper/dateFormat'
+import { OrderTable } from '@/components/Admin/Table/OrderTable'
+import { UserOrdersTable } from '@/components/Admin/Table/UserOrdersTable'
 
 type Props = {
   params: {
@@ -19,16 +21,20 @@ export default async function Page({ params }: Props) {
     { title: <Link href={ADMIN_USERS_ROUTE}>ユーザ一覧</Link> },
     { title: <Link href={toHref(ADMIN_USERS_DETAIL_ROUTE, { id: params.id })}>ユーザー詳細</Link> }
   ]
-
+  if (!params.id) return
   const supabase = createClient()
-  const { data } = await supabase.from('users').select().eq('id', params.id).returns<UserType[]>()
-
-  const userData = data && data[0]
+  const { data: userData } = await supabase.from('users').select().eq('id', params.id).single()
+  if (!userData) return
   const descriptions = {
     id: userData.id,
     updatedAt: userData.created_at,
     createdAt: userData.updated_at
   }
+
+  const { data: orders } = await supabase
+    .from('orders')
+    .select('*, purchased_products(*)')
+    .eq('user_id', params.id)
 
   const items: DescriptionsProps['items'] = [
     {
@@ -83,18 +89,29 @@ export default async function Page({ params }: Props) {
     }
   ]
 
+  const systemItems: DescriptionsProps['items'] = [
+    {
+      key: '1',
+      label: '登録日時',
+      children: formatDateTime(userData?.permission_at || new Date()),
+      span: 3
+    }
+  ]
+
   return (
     <Row gutter={[24, 24]}>
       <Col span={18}>
         <PageHeader title="ユーザー詳細" routes={routes} descriptions={descriptions} />
-        <Card>
-          <Descriptions bordered title="会社情報" items={items} />
+        <Card style={{ marginBottom: 16 }}>
+          <Descriptions style={{ marginBottom: 16 }} bordered title="会社情報" items={items} />
+          <Descriptions bordered title="システム情報" items={systemItems} />
         </Card>
+        <Card title="注文履歴">{orders ? <UserOrdersTable dataSource={orders} /> : <Empty />}</Card>
       </Col>
       <Col span={6}>
         <Card>
           <Button block danger>
-            削除
+            削除する
           </Button>
         </Card>
       </Col>

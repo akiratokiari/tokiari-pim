@@ -18,9 +18,6 @@ CREATE TABLE public.users (
 
   -- 卸販売プラン
   plan INT,
-  
-  -- Admin
-  role INT,
 
   -- カート
   cart_items JSON,
@@ -56,6 +53,61 @@ CREATE TABLE public.purchased_products (
   gtin_code TEXT, -- 商品コード
   quantity INT, -- 販売数
   amount INT, -- 価格
+
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Products テーブル
+CREATE TABLE public.products (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+  -- 商品名
+  title VARCHAR,
+  -- 商品名（フリガナ）
+  furigana VARCHAR,
+  -- 自社商品カテゴリ
+  category VARCHAR,
+  -- 取扱品目コード
+  product_code VARCHAR,
+  -- JICFS分類コード
+  jicfs_code VARCHAR,
+  -- GPCコード
+  gpc_code VARCHAR,
+  -- 商品グループコード
+  product_group_code VARCHAR,
+  -- 品番（自社シリーズ）
+  series_number VARCHAR,
+  -- 型番（自社SKU)
+  model_number VARCHAR,
+  -- サイズ
+  size VARCHAR,
+  -- サイズ
+  color VARCHAR,
+  -- GTIN（JANコード）
+  gtin_code VARCHAR,
+  -- 発売日
+  sales_started_at DATE,
+  -- 販売価格
+  selling_price DECIMAL(10, 2),
+  -- 原価
+  cost_price DECIMAL(10, 2),
+  -- 素材
+  material VARCHAR,
+
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Product Images テーブル
+CREATE TABLE public.product_images (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  product_id UUID NOT NULL REFERENCES public.products(id) ON DELETE CASCADE,
+
+  -- 画像URL
+  image_url VARCHAR,
+  -- 商品名（フリガナ）
+  order INT,
 
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP

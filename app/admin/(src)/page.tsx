@@ -1,3 +1,3 @@
-export default async function PrivatePage() {
-  return <p></p>
+export default async function Page() {
+  return <p>DashBoard</p>
 }

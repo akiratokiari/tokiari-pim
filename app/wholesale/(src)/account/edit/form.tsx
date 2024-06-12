@@ -4,8 +4,6 @@ import { updateUser } from './actions'
 import style from './style.module.css'
 import { FC, useContext } from 'react'
 import { AccountContext } from '@/contexts/account/context'
-import { PLAN_COLLABORATION_SHIRT, PLAN_ZERO_SHIRT } from '@/constants/app'
-import { toStringPlan } from '@/helper/toStringPlan'
 
 export const Form: FC = () => {
   const { account } = useContext(AccountContext)
@@ -13,12 +11,6 @@ export const Form: FC = () => {
 
   return (
     <form action={formAction} className={style.form}>
-      <div>===プラン===</div>
-      <label htmlFor="plan">プラン:</label>
-      <select id="plan" name='plan' defaultValue={account?.plan}>
-        <option value={PLAN_ZERO_SHIRT}>{toStringPlan(PLAN_ZERO_SHIRT)}</option>
-        <option value={PLAN_COLLABORATION_SHIRT}>{toStringPlan(PLAN_COLLABORATION_SHIRT)}</option>
-      </select>
       <div>===会社情報===</div>
       <label htmlFor="company">会社名:</label>
       <input id="company" defaultValue={account?.company} name="company" type="text" required />
@@ -31,6 +23,14 @@ export const Form: FC = () => {
         id="contact_name"
         defaultValue={account?.contact_name}
         name="contact_name"
+        type="text"
+        required
+      />
+      <label htmlFor="contact_name">担当者(ふりがな):</label>
+      <input
+        id="contact_kana"
+        defaultValue={account?.contact_kana}
+        name="contact_kana"
         type="text"
         required
       />

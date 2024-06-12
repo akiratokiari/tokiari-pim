@@ -1,8 +1,19 @@
-import { UserType } from '@/app/wholesale/(src)/account/page'
 import { createContext } from 'react'
 
+type QuantityData = {
+  id: string
+  color: string
+  seriesNumber: string
+  variants: {
+    id: string
+    size: string
+    quantity: number
+    modelNumber: string
+  }[]
+}
+
 type Context = {
-  account?: UserType
+  account?: any
   refresh: () => void
 }
 
