@@ -1,5 +1,5 @@
 import { ProductGallery } from '@/components/ProductGallery'
-import { ProductVariantSelector } from '@/components/Wholesale/productVariantSelector-before'
+import { ProductVariantSelector } from '@/components/Wholesale/productVariantSelector'
 import { createClient } from '@/utils/supabase/server'
 import style from './style.module.css'
 import { ProductDetailColorSelector } from '@/components/Wholesale/productDetailColorSelector'
