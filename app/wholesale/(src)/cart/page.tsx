@@ -11,7 +11,6 @@ import { CartContext, CartItemType } from '@/contexts/cart/context'
 import Image from 'next/image'
 import style from './style.module.css'
 import { Button } from '@/components/button'
-import { DisplayFormValue } from '@/components/displayFormValue'
 
 const StripeElement = ({ orderId, setOrderId, setStripeClientSecret }: any) => {
   const supabase = createClient()
@@ -106,14 +105,8 @@ const Page: FC = () => {
   const { cart, updateQuantity, deleteFromCart } = useContext(CartContext)
   const supabase = createClient()
   const { account } = useContext(AccountContext)
-  const stripe = require('stripe')(
-    'sk_test_51PJtZKDe7T0wGKDyCCK1mJSIpnwmGL4CK04xKgB2BcsJ5gMzDkmSF2wUAqQyIgifhG7Rsjq5s7vcv2AkzDGxNuoK00yieFFUwB'
-  )
-  const [stripePromise, setStripePromise] = useState(() =>
-    loadStripe(
-      'pk_test_51PJtZKDe7T0wGKDyVM00CZgAYUzDCDKiHRWqD0eL10K4ZQ3IRD0SAHot19UHARG74WFws9M2qJp7miyL67lL2gBY00ueLl2qcp'
-    )
-  )
+  const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
+  const [stripePromise, setStripePromise] = useState<any>()
   const [isLoading, setIsLoading] = useState(false)
   const [stripeClientSecret, setStripeClientSecret] = useState(null)
   const [orderId, setOrderId] = useState<string | null>(null)
@@ -143,11 +136,13 @@ const Page: FC = () => {
 
   useEffect(() => {
     // 販売情報とバイヤー情報を取得・保存
-    setStripePromise(
-      loadStripe(
-        'pk_test_51PJtZKDe7T0wGKDyVM00CZgAYUzDCDKiHRWqD0eL10K4ZQ3IRD0SAHot19UHARG74WFws9M2qJp7miyL67lL2gBY00ueLl2qcp'
+    if (process.env.STRIPE_PUBLISHABLE_KEY) {
+      setStripePromise(
+        loadStripe(
+          'pk_test_51PJtZKDe7T0wGKDyVM00CZgAYUzDCDKiHRWqD0eL10K4ZQ3IRD0SAHot19UHARG74WFws9M2qJp7miyL67lL2gBY00ueLl2qcp'
+        )
       )
-    )
+    }
   }, [])
 
   const onSubmit = async (values: any) => {
