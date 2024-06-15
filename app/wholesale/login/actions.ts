@@ -1,6 +1,8 @@
 'use server'
 
 import { USER_ROLE } from '@/constants/app'
+import { WHOLESALE_ROUTE } from '@/constants/route'
+import { getBaseUrl } from '@/helper/getBaseUrl'
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
@@ -25,5 +27,5 @@ export async function login(_: string | null, formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('http://localhost:3000/wholesale')
+  redirect(`${getBaseUrl() + WHOLESALE_ROUTE}`)
 }

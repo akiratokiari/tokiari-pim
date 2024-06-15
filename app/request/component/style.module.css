@@ -1,0 +1,47 @@
+.attention {
+  margin-bottom: 40px;
+  padding: 60px 20px;
+  background-color: aliceblue;
+}
+
+.section {
+  text-align: center;
+  padding: 20px 0;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.displayValue {
+  display: flex;
+  flex-direction: column;
+}
+
+.buttonWrapper {
+  margin-top: 40px;
+}
+.backButtonWrapper {
+  padding-bottom: 40px;
+  border-bottom: solid 1px rgb(221, 221, 221);
+}
+
+.errorMessage {
+  border-radius: 2px;
+  margin-bottom: 40px;
+  padding: 10px;
+  color: red;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.complete {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.completeTitle {
+  font-size: 14px;
+  font-weight: bold;
+}
+.completeText {
+  font-size: 14px;
+}

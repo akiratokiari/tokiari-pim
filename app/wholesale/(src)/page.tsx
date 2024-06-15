@@ -1,27 +1,34 @@
-import { ProductCard } from '@/components/Wholesale/productCard'
-import { WHOLESALE_PRODUCTS_DETAIL_ROUTE } from '@/constants/route'
-import toHref from '@/helper/toHref'
+import { ProductGrid } from '@/components/Wholesale/productGrid'
+import { ProductsFilter } from '@/components/Wholesale/productsFilter'
 import { createClient } from '@/utils/supabase/server'
-import Link from 'next/link'
+import style from './style.module.css'
 
-export default async function Page() {
+type Props = {
+  searchParams: {
+    color?: string
+    title?: string
+    category?: string
+    current?: string
+  }
+}
+
+export type ProductsFilterSearchParamsType = {
+  color?: string
+  title?: string
+  category?: string
+  current?: string
+}
+
+export default async function Page({ searchParams }: Props) {
   const supabase = createClient()
   const { data: products } = await supabase
     .from('products')
     .select('*,product_variants(*,product_images(*), product_variants_size(*))')
-    // .eq('publish_status', PRODUCT_PUBLISH_STATUS.Public)
 
   return (
-    <div>
-      {products
-        ? products.map((p) => {
-            return (
-              <Link href={toHref(WHOLESALE_PRODUCTS_DETAIL_ROUTE, { id: p.id })}>
-                <ProductCard product={p} />
-              </Link>
-            )
-          })
-        : '商品はありません'}
+    <div className={style.body}>
+      <ProductsFilter searchParams={searchParams} />
+      {products && products.length !== 0 ? <ProductGrid products={products} /> : '商品がありません'}
     </div>
   )
 }

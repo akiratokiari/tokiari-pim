@@ -17,7 +17,7 @@ export const Form: FC = () => {
       <label htmlFor="phone">電話番号:</label>
       <input id="phone" defaultValue={account?.phone} name="phone" type="tel" required />
       <label htmlFor="site_url">ホームページ:</label>
-      <input id="site_url" defaultValue={account?.site_url} name="site_url" required />
+      <input id="site_url" defaultValue={account?.site_url || ''} name="site_url" required />
       <label htmlFor="contact_name">担当者(お名前):</label>
       <input
         id="contact_name"
@@ -64,7 +64,7 @@ export const Form: FC = () => {
       <label htmlFor="building_name">建物名・部屋番号</label>
       <input
         id="building_name"
-        defaultValue={account?.building_name}
+        defaultValue={account?.building_name || ''}
         name="building_name"
         type="text"
         required

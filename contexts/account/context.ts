@@ -1,19 +1,8 @@
+import { UsersRowType } from '@/utils/supabase/type'
 import { createContext } from 'react'
 
-type QuantityData = {
-  id: string
-  color: string
-  seriesNumber: string
-  variants: {
-    id: string
-    size: string
-    quantity: number
-    modelNumber: string
-  }[]
-}
-
 type Context = {
-  account?: any
+  account?: UsersRowType
   refresh: () => void
 }
 

@@ -1,0 +1,35 @@
+.itemWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.imageWrapper {
+  width: 100px;
+  position: relative;
+  aspect-ratio: 2/3;
+}
+
+.item {
+  display: flex;
+  gap: 20px;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.caption {
+  font-size: 14px;
+}
+
+.descriptionWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inputWrapper {
+  display: flex;
+}

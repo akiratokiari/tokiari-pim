@@ -1,0 +1,26 @@
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 200px;
+}
+
+.wrapper {
+}
+
+.title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.menus {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.menu {
+  color: black;
+  font-size: 14px;
+}

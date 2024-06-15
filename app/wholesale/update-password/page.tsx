@@ -1,12 +1,11 @@
 import { Form } from './form'
 
-type Props = {
-  searchParams: {
-    error: string
-    error_description: string
-  }
-}
 
-export default async function Page({ searchParams }: Props) {
-  return <div>{searchParams.error_description ? searchParams.error_description : <Form />}</div>
+export default async function Page() {
+  return (
+    <div style={{ padding: 20 }}>
+      <div style={{ marginBottom: 20 }}>TOKIARI 卸会員パスワード再設定</div>
+      <Form />
+    </div>
+  )
 }

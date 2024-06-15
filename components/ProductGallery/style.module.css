@@ -1,0 +1,5 @@
+.swiperSlide {
+  width: 100%;
+  position: relative;
+  aspect-ratio: 2/3;
+}

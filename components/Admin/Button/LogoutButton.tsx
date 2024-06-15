@@ -2,9 +2,11 @@
 import { ADMIN_LOGIN_ROUTE } from '@/constants/route'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
-import { FC } from 'react'
+import { AnchorHTMLAttributes, FC } from 'react'
 
-export const LogoutButton: FC = () => {
+type Props = AnchorHTMLAttributes<HTMLAnchorElement>
+
+export const LogoutButton: FC<Props> = ({ ...props }) => {
   const router = useRouter()
   const supabase = createClient()
   const signOut = async () => {
@@ -19,7 +21,7 @@ export const LogoutButton: FC = () => {
   }
 
   return (
-    <a style={{ textAlign: 'center' }} onClick={signOut}>
+    <a style={{ textAlign: 'center' }} {...props} onClick={signOut}>
       ログアウト
     </a>
   )

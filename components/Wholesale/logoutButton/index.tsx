@@ -2,9 +2,11 @@
 import { WHOLESALE_LOGIN_ROUTE } from '@/constants/route'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
-import { FC } from 'react'
+import { ButtonHTMLAttributes, FC } from 'react'
 
-export const LogoutButton: FC = () => {
+type Props = ButtonHTMLAttributes<HTMLButtonElement>
+
+export const LogoutButton: FC<Props> = ({ ...props }) => {
   const router = useRouter()
   const supabase = createClient()
   const signOut = async () => {
@@ -18,5 +20,9 @@ export const LogoutButton: FC = () => {
       })
   }
 
-  return <button onClick={signOut}>ログアウト</button>
+  return (
+    <button onClick={signOut} {...props}>
+      ログアウト
+    </button>
+  )
 }

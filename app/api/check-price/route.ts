@@ -6,36 +6,49 @@ export async function POST(req: NextRequest, _: any) {
   try {
     const supabase = createClient()
     const values = await req.json()
+    const cartItems: CartItemType[] = values.cart
 
-    const valuesWithAmount = await Promise.all(
-      values.cart.map(async (v: CartItemType) => {
-        const seriesWithAmount = await Promise.all(
-          v.series.map(async (series) => {
-            const { data, error } = await supabase
-              .from('product_variants')
-              .select('price')
-              .eq('id', series.id)
-              .single()
-            if (error) throw error
-            if (data) {
-              const variantsWithPrice = series.variants.map((variant) => {
-                return {
-                  ...variant,
-                  amount: data.price
-                }
-              })
-              return { ...series, variants: variantsWithPrice }
-            }
-          })
-        )
-        return { ...v, series: seriesWithAmount }
+    let isCorrect = true
+
+    const checkedCartItemPrice = await Promise.all(
+      cartItems.map(async (v: CartItemType) => {
+        const { data, error } = await supabase
+          .from('product_variants')
+          .select('*,products(*),product_images(image_url)')
+          .eq('id', v.seriesId)
+          .single()
+        if (error) throw error
+        if (data) {
+          if (data.price !== v.price) {
+            isCorrect = false
+          }
+        }
+        return { ...v, price: data.price }
       })
     )
-    console.log('===========API======================', valuesWithAmount)
 
-    return NextResponse.json({ message: 'Success: email was sent', data: valuesWithAmount })
+    const totalPrice = checkedCartItemPrice.reduce((total, ci) => {
+      const subTotal = ci.price * ci.quantity // price * quantity が正しい計算です
+      return total + subTotal
+    }, 0)
+
+    if (isCorrect) {
+      return NextResponse.json({
+        message: '',
+        data: { cartItems: checkedCartItemPrice, totalPrice }
+      })
+    }
+    if (!isCorrect) {
+      console.log('ストレージの内容と異なります')
+      return NextResponse.json({
+        message: '',
+        data: { cartItems: checkedCartItemPrice, totalPrice }
+      })
+    }
+
+    console.log('===========API======================', checkedCartItemPrice)
   } catch (error) {
     console.log('===========API======================', error)
-    return NextResponse.json({ message: 'COULD NOT SEND MESSAGE' })
+    return NextResponse.json({ message: '' })
   }
 }

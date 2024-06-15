@@ -33,3 +33,13 @@ export type UsersRowType = Database['public']['Tables']['users']['Row']
 export type UsersInsertType = Database['public']['Tables']['users']['Insert']
 export type UsersUpdateType = Database['public']['Tables']['users']['Update']
 
+// リレーションを含んだProduct
+export type ProductWithRelationType = ProductsRowType & {
+  product_variants: ProductVariantWithRelation[]
+}
+
+// リレーションを含んだProductVariant
+export type ProductVariantWithRelation = ProductVariantsRowType & {
+  product_variants_size: ProductVariantsSizeRowType[]
+  product_images: ProductImagesRowType[]
+}

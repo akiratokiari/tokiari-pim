@@ -7,8 +7,11 @@ import { WHOLESALE_ROUTE } from '@/constants/route'
 import { createClient } from '@/utils/supabase/client'
 import { AccountContext } from '@/contexts/account/context'
 import { ORDER_PAYMENT_STATUS } from '@/constants/app'
-import { CartContext, CartItemTypeWithAmount } from '@/contexts/cart/context'
-import { message } from 'antd'
+import { CartContext, CartItemType } from '@/contexts/cart/context'
+import Image from 'next/image'
+import style from './style.module.css'
+import { Button } from '@/components/button'
+import { DisplayFormValue } from '@/components/displayFormValue'
 
 const StripeElement = ({ orderId, setOrderId, setStripeClientSecret }: any) => {
   const supabase = createClient()
@@ -98,9 +101,9 @@ type InsertDataType = {
 }
 
 const Page: FC = () => {
-  const [cartItems, setCartItems] = useState<CartItemTypeWithAmount[]>([])
+  const [cartItems, setCartItems] = useState<CartItemType[]>([])
   const [totalAmount, setTotalAmount] = useState<number | undefined>(undefined)
-  const { cart } = useContext(CartContext)
+  const { cart, updateQuantity, deleteFromCart } = useContext(CartContext)
   const supabase = createClient()
   const { account } = useContext(AccountContext)
   const stripe = require('stripe')(
@@ -131,20 +134,9 @@ const Page: FC = () => {
 
   useEffect(() => {
     if (cart) {
-      checkPrice().then((res) => {
-        let _totalAmount = 0
-        const data = JSON.stringify(res, null, 2)
-        const pared = JSON.parse(data)
-        pared.map((ci: any) => {
-          ci.series.map((s: any) => {
-            s.variants.map((v: any) => {
-              const addAmount = v.amount * v.quantity
-              _totalAmount = _totalAmount + addAmount
-            })
-          })
-        })
-        setCartItems(pared)
-        setTotalAmount(_totalAmount)
+      checkPrice().then((res: { cartItems: CartItemType[]; totalPrice: number }) => {
+        setCartItems(res.cartItems)
+        setTotalAmount(res.totalPrice)
       })
     }
   }, [cart])
@@ -193,21 +185,16 @@ const Page: FC = () => {
     setOrderId(_orderId)
 
     // Prepare data for insertion
-    const dataToInsert: InsertDataType[] = cartItems.reduce((acc: InsertDataType[], cartItem) => {
-      cartItem.series.forEach((item) => {
-        item.variants.forEach((v) => {
-          acc.push({
-            order_id: _orderId,
-            product_group_code: cartItem.product_group_code,
-            series_number: item.seriesNumber,
-            model_number: v.modelNumber,
-            price: v.amount,
-            amount: v.quantity
-          })
-        })
-      })
-      return acc
-    }, [])
+    const dataToInsert: InsertDataType[] = cartItems.map((ci) => {
+      return {
+        order_id: _orderId,
+        product_group_code: ci.product_group_code,
+        series_number: ci.seriesNumber,
+        model_number: ci.modelNumber,
+        price: ci.price,
+        amount: ci.quantity
+      }
+    })
 
     const purchasedProductsData = await supabase.from('purchased_products').insert(dataToInsert)
 
@@ -216,7 +203,7 @@ const Page: FC = () => {
     }
 
     const params = {
-      amount: 1000,
+      amount: totalAmount,
       currency: 'jpy',
       payment_method_types: ['card'],
       statement_descriptor_suffix: 'ORDER',
@@ -227,61 +214,80 @@ const Page: FC = () => {
     }
 
     const intent = await stripe.paymentIntents.create(params)
-    console.log(intent)
     setStripeClientSecret(intent.client_secret)
   }
 
-  console.log(
-    cartItems.reduce((acc: InsertDataType[], cartItem) => {
-      cartItem.series.forEach((item) => {
-        item.variants.forEach((v) => {
-          acc.push({
-            order_id: '_orderId',
-            product_group_code: cartItem.product_group_code,
-            series_number: item.seriesNumber,
-            model_number: v.modelNumber,
-            price: v.amount,
-            amount: v.quantity
-          })
-        })
-      })
-      return acc
-    }, [])
-  )
-
   return (
     <div>
-      {cartItems.map((ci) => {
-        return (
-          <div key={ci.id}>
-            <div>{ci.product_group_code}</div>
-            <div>
-              {ci.series.map((cis) => {
-                return (
-                  <div key={cis.id}>
-                    {cis.color}
-                    <br />
-                    {cis.variants.map((v) => {
-                      return (
-                        <div key={v.id}>
-                          <div>
-                            サイズ {v.size}| 販売価格 {v.amount}円 | 個数 {v.quantity}個 | 小計
-                            {v.amount * v.quantity}円
-                          </div>
-                        </div>
-                      )
-                    })}
+      <div className={style.itemWrapper}>
+        {cartItems.map((ci, index) => {
+          return (
+            <div className={style.itemWrapper} key={index}>
+              <div className={style.itemWrapper}>
+                <div className={style.item}>
+                  <div className={style.imageWrapper}>
+                    <Image src={ci.thumbnail} fill alt="" />
                   </div>
-                )
-              })}
+                  <div className={style.descriptionWrapper}>
+                    <div className={style.title}>{ci.title}</div>
+                    <div className={style.caption}>
+                      {ci.color} | {ci.size}
+                    </div>
+                    <div className={style.inputWrapper}>
+                      <input
+                        type="number"
+                        value={ci.quantity}
+                        onChange={(e) => {
+                          updateQuantity(ci.modelId, Number(e.target.value))
+                        }}
+                      />
+                      <button
+                        onClick={() => {
+                          deleteFromCart(ci.modelId)
+                        }}
+                      >
+                        削除
+                      </button>
+                    </div>
+                    <div className={style.caption}>¥{ci.price.toLocaleString()}円</div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        )
-      })}
-
-      {totalAmount && <div style={{ margin: '20px 0' }}>合計　{totalAmount}円</div>}
-      <div>
-        <button onClick={onSubmit}>支払い画面に進む</button>
+          )
+        })}
+        {totalAmount && <div>合計　¥{totalAmount.toLocaleString()}</div>}
+        <div>
+          <div>お届け希望日</div>
+          <input type="date"></input>
+          <div>配送時間帯</div>
+          <select>
+            <option value={1}>1</option>
+          </select>
+          <div>備考欄</div>
+          <textarea />
+        </div>
+        <div>
+          <div>お届け先</div>
+          {account && (
+            <div>
+              会社名：{account.company} 様<br />
+              電話：{account.phone}
+              <br />〒{account.postal_code}
+              <br />
+              {account.prefecture}
+              {account.city}
+              {account.street_address}
+              <br />
+              {account.building_name && account.building_name}
+            </div>
+          )}
+        </div>
+        <div>
+          <Button color="black" onClick={onSubmit}>
+            注文に進む
+          </Button>
+        </div>
       </div>
       {!!stripePromise && !!stripeClientSecret && (
         <Elements stripe={stripePromise} options={{ clientSecret: stripeClientSecret }}>

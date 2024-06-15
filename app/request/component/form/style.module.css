@@ -1,0 +1,15 @@
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.buttonWrapper {
+  margin-top: 20px;
+}
+
+.section {
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+}
