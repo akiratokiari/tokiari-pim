@@ -1,10 +1,12 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
-import { useRouter } from 'next/navigation'
 import { WHOLESALE_AUTH_ROUTE } from '@/constants/route'
 import { Form } from './form'
 import { getBaseUrl } from '@/helper/getBaseUrl'
+import style from './style.module.css'
+import { Button } from '@/components/button'
+import { DisplayFormValue } from '@/components/displayFormValue'
 
 type SignUpUserType = {
   password: string
@@ -20,15 +22,16 @@ type SignUpUserType = {
   phone: string
   contact_name: string
   contact_kana: string
-  site_url?: string
+  site_url: string
 }
 
 export const Plan = () => {
-  const router = useRouter()
   const [formData, setFormData] = useState<SignUpUserType | undefined>(undefined)
   const [_formData, _setFormData] = useState<SignUpUserType | undefined>(formData)
   const [step, setStep] = useState<number>(1)
   const [isComplete, setIsComplete] = useState(false)
+  const [isSending, setIsSending] = useState(false)
+  const [errorMessage,setErrorMessage] = useState("")
 
   useEffect(() => {
     if (formData) {
@@ -38,80 +41,99 @@ export const Plan = () => {
       return setStep(1)
     }
     return setStep(2)
-  }, [formData])
+  }, [formData, setFormData])
 
   const onSubmit = async () => {
-    const supabase = createClient()
-    if (!formData) return
-    const signUpData = {
-      email: formData.email,
-      password: formData.password
-    }
-
-    const signUpInfo = await supabase.auth.signUp({
-      email: formData.email,
-      password: signUpData.password,
-      options: {
-        emailRedirectTo: `${getBaseUrl() + WHOLESALE_AUTH_ROUTE}`,
-        data: {
-          postal_code: formData.postal_code,
-          prefecture: formData.prefecture,
-          city: formData.city,
-          street_address: formData.street_address,
-          company: formData.company,
-          phone: formData.phone,
-          contact_name: formData.contact_name,
-          contact_kana: formData.contact_kana,
-          building_name: formData.building_name,
-          site_url: formData.site_url
-        }
+    if (!isSending) {
+      setIsSending(true)
+      const supabase = createClient()
+      if (!formData) return
+      const signUpData = {
+        email: formData.email,
+        password: formData.password
       }
-    })
-    if (!signUpInfo.error) {
-      setIsComplete(true)
+      const signUpInfo = await supabase.auth.signUp({
+        email: formData.email,
+        password: signUpData.password,
+        options: {
+          emailRedirectTo: `${getBaseUrl() + WHOLESALE_AUTH_ROUTE}`,
+          data: {
+            postal_code: formData.postal_code,
+            prefecture: formData.prefecture,
+            city: formData.city,
+            street_address: formData.street_address,
+            company: formData.company,
+            phone: formData.phone,
+            contact_name: formData.contact_name,
+            contact_kana: formData.contact_kana,
+            building_name: formData.building_name,
+            site_url: formData.site_url
+          }
+        }
+      })
+      if (!signUpInfo.error) {
+        await supabase.auth.signOut()
+        setIsComplete(true)
+      }
+      if (signUpInfo.error) {
+        setIsSending(false)
+        setFormData(undefined)
+        setErrorMessage(signUpInfo.error.message)
+      }
     }
   }
 
   return (
-    <div style={{ marginBottom: 20, padding: 20 }}>
+    <div style={{ marginBottom: 20 }}>
       {isComplete ? (
-        <>完了！</>
+        <div className={style.complete}>
+          <div className={style.completeTitle}>申し込みが完了しました</div>
+          <div className={style.completeText}>ご入力されたメールアドレス宛に確認メールをお送りしました。<br/>
+          3日を目処に審査結果をご連絡いたします。
+          </div>
+        </div>
       ) : (
         <>
-          <div style={{ marginBottom: 20 }}>
-            <div> STEP 1 お客様情報を入力してください</div>
-            <div> STEP 2 確認・登録</div>
-            <div> STEP 3 完了</div>
+          <div className={style.attention}>
+            ここに申し込みにおける注意点や必要な項目についての文章を記入
           </div>
           {/* パンくずリスト */}
-          <div style={{ marginBottom: 10 }}>
-            {step === 2 && (
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <div>
-                  <button onClick={() => setFormData(undefined)}>フォームの入力に戻る</button>
-                </div>
-              </div>
-            )}
-          </div>
+          {errorMessage && <div className={style.errorMessage}>ERROR：{errorMessage}</div>}
           {/* 入力フォーム */}
           {step === 1 && <Form formData={_formData} setFormData={setFormData} />}
           {step === 2 && formData && (
             <div>
-              <div>===会社===</div>
-              <div>会社名：{formData.company}</div>
-              <div>サイト{formData.site_url}</div>
-              <div>メールアドレス:{formData.email}</div>
-              <div>パスワード:{formData.password}</div>
-              <div>電話番号：{formData.phone}</div>
-              <div>担当者(お名前){formData.contact_name}</div>
-              <div>担当者(フリガナ){formData.contact_kana}</div>
-              <div>===住所情報===</div>
-              <div>郵便番号:{formData.postal_code}</div>
-              <div>都道府県:{formData.prefecture}</div>
-              <div>市区町村:{formData.city}</div>
-              <div>番地:{formData.street_address}</div>
-              <div>ビル名・部屋番号(任意):{formData.building_name}</div>
-              <button onClick={onSubmit}>申請する</button>
+              <div className={style.backButtonWrapper}>
+                <Button color="white" onClick={() => setFormData(undefined)}>
+                  フォームの入力に戻る
+                </Button>
+              </div>
+              <div className={style.section}>基本情報</div>
+              <div className={style.displayValue}>
+                <DisplayFormValue first label="会社名" value={formData.company} />
+                <DisplayFormValue label="サイト" value={formData.site_url} />
+                <DisplayFormValue label="メールアドレス" value={formData.email} />
+                <DisplayFormValue label="パスワード" value={formData.password} />
+                <DisplayFormValue label="会社名" value={formData.company} />
+                <DisplayFormValue label="電話番号" value={formData.phone} />
+                <DisplayFormValue label="担当者(お名前)" value={formData.contact_name} />
+                <DisplayFormValue label="担当者(フリガナ)" value={formData.contact_kana} />
+              </div>
+              <div className={style.displayValue}>
+                <div className={style.section}>住所</div>
+                <DisplayFormValue first label="郵便番号" value={formData.postal_code} />
+                <DisplayFormValue label="都道府県" value={formData.prefecture} />
+                <DisplayFormValue label="市区町村" value={formData.city} />
+                <DisplayFormValue label="番地" value={formData.street_address} />
+                {formData.building_name && (
+                  <DisplayFormValue label="ビル名・部屋番号(任意)" value={formData.building_name} />
+                )}
+              </div>
+              <div className={style.buttonWrapper}>
+                <Button color="black" onClick={onSubmit}>
+                  申し込む
+                </Button>
+              </div>
             </div>
           )}
         </>

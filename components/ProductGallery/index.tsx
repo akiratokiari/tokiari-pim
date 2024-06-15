@@ -4,6 +4,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 // Import Swiper styles
 import 'swiper/css'
 import Image from 'next/image'
+import style from './style.module.css'
 
 type Props = { data: images[] }
 
@@ -18,16 +19,11 @@ type images = {
 
 export const ProductGallery: FC<Props> = ({ data }) => {
   return (
-    <Swiper
-      spaceBetween={0}
-      slidesPerView={1}
-      loop
-      style={{ width: '100px', height: '150px', aspectRatio: '3/2' }}
-    >
+    <Swiper spaceBetween={0} slidesPerView={1} loop>
       {data.map((i, index) => {
         return (
-          <SwiperSlide key={index}>
-            <Image src={i.image_url} width={100} height={150} alt="" />
+          <SwiperSlide key={index} className={style.swiperSlide}>
+            <Image src={i.image_url} fill alt="" />
           </SwiperSlide>
         )
       })}

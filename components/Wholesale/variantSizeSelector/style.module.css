@@ -1,0 +1,55 @@
+.body {
+  display: flex;
+  gap: 10px;
+  height: 35px;
+  align-items: center;
+}
+.size {
+  line-height: 30px;
+}
+
+.counterWrapper {
+  display: flex;
+  gap: 10px;
+}
+.counter {
+  line-height: 30px;
+  display: flex;
+  min-width: 100px;
+  border: solid 1px black;
+  border-radius: 2px;
+}
+
+.counterButton {
+  min-width: 40px;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.button {
+  font-size: 12px;
+  line-height: 30px;
+  background-color: rgb(39, 39, 39);
+  color: white;
+  border-radius: 2px;
+}
+
+.input {
+  border: none;
+  width: 35px;
+  text-align: center;
+  outline: none;
+}
+
+.input::-webkit-outer-spin-button,
+.input::-webkit-inner-spin-button {
+  /* display: none; <- Crashes Chrome on hover */
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.input[type='number'] {
+  -moz-appearance: textfield; /* Firefox */
+}

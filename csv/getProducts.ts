@@ -1,4 +1,4 @@
-import { Model, Product } from '@/type/product'
+
 import fs from 'fs'
 import Papa from 'papaparse'
 
@@ -19,7 +19,7 @@ export async function getProducts({
   size,
   color,
   category
-}: searchParams): Promise<Product[] | []> {
+}: searchParams): Promise<any[] | []> {
   const csv = fs.readFileSync('./public/product.csv', 'utf8')
   const headerReplacedCsv = csv.replace(japaneseCsvHeader, englishCsvHeader)
   const parsedCsv = Papa.parse(headerReplacedCsv, {
@@ -27,7 +27,7 @@ export async function getProducts({
     dynamicTyping: true,
     skipEmptyLines: true
   })
-  const productData = parsedCsv.data as Model[] | []
+  const productData = parsedCsv.data as any[] | []
 
   // シリーズだけを取得
   const _productSeries = productData.map((ps) => {

@@ -1,0 +1,68 @@
+.body {
+  display: flex;
+  flex-direction: column;
+  width: 1200px;
+  margin: 0 auto;
+}
+
+.content {
+  max-width: 1200px;
+  display: flex;
+}
+
+.left {
+  width: 50%;
+}
+
+.leftBody {
+  width: 100%;
+  aspect-ratio: 2/3;
+  top: 0;
+  position: sticky;
+  top: 20px;
+}
+
+.right {
+  padding: 0 20px;
+  width: 50%;
+}
+
+.description {
+  font-size: 14px;
+  letter-spacing: 0.87px;
+  line-height: 22.65px;
+  margin: 20px 0;
+  white-space: pre-wrap;
+}
+
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.title {
+  font-size: 16px;
+}
+.category {
+  padding: 2px 6px;
+  font-size: 12px;
+  border-radius: 2px;
+  width: fit-content;
+  background-color: rgb(234, 234, 234);
+}
+.price {
+  font-size: 16px;
+}
+.colorSelector {
+  display: flex;
+  gap: 10px;
+}
+
+.seriesNumber {
+  font-size: 14px;
+}
+
+.attention {
+  font-size: 12px;
+}

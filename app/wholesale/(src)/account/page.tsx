@@ -7,6 +7,8 @@ import {
   WHOLESALE_ACCOUNT_EDIT_ROUTE
 } from '@/constants/route'
 import { toStringPlan } from '@/helper/toStringPlan'
+import { LogoutButton } from '@/components/Wholesale'
+
 
 export default async function Page() {
   const supabase = createClient()
@@ -27,10 +29,18 @@ export default async function Page() {
 
     return (
       <div>
-        <div>
-          <Link href={WHOLESALE_ACCOUNT_EDIT_ROUTE}>アカウント編集</Link>
-          <Link href={WHOLESALE_ACCOUNT_EDIT_EMAIL_ROUTE}>メールアドレス変更</Link>
-          <Link href={WHOLESALE_ACCOUNT_EDIT_PASSWORD_ROUTE}>パスワード変更</Link>
+        <div className={style.menuWrapper}>
+          <Link className={style.menu} href={WHOLESALE_ACCOUNT_EDIT_ROUTE}>
+            アカウント編集
+          </Link>
+          <Link className={style.menu} href={WHOLESALE_ACCOUNT_EDIT_EMAIL_ROUTE}>
+            メールアドレス変更
+          </Link>
+          <Link className={style.menu} href={WHOLESALE_ACCOUNT_EDIT_PASSWORD_ROUTE}>
+            パスワード変更
+          </Link>
+
+          <LogoutButton className={style.menu} />
         </div>
         <div className={style.body}>
           <div>===現在のプラン===</div>

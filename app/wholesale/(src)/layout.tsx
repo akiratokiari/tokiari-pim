@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Header } from '@/components/Wholesale/header'
+import { Footer } from '@/components/Wholesale/footer'
 
 export const metadata: Metadata = {
   title: 'tokiari-pim',
@@ -14,7 +15,8 @@ export default function RootLayout({
   return (
     <div>
       <Header />
-      <div>{children}</div>
+      <div style={{ padding: '85px 20px 20px 20px' }}>{children}</div>
+      <Footer />
     </div>
   )
 }

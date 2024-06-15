@@ -1,5 +1,4 @@
 'use client'
-import { Product } from '@/type/product'
 import { FC } from 'react'
 import { ProductCard } from '../productCard'
 import style from './style.module.css'
@@ -8,7 +7,7 @@ import { PRODUCT_DETAIL_ROUTE } from '@/constants/route'
 import toHref from '@/helper/toHref'
 
 type Props = {
-  products: [] | Product[]
+  products: [] | any[]
 }
 
 export const ProductGrid: FC<Props> = ({ products }) => {

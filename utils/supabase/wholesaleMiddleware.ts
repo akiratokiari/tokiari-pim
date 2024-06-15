@@ -1,5 +1,5 @@
 import { USER_ROLE } from '@/constants/app'
-import { WHOLESALE_ROUTE, WHOLESALE_WELCOME_ROUTE } from '@/constants/route'
+import { WHOLESALE_LOGIN_ROUTE, WHOLESALE_ROUTE, WHOLESALE_WELCOME_ROUTE } from '@/constants/route'
 
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
@@ -40,8 +40,10 @@ export async function wholesaleMiddleware(request: NextRequest) {
   const url = new URL(request.url)
 
   const { data, error } = await supabase.auth.getUser()
+
+
   if (error) {
-    return NextResponse.redirect(new URL(WHOLESALE_WELCOME_ROUTE, request.url), 302)
+    return NextResponse.redirect(new URL(WHOLESALE_LOGIN_ROUTE, request.url), 302)
   }
 
   const { data: userData, error: userError } = await supabase
@@ -61,6 +63,9 @@ export async function wholesaleMiddleware(request: NextRequest) {
 
   if (!loginUser.plan && url.pathname !== WHOLESALE_WELCOME_ROUTE) {
     return NextResponse.redirect(new URL(WHOLESALE_WELCOME_ROUTE, request.url), 302)
+  }
+  if (loginUser.plan && url.pathname === WHOLESALE_WELCOME_ROUTE) {
+    return NextResponse.redirect(new URL(WHOLESALE_ROUTE, request.url), 302)
   }
 
   if (loginUser.user_role === USER_ROLE.Buyer) {

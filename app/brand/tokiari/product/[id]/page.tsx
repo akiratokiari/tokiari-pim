@@ -21,7 +21,7 @@ const Page: FC<Props> = async ({ params }) => {
         <div>発売日：{product?.model[0].salesStartedAt}</div>
       </div>
       <div className={style.modelWrapper}>
-        {product?.model?.map((m) => {
+        {product?.model?.map((m:any) => {
           return (
             <div className={style.model}>
               <div>モデル：{m.modelNumber}</div>

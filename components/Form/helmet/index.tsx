@@ -11,12 +11,12 @@ type Props = {
 export const Helmet: FC<Props> = ({ label, error, required = true, children }) => {
   return (
     <div className={style.body}>
-      <div className={style.label}>
-        {label}
-        <span className={style.required}>
-          {required && ' *'}
+      <div className={style.labelWrapper}>
+        {required && <span className={style.required}>必須</span>}
+        <div style={{ color: error ? 'red' : 'black' }}>
+          {label}
           {error}
-        </span>
+        </div>
       </div>
       {children}
     </div>

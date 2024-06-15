@@ -1,10 +1,10 @@
 'use client'
+import { UsersInsertType } from '@/utils/supabase/type'
 import { FC, FormEvent } from 'react'
-import { UserType } from '../../../page'
 
 type Props = {
   setFormData: any
-  formData?: UserType
+  formData?: UsersInsertType
 }
 
 export const Form: FC<Props> = ({ formData, setFormData }) => {
@@ -47,7 +47,7 @@ export const Form: FC<Props> = ({ formData, setFormData }) => {
       />
       <label htmlFor="site_url">ホームページ:</label>
       <input
-        defaultValue={formData ? formData.site_url : ''}
+        defaultValue={formData ? formData.site_url || '' : ''}
         id="site_url"
         name="site_url"
         required
@@ -95,7 +95,7 @@ export const Form: FC<Props> = ({ formData, setFormData }) => {
       />
       <label htmlFor="building_name">建物名・部屋番号</label>
       <input
-        defaultValue={formData ? formData.building_name : ''}
+        defaultValue={formData ? formData.building_name || '' : ''}
         id="building_name"
         name="building_name"
         type="text"

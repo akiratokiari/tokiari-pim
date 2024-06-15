@@ -1,217 +1,49 @@
 'use client'
-import {
-  ProductImagesRowType,
-  ProductVariantsRowType,
-  ProductVariantsSizeRowType
-} from '@/utils/supabase/type'
+import { ProductVariantWithRelation } from '@/utils/supabase/type'
 import { FC } from 'react'
 import { VariantSizeSelector } from '../variantSizeSelector'
+import style from './style.module.css'
 
 type Props = {
   product: ProductType
-  variants: VariantType[]
+  variants: ProductVariantWithRelation[]
+  currentColor: string
 }
 
 export type ProductType = {
   id: string
+  title: string
   product_group_code: string
 }
 
-export type VariantType = ProductVariantsRowType & {
-  product_images: ProductImagesRowType[]
-  product_variants_size: ProductVariantsSizeRowType[]
-}
-
-export const ProductVariantSelector: FC<Props> = ({ product, variants }) => {
+export const ProductVariantSelector: FC<Props> = ({ product, variants, currentColor }) => {
   return (
     <div>
-      <div>
-        {variants.map((pv) => (
-          <div key={pv.id}>
-            色 {pv.color}
-            <div>
+      {variants.map((pv) => {
+        if (currentColor === pv.color) {
+          return (
+            <div key={pv.id} className={style.body}>
               {pv.product_variants_size.map((pvs) => {
-                const variantData = {
-                  id: pv.id,
+                const cartFormatDataWithoutQuantity = {
+                  productId: product.id,
+                  modelId: pvs.id,
+                  seriesId: pv.id,
                   color: pv.color,
-                  seriesNumber: pv.series_number
-                }
-                const variantSizeData = {
-                  id: pvs.id,
+                  title: product.title,
+                  seriesNumber: pv.series_number,
                   size: pvs.product_size,
-                  modelNumber: pvs.model_number
+                  modelNumber: pvs.model_number,
+                  thumbnail: variants[0].product_images[0].image_url,
+                  product_group_code: product.product_group_code,
+                  quantity: 1,
+                  price: pv.price
                 }
-
-                return (
-                  <VariantSizeSelector
-                    key={pvs.id}
-                    productData={product}
-                    variantData={variantData}
-                    variantSizeData={variantSizeData}
-                  />
-                )
+                return <VariantSizeSelector key={pvs.id} data={cartFormatDataWithoutQuantity} />
               })}
             </div>
-          </div>
-        ))}
-      </div>
+          )
+        }
+      })}
     </div>
   )
 }
-
-// 'use client'
-// import { CartContext, CartItemType } from '@/contexts/cart/context'
-// import {
-//   ProductImagesRowType,
-//   ProductVariantsRowType,
-//   ProductVariantsSizeRowType
-// } from '@/utils/supabase/type'
-// import { FC, useContext, useEffect, useState } from 'react'
-
-// type Props = {
-//   variants: VariantType[]
-// }
-
-// export type VariantType = ProductVariantsRowType & {
-//   product_images: ProductImagesRowType[]
-//   product_variants_size: ProductVariantsSizeRowType[]
-// }
-
-// type QuantityData = {
-//   id: string
-//   color: string
-//   seriesNumber: string
-//   variants: {
-//     id: string
-//     size: string
-//     quantity: number
-//     modelNumber: string
-//   }[]
-// }
-
-// export const ProductVariantSelector: FC<Props> = ({ variants }) => {
-//   const [quantities, setQuantities] = useState<QuantityData[]>([])
-//   const [inputMode, setInputMode] = useState<{ [key: string]: boolean }>({})
-//   const { cart, addToCart } = useContext(CartContext)
-
-//   console.log(cart)
-
-//   useEffect(() => {
-//     if (variants) {
-//       const data = variants.map((v) => ({
-//         id: v.id,
-//         color: v.color,
-//         seriesNumber: v.series_number,
-//         variants:
-//           v.product_variants_size.map((pvs) => ({
-//             id: pvs.id,
-//             size: pvs.product_size,
-//             quantity: 0,
-//             modelNumber: pvs.model_number
-//           })) || []
-//       }))
-//       setQuantities(data)
-//     }
-//   }, [variants])
-
-//   const handleQuantityChange = (variantId: string, variantSizeId: string, amount: number) => {
-//     setQuantities((prevQuantities) =>
-//       prevQuantities.map((variant) =>
-//         variant.id === variantId
-//           ? {
-//               ...variant,
-//               variants: variant.variants.map((size) =>
-//                 size.id === variantSizeId
-//                   ? { ...size, quantity: Math.max(0, size.quantity + amount) }
-//                   : size
-//               )
-//             }
-//           : variant
-//       )
-//     )
-//   }
-
-//   const handleQuantityInput = (variantId: string, variantSizeId: string, value: string) => {
-//     const quantity = Math.max(0, parseInt(value, 10) || 0)
-//     setQuantities((prevQuantities) =>
-//       prevQuantities.map((variant) =>
-//         variant.id === variantId
-//           ? {
-//               ...variant,
-//               variants: variant.variants.map((size) =>
-//                 size.id === variantSizeId ? { ...size, quantity } : size
-//               )
-//             }
-//           : variant
-//       )
-//     )
-//   }
-
-//   const handleSelectChange = (variantId: string, variantSizeId: string, value: string) => {
-//     if (parseInt(value, 10) === 10) {
-//       setInputMode((prev) => ({ ...prev, [`${variantId}-${variantSizeId}`]: true }))
-//     } else {
-//       handleQuantityInput(variantId, variantSizeId, value)
-//     }
-//   }
-
-//   const handleAddToCart = (quantityItem: QuantityData) => {
-//     const item: CartItemType = {
-//       id: quantityItem.id,
-//       color: quantityItem.color,
-//       seriesNumber: quantityItem.seriesNumber,
-//       variants: quantityItem.variants.filter((variant) => variant.quantity > 0)
-//     }
-//     addToCart(item)
-//     console.log(quantityItem)
-//   }
-
-//   return (
-//     <div>
-//       <div>
-//         {variants.map((pv) => (
-//           <div key={pv.id}>
-//             色 {pv.color}
-//             <div>
-//               {pv.product_variants_size.map((pvs) => {
-//                 const quantityData = quantities.find((q) => q.id === pv.id)
-//                 const isInputMode = inputMode[`${pv.id}-${pvs.id}`]
-//                 if (quantityData) {
-//                   return (
-//                     <div key={pvs.id}>
-//                       {pvs.product_size} | {pvs.model_number}
-//                       <button onClick={() => handleQuantityChange(pv.id, pvs.id, -1)}>-</button>
-//                       {isInputMode ? (
-//                         <input
-//                           type="number"
-//                           value={quantityData.variants.find((v) => v.id === pvs.id)?.quantity || 10}
-//                           onChange={(e) => handleQuantityInput(pv.id, pvs.id, e.target.value)}
-//                         />
-//                       ) : (
-//                         <select
-//                           value={quantityData.variants.find((v) => v.id === pvs.id)?.quantity || 0}
-//                           onChange={(e) => handleSelectChange(pv.id, pvs.id, e.target.value)}
-//                         >
-//                           {[...Array(10)].map((_, index) => (
-//                             <option key={index + 1} value={index + 1}>
-//                               {index + 1}
-//                             </option>
-//                           ))}
-//                         </select>
-//                       )}
-//                       <button onClick={() => handleQuantityChange(pv.id, pvs.id, 1)}>+</button>
-//                       <button onClick={() => handleAddToCart(quantityData)}>
-//                         カートに追加する
-//                       </button>
-//                     </div>
-//                   )
-//                 }
-//                 return null
-//               })}
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   )
-// }
