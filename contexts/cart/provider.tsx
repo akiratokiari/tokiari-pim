@@ -6,9 +6,11 @@ export const CartProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('cart_items', JSON.stringify(cart))
+      const _storageItems = localStorage.getItem('cart_items')
+      const storageItems = _storageItems ? JSON.parse(_storageItems) : []
+      if (storageItems.length > 0) setCart(storageItems)
     }
-  }, [cart])
+  }, [])
 
   const addToCart = (addItem: CartItemType) => {
     const isProductExist = cart.find((c) => c.modelId === addItem.modelId)

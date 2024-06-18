@@ -167,7 +167,7 @@ export default async function Page({ params }: Props) {
         >
           {productData.product_images.map((image) => (
             <span key={image.id} style={{ marginRight: '16px' }}>
-              <Image width={200} src={image.image_url} />
+              <Image width={200} src={image.image_url} alt="" />
             </span>
           ))}
         </Card>

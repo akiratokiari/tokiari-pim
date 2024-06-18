@@ -79,10 +79,12 @@ const StripeElement = ({ orderId, setOrderId, setStripeClientSecret }: any) => {
         <PaymentElement />
         <div>
           <div>
-            <button>支払いをする</button>
+            <Button color="black">支払いをする</Button>
           </div>
           <div>
-            <button onClick={onBack}>入力画面に戻る</button>
+            <Button color="white" onClick={onBack}>
+              入力画面に戻る
+            </Button>
           </div>
         </div>
       </form>
@@ -105,7 +107,9 @@ const Page: FC = () => {
   const { cart, updateQuantity, deleteFromCart } = useContext(CartContext)
   const supabase = createClient()
   const { account } = useContext(AccountContext)
-  const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
+  const stripe = require('stripe')(
+    'sk_test_51PJtZKDe7T0wGKDyCCK1mJSIpnwmGL4CK04xKgB2BcsJ5gMzDkmSF2wUAqQyIgifhG7Rsjq5s7vcv2AkzDGxNuoK00yieFFUwB'
+  )
   const [stripePromise, setStripePromise] = useState<any>()
   const [isLoading, setIsLoading] = useState(false)
   const [stripeClientSecret, setStripeClientSecret] = useState(null)
@@ -136,13 +140,12 @@ const Page: FC = () => {
 
   useEffect(() => {
     // 販売情報とバイヤー情報を取得・保存
-    if (process.env.STRIPE_PUBLISHABLE_KEY) {
-      setStripePromise(
-        loadStripe(
-          'pk_test_51PJtZKDe7T0wGKDyVM00CZgAYUzDCDKiHRWqD0eL10K4ZQ3IRD0SAHot19UHARG74WFws9M2qJp7miyL67lL2gBY00ueLl2qcp'
-        )
+
+    setStripePromise(
+      loadStripe(
+        'pk_test_51PJtZKDe7T0wGKDyVM00CZgAYUzDCDKiHRWqD0eL10K4ZQ3IRD0SAHot19UHARG74WFws9M2qJp7miyL67lL2gBY00ueLl2qcp'
       )
-    }
+    )
   }, [])
 
   const onSubmit = async (values: any) => {
