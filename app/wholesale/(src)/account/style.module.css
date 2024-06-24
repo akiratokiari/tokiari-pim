@@ -14,3 +14,14 @@
   padding: 2px 8px;
   border: solid 1px black;
 }
+
+.displayValueWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  padding: 16px 0;
+  font-weight: bold;
+  font-size: 16px;
+}

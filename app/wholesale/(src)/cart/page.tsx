@@ -11,6 +11,8 @@ import { CartContext, CartItemType } from '@/contexts/cart/context'
 import Image from 'next/image'
 import style from './style.module.css'
 import { Button } from '@/components/button'
+import { VariantSizeSelector } from '@/components/Wholesale/variantSizeSelector'
+import { CartProductAmountInput } from '@/components/Wholesale/cartProductAmountInput'
 
 const StripeElement = ({ orderId, setOrderId, setStripeClientSecret }: any) => {
   const supabase = createClient()
@@ -232,20 +234,7 @@ const Page: FC = () => {
                       {ci.color} | {ci.size}
                     </div>
                     <div className={style.inputWrapper}>
-                      <input
-                        type="number"
-                        value={ci.quantity}
-                        onChange={(e) => {
-                          updateQuantity(ci.modelId, Number(e.target.value))
-                        }}
-                      />
-                      <button
-                        onClick={() => {
-                          deleteFromCart(ci.modelId)
-                        }}
-                      >
-                        削除
-                      </button>
+                      <CartProductAmountInput data={ci} />
                     </div>
                     <div className={style.caption}>¥{ci.price.toLocaleString()}円</div>
                   </div>
@@ -260,6 +249,8 @@ const Page: FC = () => {
           <input type="date"></input>
           <div>配送時間帯</div>
           <select>
+            <option value={1}>1</option>
+            <option value={1}>1</option>
             <option value={1}>1</option>
           </select>
           <div>備考欄</div>

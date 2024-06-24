@@ -13,6 +13,7 @@ import toHref from '@/helper/toHref'
 import { createClient } from '@/utils/supabase/server'
 import { DeleteProductVariantButton } from '@/components/Admin/Button/DeleteProductVariantButton'
 import { UpdateVariantPublishStatusButton } from '@/components/Admin/Button/UpdateVariantPublishStatusButton'
+import { LabelStyle } from '@/constants/adminCSS'
 
 type Props = {
   params: {
@@ -128,22 +129,22 @@ export default async function Page({ params }: Props) {
           ]}
         >
           <Descriptions
+            labelStyle={LabelStyle}
             size="small"
-            labelStyle={{ width: 180 }}
             style={{ marginBottom: 16 }}
             bordered
             items={items}
           />
           <Descriptions
+            labelStyle={LabelStyle}
             size="small"
-            labelStyle={{ width: 180 }}
             style={{ marginBottom: 16 }}
             bordered
             items={codeInfoItems}
           />
           <Descriptions
+            labelStyle={LabelStyle}
             size="small"
-            labelStyle={{ width: 180 }}
             style={{ marginBottom: 16 }}
             bordered
             items={priceItems}

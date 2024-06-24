@@ -15,7 +15,7 @@ export const Header: FC<Props> = () => {
       </Link>
       <div className={style.navigation}>
         <div className={style.menuWrapper}>
-          <Link className={style.menu} href={WHOLESALE_ROUTE}>
+          <Link className={style.menu} href={'/wholesale/search'}>
             PRODUCTS
           </Link>
           <Link className={style.menu} href={WHOLESALE_CART_ROUTE}>

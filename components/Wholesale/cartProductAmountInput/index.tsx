@@ -1,5 +1,5 @@
 import { CartContext, CartItemType } from '@/contexts/cart/context'
-import React, { FC, useContext, useState } from 'react'
+import React, { FC, useContext, useEffect, useState } from 'react'
 import style from './style.module.css'
 import Image from 'next/image'
 import AddSVG from '../../../public/add.svg'
@@ -9,9 +9,9 @@ type Props = {
   data: CartItemType
 }
 
-export const VariantSizeSelector: FC<Props> = ({ data }) => {
+export const CartProductAmountInput: FC<Props> = ({ data }) => {
   const [value, setValue] = useState<string | number>(data.quantity)
-  const { addToCart } = useContext(CartContext)
+  const { updateQuantity, deleteFromCart } = useContext(CartContext)
 
   const handleQuantityChange = (amount: number) => {
     const newValue = (typeof value === 'string' ? parseInt(value, 10) : value) + amount
@@ -35,34 +35,21 @@ export const VariantSizeSelector: FC<Props> = ({ data }) => {
     }
   }
 
-  const handleAddToCart = () => {
-    const quantity = typeof value === 'string' ? parseInt(value, 10) : value
-
-    const cartItem: CartItemType = {
-      // 基準(SKU)
-      productId: data.productId,
-      modelId: data.modelId,
-      seriesId: data.seriesId,
-      product_group_code: data.product_group_code,
-      seriesNumber: data.seriesNumber,
-      modelNumber: data.modelNumber,
-      quantity: quantity,
-      color: data.color,
-      price: data.price,
-      size: data.size,
-      title: data.title,
-      thumbnail: data.thumbnail
+  useEffect(() => {
+    if (typeof value === 'number') {
+      const cartItem: CartItemType = {
+        ...data,
+        quantity: value
+      }
+      updateQuantity(cartItem.modelId,value)
     }
-
-    addToCart(cartItem)
-  }
+  }, [value])
 
   return (
     <div className={style.body}>
-      <div className={style.size}>size : {data.size}</div>
       <div className={style.counter}>
         <button className={style.counterButton} onClick={() => handleQuantityChange(-1)}>
-          <Image src={RemoveSVG} alt={RemoveSVG} />
+          <Image src={RemoveSVG} alt="remove" />
         </button>
         <input
           className={style.input}
@@ -73,11 +60,15 @@ export const VariantSizeSelector: FC<Props> = ({ data }) => {
           onChange={handleQuantityInput}
         />
         <button className={style.counterButton} onClick={() => handleQuantityChange(1)}>
-          <Image src={AddSVG} alt={AddSVG} />
+          <Image src={AddSVG} alt="add" />
         </button>
       </div>
-      <button className={style.button} onClick={handleAddToCart}>
-        カートに追加する
+      <button
+        onClick={() => {
+          deleteFromCart(data.modelId)
+        }}
+      >
+        削除
       </button>
     </div>
   )

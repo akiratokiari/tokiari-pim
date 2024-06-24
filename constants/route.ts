@@ -26,7 +26,6 @@ export const WHOLESALE_ROUTE = '/wholesale'
 export const WHOLESALE_CART_ROUTE = '/wholesale/cart'
 export const WHOLESALE_ACCOUNT_ROUTE = '/wholesale/account'
 export const WHOLESALE_PRODUCTS_DETAIL_ROUTE = '/wholesale/products/[id]'
-export const WHOLESALE_WELCOME_ROUTE = '/wholesale/welcome'
 
 // アカウント編集
 export const WHOLESALE_ACCOUNT_EDIT_ROUTE = '/wholesale/account/edit'

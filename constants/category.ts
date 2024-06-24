@@ -2,7 +2,7 @@ export const CATEGORY_TOPS = 'Tops'
 export const CATEGORY_SHIRTS = 'Shirts'
 export const CATEGORY_BOTTOMS = 'Bottoms'
 export const CATEGORY_OUTER = 'Outer'
-export const CATEGORY_OTHER = 'その他'
+export const CATEGORY_OTHER = 'Other'
 
 export const CategoryArray = [
   CATEGORY_TOPS,

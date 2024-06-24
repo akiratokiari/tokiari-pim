@@ -8,7 +8,7 @@ import {
 } from '@/constants/route'
 import { toStringPlan } from '@/helper/toStringPlan'
 import { LogoutButton } from '@/components/Wholesale'
-
+import { DisplayFormValue } from '@/components/displayFormValue'
 
 export default async function Page() {
   const supabase = createClient()
@@ -42,22 +42,27 @@ export default async function Page() {
 
           <LogoutButton className={style.menu} />
         </div>
-        <div className={style.body}>
-          <div>===現在のプラン===</div>
-          {userData.plan && <div>プラン：{toStringPlan(userData.plan)}</div>}
-          <div>===会社===</div>
-          <div>会社名：{userData.company}</div>
-          <div>サイト：{userData.site_url}</div>
-          <div>メールアドレス：{userData.email}</div>
-          <div>電話番号：{userData.phone}</div>
-          <div>担当者(お名前)：{userData.contact_name}</div>
-          <div>担当者(フリガナ)：{userData.contact_kana}</div>
-          <div>===住所情報===</div>
-          <div>郵便番号：{userData.postal_code}</div>
-          <div>都道府県：{userData.prefecture}</div>
-          <div>市区町村：{userData.city}</div>
-          <div>番地：{userData.street_address}</div>
-          <div>ビル名・部屋番号(任意)：{userData.building_name}</div>
+        <div className={style.displayValueWrapper}>
+          <div className={style.title}>アカウント</div>
+          <DisplayFormValue first label="メールアドレス" value={userData.email} />
+          <DisplayFormValue label="パスワード" value={'********'} />
+        </div>
+        <div className={style.displayValueWrapper}>
+          <div className={style.title}>登録情報</div>
+          <DisplayFormValue first label="会社名" value={userData.company} />
+          <DisplayFormValue label="サイト：" value={userData.site_url || ''} />
+
+          <DisplayFormValue label="電話番号" value={userData.phone} />
+          <DisplayFormValue label="担当者(お名前)" value={userData.contact_name} />
+          <DisplayFormValue label="担当者(フリガナ)" value={userData.contact_kana} />
+        </div>
+        <div className={style.displayValueWrapper}>
+          <div className={style.title}>住所</div>
+          <DisplayFormValue first label="郵便番号" value={userData.postal_code} />
+          <DisplayFormValue label="都道府県" value={userData.prefecture} />
+          <DisplayFormValue label="市区町村" value={userData.city} />
+          <DisplayFormValue label="番地" value={userData.street_address} />
+          <DisplayFormValue label="ビル名・部屋番号(任意)" value={userData.building_name || ''} />
         </div>
       </div>
     )

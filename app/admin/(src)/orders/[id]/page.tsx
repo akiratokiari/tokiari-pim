@@ -1,6 +1,7 @@
 import { DisplayPaymentStatus } from '@/components/Admin/DisplayPaymentStatus'
 import { PageHeader } from '@/components/Admin/PageHeader'
 import { PurchasedProductTable } from '@/components/Admin/Table/PurchasedProductTable'
+import { LabelStyle } from '@/constants/adminCSS'
 import { ADMIN_ORDERS_DETAIL_ROUTE, ADMIN_ORDERS_ROUTE, ADMIN_ROUTE } from '@/constants/route'
 import { formatDateTime } from '@/helper/dateFormat'
 import toHref from '@/helper/toHref'
@@ -111,13 +112,13 @@ export default async function Page({ params }: Props) {
       <Col span={24}>
         <PageHeader title="購入履歴詳細" routes={routes} />
         <Card style={{ marginBottom: 16 }}>
-          <Descriptions bordered title="購入者情報" items={items} />
+          <Descriptions labelStyle={LabelStyle} bordered title="購入者情報" items={items} />
         </Card>
         <Card title="購入商品" style={{ marginBottom: 16 }}>
           <PurchasedProductTable products={order.purchased_products} />
         </Card>
         <Card>
-          <Descriptions bordered title="システム情報" items={systemItems} />
+          <Descriptions labelStyle={LabelStyle} bordered title="システム情報" items={systemItems} />
         </Card>
       </Col>
     </Row>

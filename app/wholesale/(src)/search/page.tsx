@@ -1,23 +1,12 @@
 import { ProductGrid } from '@/components/Wholesale/productGrid'
-import { ProductsFilter } from '@/components/Wholesale/productsFilter'
 import { createClient } from '@/utils/supabase/server'
 import style from './style.module.css'
-import { CategoryFilter } from '@/components/Wholesale/categoryFilter'
 
 type Props = {
   searchParams: {
-    color?: string
-    title?: string
-    category?: string
-    current?: string
+    sort?: string
+    keyword?: string
   }
-}
-
-export type ProductsFilterSearchParamsType = {
-  color?: string
-  title?: string
-  category?: string
-  current?: string
 }
 
 export default async function Page({ searchParams }: Props) {
@@ -28,7 +17,6 @@ export default async function Page({ searchParams }: Props) {
 
   return (
     <div className={style.body}>
-      <CategoryFilter />
       {products && products.length !== 0 ? <ProductGrid products={products} /> : '商品がありません'}
     </div>
   )

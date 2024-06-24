@@ -1,22 +1,13 @@
-.body {
+.menus {
   display: flex;
-  gap: 10px;
-  width: 200px;
-}
-
-.wrapper {
+  flex-direction: column;
+  gap: 5px;
 }
 
 .title {
   font-weight: bold;
   margin-bottom: 10px;
   font-size: 14px;
-}
-
-.menus {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
 }
 
 .menu {
