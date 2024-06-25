@@ -1,0 +1,17 @@
+.body {
+  display: flex;
+  flex-direction: column;
+}
+.contents {
+  width: 100%;
+}
+
+@media (min-width: 756px) {
+  .body {
+    display: flex;
+    flex-direction: row;
+  }
+  .contents {
+    width: 100%;
+  }
+}

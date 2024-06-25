@@ -34,7 +34,6 @@ export async function middleware(request: NextRequest) {
 
   if (url.pathname.includes(ADMIN_ROUTE)) {
     // 管理者のMiddleware
-
     return await adminMiddleware(request)
   }
   // バイヤーのMiddleware

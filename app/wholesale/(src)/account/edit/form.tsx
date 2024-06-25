@@ -1,75 +1,202 @@
 'use client'
-import { useFormState } from 'react-dom'
-import { updateUser } from './actions'
+import { Button } from '@/components/button'
+import { Helmet, Input } from '@/components/Form'
+import { FC, useContext, useEffect, useState } from 'react'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import style from './style.module.css'
-import { FC, useContext } from 'react'
 import { AccountContext } from '@/contexts/account/context'
+import { createClient } from '@/utils/supabase/client'
+import { useRouter } from 'next/navigation'
+import { WHOLESALE_ACCOUNT_ROUTE } from '@/constants/route'
 
-export const Form: FC = () => {
-  const { account } = useContext(AccountContext)
-  const [_, formAction] = useFormState(updateUser, null)
+type Props = {
+  setFormData?: any
+  formData?: any
+}
+
+export type FormValue = {
+  postal_code: string
+  prefecture: string
+  city: string
+  street_address: string
+  building_name?: string
+  company: string
+  phone: string
+  contact_name: string
+  contact_kana: string
+  site_url: string
+}
+
+export const Form: FC<Props> = () => {
+  const { account, refresh } = useContext(AccountContext)
+  const supabase = createClient()
+  const router = useRouter()
+
+  useEffect(() => {
+    refresh()
+  }, [])
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm<FormValue>({})
+
+  const [isSending, setIsSending] = useState(false)
+
+  useEffect(() => {
+    // accountの値が変更された時にフォームの値をリセット
+    reset({
+      building_name: account?.building_name || '',
+      company: account?.company || '',
+      postal_code: account?.postal_code || '',
+      prefecture: account?.prefecture || '',
+      city: account?.city || '',
+      street_address: account?.street_address || '',
+      phone: account?.phone || '',
+      contact_name: account?.contact_name || '',
+      contact_kana: account?.contact_kana || '',
+      site_url: account?.site_url || ''
+    })
+  }, [account, reset])
+
+  const onSubmit: SubmitHandler<FormValue> = async (values) => {
+    if (!isSending) {
+      const userId = (await supabase.auth.getUser()).data.user?.id
+      if (!userId) {
+        return '予期せぬエラーが発生しました'
+      }
+      try {
+        await supabase.from('users').update(values).eq('id', userId)
+      } catch {
+        return '予期せぬエラーが発生しました'
+      }
+
+      router.push(WHOLESALE_ACCOUNT_ROUTE)
+      router.refresh()
+      setIsSending(true)
+    }
+  }
 
   return (
-    <form action={formAction} className={style.form}>
-      <div>===会社情報===</div>
-      <label htmlFor="company">会社名:</label>
-      <input id="company" defaultValue={account?.company} name="company" type="text" required />
-      <label htmlFor="phone">電話番号:</label>
-      <input id="phone" defaultValue={account?.phone} name="phone" type="tel" required />
-      <label htmlFor="site_url">ホームページ:</label>
-      <input id="site_url" defaultValue={account?.site_url || ''} name="site_url" required />
-      <label htmlFor="contact_name">担当者(お名前):</label>
-      <input
-        id="contact_name"
-        defaultValue={account?.contact_name}
-        name="contact_name"
-        type="text"
-        required
-      />
-      <label htmlFor="contact_name">担当者(ふりがな):</label>
-      <input
-        id="contact_kana"
-        defaultValue={account?.contact_kana}
-        name="contact_kana"
-        type="text"
-        required
-      />
-      <div>===住所情報===</div>
-      <label htmlFor="postal_code">郵便番号:</label>
-      <input
-        id="postal_code"
-        defaultValue={account?.postal_code}
-        name="postal_code"
-        type="text"
-        required
-      />
-      <label htmlFor="prefecture">都道府県:</label>
-      <input
-        id="prefecture"
-        defaultValue={account?.prefecture}
-        name="prefecture"
-        type="text"
-        required
-      />
-      <label htmlFor="city">市区町村:</label>
-      <input id="city" defaultValue={account?.city} name="city" type="text" required />
-      <label htmlFor="street_address">番地:</label>
-      <input
-        id="street_address"
-        defaultValue={account?.street_address}
-        name="street_address"
-        type="text"
-        required
-      />
-      <label htmlFor="building_name">建物名・部屋番号</label>
-      <input
-        id="building_name"
-        defaultValue={account?.building_name || ''}
-        name="building_name"
-        type="text"
-        required
-      />
-      <button type="submit">変更</button>
-    </form>
+    <div>
+      <form onSubmit={handleSubmit(onSubmit)} className={style.form}>
+        <div className={style.section}>登録情報</div>
+        <Helmet label="会社名" error={errors.company?.message}>
+          <Input
+            placeholder="会社名を入力してください"
+            type="text"
+            name="company"
+            register={register}
+            registerOptions={{
+              required: 'は必須項目です'
+            }}
+          />
+        </Helmet>
+        <Helmet label="電話番号" error={errors.phone?.message}>
+          <Input
+            type="text"
+            placeholder="電話番号を入力してください"
+            name="phone"
+            register={register}
+            registerOptions={{
+              required: 'は必須項目です'
+            }}
+          />
+        </Helmet>
+        <Helmet label="サイトURL" error={errors.site_url?.message}>
+          <Input
+            type="url"
+            placeholder="サイトURLを入力してください"
+            name="site_url"
+            register={register}
+            registerOptions={{
+              required: 'は必須項目です'
+            }}
+          />
+        </Helmet>
+        <Helmet label="お名前" error={errors.contact_name?.message}>
+          <Input
+            type="text"
+            placeholder="お名前を入力してください"
+            name="contact_name"
+            register={register}
+            registerOptions={{
+              required: 'は必須項目です'
+            }}
+          />
+        </Helmet>
+        <Helmet label="お名前(カナ)" error={errors.contact_kana?.message}>
+          <Input
+            type="text"
+            placeholder="お名前(カナ)を入力してください"
+            name="contact_kana"
+            register={register}
+            registerOptions={{
+              required: 'お名前(カナは必須項目です'
+            }}
+          />
+        </Helmet>
+        <div className={style.section}>住所情報</div>
+        <Helmet label="郵便番号" error={errors.postal_code?.message}>
+          <Input
+            type="text"
+            placeholder="郵便番号を入力してください"
+            name="postal_code"
+            register={register}
+            registerOptions={{
+              required: 'は必須項目です'
+            }}
+          />
+        </Helmet>
+        <Helmet label="都道府県" error={errors.prefecture?.message}>
+          <Input
+            type="text"
+            placeholder="都道府県を入力してください"
+            name="prefecture"
+            register={register}
+            registerOptions={{
+              required: 'は必須項目です'
+            }}
+          />
+        </Helmet>
+        <Helmet label="市区町村" error={errors.city?.message}>
+          <Input
+            type="text"
+            placeholder="市区町村を入力してください"
+            name="city"
+            register={register}
+            registerOptions={{
+              required: 'は必須項目です'
+            }}
+          />
+        </Helmet>
+        <Helmet label="番地" error={errors.street_address?.message}>
+          <Input
+            type="text"
+            placeholder="番地を入力してください"
+            name="street_address"
+            register={register}
+            registerOptions={{
+              required: 'は必須項目です'
+            }}
+          />
+        </Helmet>
+        <Helmet label="建物名・部屋番号" required={false}>
+          <Input
+            type="text"
+            placeholder="建物名・部屋番号を入力してください"
+            name="building_name"
+            register={register}
+          />
+        </Helmet>
+        <div className={style.buttonWrapper}>
+          <Button isLoading={isSending} disabled={isSending} color="black" type="submit">
+            編集する
+          </Button>
+        </div>
+      </form>
+    </div>
   )
 }

@@ -2,14 +2,7 @@ import { ProductGrid } from '@/components/Wholesale/productGrid'
 import { createClient } from '@/utils/supabase/server'
 import style from './style.module.css'
 
-type Props = {
-  searchParams: {
-    sort?: string
-    keyword?: string
-  }
-}
-
-export default async function Page({ searchParams }: Props) {
+export default async function Page() {
   const supabase = createClient()
   const { data: products } = await supabase
     .from('products')

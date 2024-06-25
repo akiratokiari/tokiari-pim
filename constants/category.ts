@@ -5,9 +5,9 @@ export const CATEGORY_OUTER = 'Outer'
 export const CATEGORY_OTHER = 'Other'
 
 export const CategoryArray = [
+  CATEGORY_OUTER,
   CATEGORY_TOPS,
   CATEGORY_SHIRTS,
   CATEGORY_BOTTOMS,
-  CATEGORY_OUTER,
   CATEGORY_OTHER
 ]

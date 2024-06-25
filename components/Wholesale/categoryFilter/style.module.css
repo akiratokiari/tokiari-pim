@@ -14,3 +14,27 @@
   color: black;
   font-size: 14px;
 }
+
+.select {
+  width: 100%;
+  margin: 0 0 20px 0;
+}
+
+.mobile {
+  display: block;
+}
+
+.desktop {
+  display: none;
+}
+
+@media (min-width: 756px) {
+  .mobile {
+    display: none;
+  }
+
+  .desktop {
+    display: block;
+    padding-right: 20px;
+  }
+}

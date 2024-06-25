@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { CategoryFilter } from '@/components/Wholesale/categoryFilter'
+import style from './layout.module.css'
 
 export const metadata: Metadata = {
   title: 'tokiari-pim',
@@ -12,10 +13,9 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <div style={{ display: 'flex' }}>
+    <div className={style.body}>
       <CategoryFilter />
-      <div style={{ padding: '0px 20px 0px 20px', width: '100%' }}>{children}</div>
-      {/* <SortFilter /> */}
+      <div className={style.contents}>{children}</div>
     </div>
   )
 }

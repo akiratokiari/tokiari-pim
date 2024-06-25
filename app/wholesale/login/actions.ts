@@ -19,9 +19,16 @@ export async function login(_: string | null, formData: FormData) {
     return '予期せぬエラーが発生しました'
   }
 
-  const userData = await supabase.from('users').select('user_role').eq('id', data.user.id).single()
+  const userData = await supabase
+    .from('users')
+    .select('user_role')
+    .in('user_role', [USER_ROLE.Buyer, USER_ROLE.Admin])
+    .single()
 
-  if (userData.data && userData.data.user_role !== USER_ROLE.Buyer) {
+  if (
+    (userData.data && userData.data.user_role !== USER_ROLE.Buyer) ||
+    (userData.data && userData.data.user_role !== USER_ROLE.Admin)
+  ) {
     await supabase.auth.signOut()
     return '予期せぬエラーが発生しました'
   }

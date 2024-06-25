@@ -15,7 +15,9 @@ export default function RootLayout({
   return (
     <div>
       <Header />
-      <div style={{ padding: '85px 20px 20px 20px' }}>{children}</div>
+      <div style={{ padding: '85px 20px 50px 20px', backgroundColor: ' rgb(245, 245, 245)' }}>
+        {children}
+      </div>
       <Footer />
     </div>
   )

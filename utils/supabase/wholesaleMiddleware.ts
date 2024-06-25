@@ -47,7 +47,7 @@ export async function wholesaleMiddleware(request: NextRequest) {
 
   const { data: userData, error: userError } = await supabase
     .from('users')
-    .select('user_role, plan')
+    .select('user_role')
     .eq('id', data.user.id)
     .single()
 
@@ -56,8 +56,7 @@ export async function wholesaleMiddleware(request: NextRequest) {
   }
 
   const loginUser = {
-    user_role: userData.user_role,
-    plan: userData.plan
+    user_role: userData.user_role
   }
 
   if (loginUser.user_role === USER_ROLE.Buyer) {

@@ -18,11 +18,11 @@ export const Header: FC<Props> = () => {
           <Link className={style.menu} href={'/wholesale/search'}>
             PRODUCTS
           </Link>
-          <Link className={style.menu} href={WHOLESALE_CART_ROUTE}>
-            CART
-          </Link>
           <Link className={style.menu} href={WHOLESALE_ACCOUNT_ROUTE}>
-            ACCOUNT
+            😀
+          </Link>
+          <Link className={style.menu} href={WHOLESALE_CART_ROUTE}>
+            🛒
           </Link>
         </div>
       </div>
