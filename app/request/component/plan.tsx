@@ -88,8 +88,10 @@ export const Plan = () => {
       {isComplete ? (
         <div className={style.complete}>
           <div className={style.completeTitle}>申し込みが完了しました</div>
-          <div className={style.completeText}>ご入力されたメールアドレス宛に確認メールをお送りしました。<br/>
-          3日を目処に審査結果をご連絡いたします。
+          <div className={style.completeText}>
+            ご入力されたメールアドレス宛に確認メールをお送りしました。
+            <br />
+            3日を目処に審査結果をご連絡いたします。
           </div>
         </div>
       ) : (
@@ -124,7 +126,7 @@ export const Plan = () => {
                 <DisplayFormValue first label="郵便番号" value={formData.postal_code} />
                 <DisplayFormValue label="都道府県" value={formData.prefecture} />
                 <DisplayFormValue label="市区町村" value={formData.city} />
-                <DisplayFormValue label="番地" value={formData.street_address} />
+                <DisplayFormValue label="住所" value={formData.street_address} />
                 {formData.building_name && (
                   <DisplayFormValue label="ビル名・部屋番号(任意)" value={formData.building_name} />
                 )}

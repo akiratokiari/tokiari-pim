@@ -172,10 +172,10 @@ export const Form: FC<Props> = () => {
             }}
           />
         </Helmet>
-        <Helmet label="番地" error={errors.street_address?.message}>
+        <Helmet label="住所" error={errors.street_address?.message}>
           <Input
             type="text"
-            placeholder="番地を入力してください"
+            placeholder="住所を入力してください"
             name="street_address"
             register={register}
             registerOptions={{

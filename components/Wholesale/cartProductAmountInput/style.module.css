@@ -1,8 +1,10 @@
 .body {
   display: flex;
+  justify-content: space-between;
   gap: 10px;
-  height: 35px;
+  height: 20px;
   align-items: center;
+  width: 100%;
 }
 .size {
   line-height: 30px;
@@ -15,13 +17,13 @@
 .counter {
   line-height: 30px;
   display: flex;
-  min-width: 100px;
-  border: solid 1px black;
+  /* min-width: 100px; */
+  border: solid 1px rgb(237, 237, 237);
   border-radius: 2px;
 }
 
 .counterButton {
-  min-width: 40px;
+  width: 30px;
   padding: 0;
   display: flex;
   justify-content: center;
@@ -38,9 +40,10 @@
 
 .input {
   border: none;
-  width: 35px;
+  width: 25px;
   text-align: center;
   outline: none;
+  font-size: 12px;
 }
 
 .input::-webkit-outer-spin-button,
@@ -52,4 +55,11 @@
 
 .input[type='number'] {
   -moz-appearance: textfield; /* Firefox */
+}
+
+.deleteButton {
+  font-size: 14px;
+  color: rgb(146, 146, 146);
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }

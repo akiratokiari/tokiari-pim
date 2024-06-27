@@ -1,20 +1,33 @@
 'use client'
 import { FC, useContext, useEffect, useState } from 'react'
-import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
+import {
+  Elements,
+  PaymentElement,
+  useStripe,
+  useElements,
+  AddressElement
+} from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
 import { useRouter } from 'next/navigation'
 import { WHOLESALE_ROUTE } from '@/constants/route'
 import { createClient } from '@/utils/supabase/client'
 import { AccountContext } from '@/contexts/account/context'
-import { ORDER_PAYMENT_STATUS } from '@/constants/app'
+import { ORDER_DELIVERY_OPTION, ORDER_PAYMENT_STATUS } from '@/constants/app'
 import { CartContext, CartItemType } from '@/contexts/cart/context'
 import Image from 'next/image'
 import style from './style.module.css'
 import { Button } from '@/components/button'
-import { VariantSizeSelector } from '@/components/Wholesale/variantSizeSelector'
 import { CartProductAmountInput } from '@/components/Wholesale/cartProductAmountInput'
+import { UsersRowType } from '@/utils/supabase/type'
 
-const StripeElement = ({ orderId, setOrderId, setStripeClientSecret }: any) => {
+type Props = {
+  orderId: any
+  setOrderId: any
+  setStripeClientSecret: any
+  account: UsersRowType
+}
+
+const StripeElement = ({ orderId, setOrderId, setStripeClientSecret, account }: Props) => {
   const supabase = createClient()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
@@ -79,8 +92,8 @@ const StripeElement = ({ orderId, setOrderId, setStripeClientSecret }: any) => {
     <div>
       <form onSubmit={onCreditSubmit}>
         <PaymentElement />
-        <div>
-          <div>
+        <div style={{ marginTop: 20 }}>
+          <div style={{ marginBottom: 20 }}>
             <Button color="black">支払いをする</Button>
           </div>
           <div>
@@ -101,12 +114,13 @@ type InsertDataType = {
   model_number: string
   price: number // 必要なフィールドを追加
   amount: number // 必要なフィールドを追加
+  payment_status: number
 }
 
 const Page: FC = () => {
   const [cartItems, setCartItems] = useState<CartItemType[]>([])
   const [totalAmount, setTotalAmount] = useState<number | undefined>(undefined)
-  const { cart, updateQuantity, deleteFromCart } = useContext(CartContext)
+  const { cart } = useContext(CartContext)
   const supabase = createClient()
   const { account } = useContext(AccountContext)
   const stripe = require('stripe')(
@@ -117,6 +131,10 @@ const Page: FC = () => {
   const [stripeClientSecret, setStripeClientSecret] = useState(null)
   const [orderId, setOrderId] = useState<string | null>(null)
   const router = useRouter()
+  const [isDateInputVisible, setDateInputVisible] = useState(false)
+  const [deliveryTime, setDeliveryTime] = useState('指定なし')
+  const [deliveryDate, setDeliveryDate] = useState(getFourDaysLater())
+  const [textarea, setTextarea] = useState('')
 
   const checkPrice = async () => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/check-price`, {
@@ -142,15 +160,15 @@ const Page: FC = () => {
 
   useEffect(() => {
     // 販売情報とバイヤー情報を取得・保存
-
     setStripePromise(
       loadStripe(
-        'pk_test_51PJtZKDe7T0wGKDyVM00CZgAYUzDCDKiHRWqD0eL10K4ZQ3IRD0SAHot19UHARG74WFws9M2qJp7miyL67lL2gBY00ueLl2qcp'
+        'pk_test_51PJtZKDe7T0wGKDyVM00CZgAYUzDCDKiHRWqD0eL10K4ZQ3IRD0SAHot19UHARG74WFws9M2qJp7miyL67lL2gBY00ueLl2qcp',
+        { locale: 'ja' }
       )
     )
   }, [])
 
-  const onSubmit = async (values: any) => {
+  const onSubmit = async () => {
     setIsLoading(true)
 
     // 販売情報をDBに& StripeCreate
@@ -173,7 +191,12 @@ const Page: FC = () => {
         phone: account.phone,
         contact_name: account.contact_name,
         contact_kana: account.contact_kana,
-        //
+        // 配送Options
+        option: isDateInputVisible ? ORDER_DELIVERY_OPTION.Exist : ORDER_DELIVERY_OPTION.Whenever,
+        delivery_date: isDateInputVisible ? deliveryDate : null,
+        delivery_time: isDateInputVisible ? deliveryTime : null,
+        remarks: textarea,
+        // システム情報
         is_delivered: false,
         payment_status: ORDER_PAYMENT_STATUS.Hold
       })
@@ -192,14 +215,17 @@ const Page: FC = () => {
         series_number: ci.seriesNumber,
         model_number: ci.modelNumber,
         price: ci.price,
-        amount: ci.quantity
+        amount: ci.quantity,
+        payment_status: ORDER_PAYMENT_STATUS.Hold
       }
     })
+
+    console.log('dataToInsert', dataToInsert)
 
     const purchasedProductsData = await supabase.from('purchased_products').insert(dataToInsert)
 
     if (purchasedProductsData.error) {
-      return
+      return window.alert('予期せぬエラーが発生しました')
     }
 
     const params = {
@@ -217,70 +243,156 @@ const Page: FC = () => {
     setStripeClientSecret(intent.client_secret)
   }
 
+  function getFourDaysLater() {
+    const today = new Date()
+    const fourDaysLater = new Date(today.setDate(today.getDate() + 4))
+    const year = fourDaysLater.getFullYear()
+    const month = String(fourDaysLater.getMonth() + 1).padStart(2, '0')
+    const day = String(fourDaysLater.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
+  const defaultDate = getFourDaysLater()
+
+  const handleRadioChange = (event: any) => {
+    if (event.target.value === '希望する') {
+      setDateInputVisible(true)
+    } else {
+      setDateInputVisible(false)
+    }
+  }
+
   return (
-    <div>
-      <div className={style.itemWrapper}>
+    <div className={style.body}>
+      <div className={style.itemSection}>
         {cartItems.map((ci, index) => {
           return (
             <div className={style.itemWrapper} key={index}>
-              <div className={style.itemWrapper}>
-                <div className={style.item}>
-                  <div className={style.imageWrapper}>
-                    <Image src={ci.thumbnail} fill alt="" />
+              <div className={style.imageWrapper}>
+                <Image src={ci.thumbnail} fill alt="" />
+              </div>
+              <div className={style.item}>
+                <div className={style.descriptionWrapper}>
+                  <div className={style.title}>{ci.title}</div>
+                  <div className={style.caption}>
+                    {ci.color} / {ci.size}
                   </div>
-                  <div className={style.descriptionWrapper}>
-                    <div className={style.title}>{ci.title}</div>
-                    <div className={style.caption}>
-                      {ci.color} | {ci.size}
-                    </div>
-                    <div className={style.inputWrapper}>
-                      <CartProductAmountInput data={ci} />
-                    </div>
-                    <div className={style.caption}>¥{ci.price.toLocaleString()}円</div>
-                  </div>
+                  <div className={style.caption}>¥{ci.price.toLocaleString()}円</div>
+                </div>
+                <div className={style.inputWrapper}>
+                  <CartProductAmountInput data={ci} />
+                </div>
+                <div className={style.subTotalCaption}>
+                  ¥{(ci.price * ci.quantity).toLocaleString()}円
                 </div>
               </div>
             </div>
           )
         })}
-        {totalAmount && <div>合計　¥{totalAmount.toLocaleString()}</div>}
-        <div>
-          <div>お届け希望日</div>
-          <input type="date"></input>
-          <div>配送時間帯</div>
-          <select>
-            <option value={1}>1</option>
-            <option value={1}>1</option>
-            <option value={1}>1</option>
-          </select>
-          <div>備考欄</div>
-          <textarea />
-        </div>
-        <div>
-          <div>お届け先</div>
-          {account && (
-            <div>
-              会社名：{account.company} 様<br />
-              電話：{account.phone}
-              <br />〒{account.postal_code}
-              <br />
-              {account.prefecture}
-              {account.city}
-              {account.street_address}
-              <br />
-              {account.building_name && account.building_name}
+
+        <div className={style.footer}>
+          <div className={style.footerContent}>
+            <div className={style.shippingDateWrapper}>
+              <div className={style.label}>お届け先</div>
+              {account && (
+                <div className={style.defaultAddressValues}>
+                  <div>
+                    <div className={style.addressLabel}>会社名</div>
+                    <div>{account.company} 様</div>
+                  </div>
+                  <div>
+                    <div className={style.addressLabel}>電話番号</div>
+                    <div>{account.phone}</div>
+                  </div>
+                  <div className={style.addressLabel}>住所</div>
+                  <div>
+                    {account.postal_code}
+                    <br />
+                    {account.prefecture}
+                    {account.city}
+                    {account.street_address}
+                    <br />
+                    {account.building_name && account.building_name}
+                  </div>
+                </div>
+              )}
+              <div className={style.label}>配送希望日</div>
+              <div className={style.radioOptionWrapper}>
+                <div>
+                  <input
+                    className={style.radioOption}
+                    type="radio"
+                    id="op1"
+                    name="delivery"
+                    value="希望する"
+                    onChange={handleRadioChange}
+                  />
+                  <label className={style.radioOption} htmlFor="op1">
+                    希望する
+                  </label>
+                </div>
+                <div>
+                  <input
+                    className={style.radioOption}
+                    type="radio"
+                    id="op2"
+                    name="delivery"
+                    value="希望しない"
+                    defaultChecked
+                    onChange={handleRadioChange}
+                  />
+                  <label className={style.radioOption} htmlFor="op2">
+                    希望しない
+                  </label>
+                </div>
+              </div>
+              {isDateInputVisible && (
+                <div>
+                  <input
+                    onChange={(e) => setDeliveryDate(e.target.value)}
+                    className={style.input}
+                    type="date"
+                    defaultValue={defaultDate}
+                    min={defaultDate}
+                  />
+                  <div className={style.label}>配送時間帯</div>
+                  <select
+                    required
+                    onChange={(e) => setDeliveryTime(e.target.value)}
+                    className={style.select}
+                  >
+                    <option value={'指定なし'}>指定なし</option>
+                    <option value={'午前(8:00 ~ 13:00)'}>午前(8:00 ~ 13:00)</option>
+                    <option value={'午後(13:00 ~ 17:00まで)'}>午後(13:00 ~ 17:00まで)</option>
+                  </select>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-        <div>
-          <Button color="black" onClick={onSubmit}>
-            注文に進む
-          </Button>
+            <div className={style.label}>備考欄</div>
+            <textarea
+              onChange={(e) => setTextarea(e.target.value)}
+              placeholder="何かありましたらご記入ください"
+              className={style.textarea}
+            />
+          </div>
+
+          <div className={style.footerContent}>
+            <div className={style.totalAmountWrapper}>
+              合計金額
+              {totalAmount && (
+                <div className={style.totalAmount}>　¥{totalAmount.toLocaleString()}(税込)</div>
+              )}
+            </div>
+            <Button isLoading={isLoading} color="black" onClick={onSubmit}>
+              決済に進む
+            </Button>
+          </div>
         </div>
       </div>
-      {!!stripePromise && !!stripeClientSecret && (
+      {!!stripePromise && !!stripeClientSecret && !!account && (
         <Elements stripe={stripePromise} options={{ clientSecret: stripeClientSecret }}>
           <StripeElement
+            account={account}
             orderId={orderId}
             setOrderId={setOrderId}
             setStripeClientSecret={setStripeClientSecret}

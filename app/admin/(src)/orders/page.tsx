@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
 import { OrderTable } from '@/components/Admin/Table/OrderTable'
 import { OrdersSearchForm } from '@/components/Admin/SearchForm/OrdersSearchForm'
+import { ORDER_PAYMENT_STATUS } from '@/constants/app'
 
 type Props = {
   searchParams: {
@@ -26,7 +27,7 @@ export default async function Page({ searchParams }: Props) {
   let query = supabase
     .from('orders')
     .select('*, purchased_products(*)', { count: 'exact' })
-    .in('payment_status', [2, 4])
+    .in('payment_status', [ORDER_PAYMENT_STATUS.Buy, ORDER_PAYMENT_STATUS.Refund])
 
   const from = (currentPage - 1) * PAGE_SIZE
   const to = from + PAGE_SIZE - 1

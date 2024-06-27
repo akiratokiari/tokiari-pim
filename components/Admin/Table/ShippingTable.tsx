@@ -1,6 +1,6 @@
 'use client'
 import { DisplayPaymentStatus } from '@/components/Admin/DisplayPaymentStatus'
-import { ADMIN_SHIPPING_DETAIL_ROUTE, ADMIN_USERS_DETAIL_ROUTE } from '@/constants/route'
+import { ADMIN_ORDERS_DETAIL_ROUTE, ADMIN_USERS_DETAIL_ROUTE } from '@/constants/route'
 import { formatDateTime } from '@/helper/dateFormat'
 import toHref from '@/helper/toHref'
 import { OrdersRowType, PurchasedProductsRowType } from '@/utils/supabase/type'
@@ -83,7 +83,7 @@ export const ShippingTable: FC<Props> = ({ dataSource }) => {
       key: 'id',
       render: (id) => (
         <div>
-          <Link href={toHref(ADMIN_SHIPPING_DETAIL_ROUTE, { id: id })}>詳細</Link>
+          <Link href={toHref(ADMIN_ORDERS_DETAIL_ROUTE, { id: id })}>詳細</Link>
         </div>
       )
     }

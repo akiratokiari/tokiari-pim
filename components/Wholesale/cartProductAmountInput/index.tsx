@@ -41,7 +41,7 @@ export const CartProductAmountInput: FC<Props> = ({ data }) => {
         ...data,
         quantity: value
       }
-      updateQuantity(cartItem.modelId,value)
+      updateQuantity(cartItem.modelId, value)
     }
   }, [value])
 
@@ -67,8 +67,9 @@ export const CartProductAmountInput: FC<Props> = ({ data }) => {
         onClick={() => {
           deleteFromCart(data.modelId)
         }}
+        className={style.deleteButton}
       >
-        削除
+        Delete
       </button>
     </div>
   )

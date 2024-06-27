@@ -62,10 +62,7 @@ export default async function Page({ params }: Props) {
       label: 'サイトURL',
       children: <ExternalLink href={userData?.site_url || ''}>{userData?.site_url}</ExternalLink>,
       span: 3
-    }
-  ]
-
-  const addressItems: DescriptionsProps['items'] = [
+    },
     {
       key: 'address',
       label: '住所',
@@ -85,19 +82,11 @@ export default async function Page({ params }: Props) {
         </div>
       ),
       span: 3
-    }
-  ]
-  const nameItems: DescriptionsProps['items'] = [
-    {
-      key: 'contactName',
-      label: 'お名前',
-      children: userData?.contact_name,
-      span: 3
     },
     {
-      key: 'contactKana',
-      label: 'お名前(フリガナ)',
-      children: userData?.contact_kana,
+      key: 'contactName',
+      label: <>担当者名</>,
+      children: `${userData?.contact_name} (${userData?.contact_kana})`,
       span: 3
     }
   ]
@@ -123,21 +112,11 @@ export default async function Page({ params }: Props) {
             title="会社情報"
             items={items}
           />
-          <Descriptions
-            labelStyle={LabelStyle}
-            style={{ marginBottom: 16 }}
-            bordered
-            items={addressItems}
-          />
-          <Descriptions
-            labelStyle={LabelStyle}
-            style={{ marginBottom: 16 }}
-            bordered
-            items={nameItems}
-          />
           <Descriptions labelStyle={LabelStyle} bordered items={systemItems} />
         </Card>
-        <Card title="注文履歴">{orders ? <UserOrdersTable dataSource={orders} /> : <Empty />}</Card>
+        <Card title="注文履歴">
+          {orders && orders?.length > 0 ? <UserOrdersTable dataSource={orders} /> : <Empty />}
+        </Card>
       </Col>
       <Col span={6}>
         <Card>

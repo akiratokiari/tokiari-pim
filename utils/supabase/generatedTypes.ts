@@ -13,13 +13,17 @@ export type Database = {
           contact_name: string
           created_at: string
           deleted_at: string | null
+          delivery_date: string | null
+          delivery_time: string | null
           id: string
           is_delivered: boolean | null
+          option: number | null
           payment_intent: string | null
           payment_status: number
           phone: string
           postal_code: string
           prefecture: string
+          remarks: string | null
           street_address: string
           updated_at: string
           user_id: string
@@ -33,13 +37,17 @@ export type Database = {
           contact_name: string
           created_at?: string
           deleted_at?: string | null
+          delivery_date?: string | null
+          delivery_time?: string | null
           id?: string
           is_delivered?: boolean | null
+          option?: number | null
           payment_intent?: string | null
           payment_status: number
           phone: string
           postal_code: string
           prefecture: string
+          remarks?: string | null
           street_address: string
           updated_at?: string
           user_id: string
@@ -53,13 +61,17 @@ export type Database = {
           contact_name?: string
           created_at?: string
           deleted_at?: string | null
+          delivery_date?: string | null
+          delivery_time?: string | null
           id?: string
           is_delivered?: boolean | null
+          option?: number | null
           payment_intent?: string | null
           payment_status?: number
           phone?: string
           postal_code?: string
           prefecture?: string
+          remarks?: string | null
           street_address?: string
           updated_at?: string
           user_id?: string
@@ -207,6 +219,7 @@ export type Database = {
           material: string
           product_code: string
           product_group_code: string
+          publish_status: number
           sales_started_at: string
           title: string
           updated_at: string
@@ -223,6 +236,7 @@ export type Database = {
           material: string
           product_code: string
           product_group_code: string
+          publish_status?: number
           sales_started_at: string
           title: string
           updated_at?: string
@@ -239,6 +253,7 @@ export type Database = {
           material?: string
           product_code?: string
           product_group_code?: string
+          publish_status?: number
           sales_started_at?: string
           title?: string
           updated_at?: string
@@ -253,6 +268,7 @@ export type Database = {
           id: string
           model_number: string
           order_id: string
+          payment_status: number
           price: number
           product_group_code: string
           series_number: string
@@ -265,6 +281,7 @@ export type Database = {
           id?: string
           model_number: string
           order_id: string
+          payment_status: number
           price: number
           product_group_code: string
           series_number: string
@@ -277,6 +294,7 @@ export type Database = {
           id?: string
           model_number?: string
           order_id?: string
+          payment_status?: number
           price?: number
           product_group_code?: string
           series_number?: string
