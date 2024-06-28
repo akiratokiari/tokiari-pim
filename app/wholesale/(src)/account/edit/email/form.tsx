@@ -25,9 +25,11 @@ export const Form = () => {
             </label>
             <div style={{ marginTop: 5, display: 'flex', gap: 10 }}>
               <input id="email" name="email" type="email" required />
-              <Button color="black" type="submit">
-                変更する
-              </Button>
+              <div style={{ maxWidth: 100 }}>
+                <Button color="black" type="submit">
+                  変更する
+                </Button>
+              </div>
             </div>
           </form>
         </>

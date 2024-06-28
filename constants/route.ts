@@ -20,6 +20,8 @@ export const ADMIN_PRODUCT_VARIANT_DETAIL_ROUTE = '/admin/products/[id]/[variant
 export const ADMIN_PRODUCT_VARIANT_DETAIL_EDIT_ROUTE = '/admin/products/[id]/[variantId]/edit'
 export const ADMIN_PRODUCT_VARIANT_DETAIL_EDIT_IMAGE_ROUTE =
   '/admin/products/[id]/[variantId]/edit/images'
+export const ADMIN_PRODUCT_VARIANT_DETAIL_EDIT_SIZE_ROUTE =
+  '/admin/products/[id]/[variantId]/edit/size'
 export const ADMIN_PRODUCTS_CREATE_ROUTE = '/admin/products/create'
 
 export const WHOLESALE_ROUTE = '/wholesale'

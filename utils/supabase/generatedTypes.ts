@@ -13,6 +13,7 @@ export type Database = {
           contact_name: string
           created_at: string
           deleted_at: string | null
+          delivery_code: string | null
           delivery_date: string | null
           delivery_time: string | null
           id: string
@@ -37,6 +38,7 @@ export type Database = {
           contact_name: string
           created_at?: string
           deleted_at?: string | null
+          delivery_code?: string | null
           delivery_date?: string | null
           delivery_time?: string | null
           id?: string
@@ -61,6 +63,7 @@ export type Database = {
           contact_name?: string
           created_at?: string
           deleted_at?: string | null
+          delivery_code?: string | null
           delivery_date?: string | null
           delivery_time?: string | null
           id?: string
@@ -155,15 +158,7 @@ export type Database = {
           series_number?: string
           updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: 'product_variants_product_id_fkey'
-            columns: ['product_id']
-            isOneToOne: false
-            referencedRelation: 'products'
-            referencedColumns: ['id']
-          }
-        ]
+        Relationships: []
       }
       product_variants_size: {
         Row: {
@@ -216,7 +211,6 @@ export type Database = {
           id: string
           jicfs_code: string
           kana: string
-          material: string
           product_code: string
           product_group_code: string
           publish_status: number
@@ -233,7 +227,6 @@ export type Database = {
           id?: string
           jicfs_code: string
           kana: string
-          material: string
           product_code: string
           product_group_code: string
           publish_status?: number
@@ -250,7 +243,6 @@ export type Database = {
           id?: string
           jicfs_code?: string
           kana?: string
-          material?: string
           product_code?: string
           product_group_code?: string
           publish_status?: number

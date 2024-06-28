@@ -13,6 +13,8 @@ import { createClient } from '@/utils/supabase/server'
 import { DisplayVariants } from '@/components/Admin/DisplayVariants'
 import { DeleteProductButton } from '@/components/Admin/Button/DeleteProductButton'
 import { LabelStyle } from '@/constants/adminCSS'
+import { DisplayPublishStatus } from '@/components/Admin/DisplayPublishStatus'
+import { UpdateProductPublishStatusButton } from '@/components/Admin/Button/UpdateProductPublishStatusButton'
 
 type Props = {
   params: {
@@ -74,6 +76,12 @@ export default async function Page({ params }: Props) {
       label: '販売開始日時',
       children: productData.sales_started_at,
       span: 3
+    },
+    {
+      key: 'publishStatus',
+      label: '公開状況',
+      children: <DisplayPublishStatus publish_status={productData.publish_status} />,
+      span: 3
     }
   ]
   const items: DescriptionsProps['items'] = [
@@ -100,17 +108,12 @@ export default async function Page({ params }: Props) {
       label: 'カテゴリ',
       children: productData.category,
       span: 3
-    },
-    {
-      key: 'material',
-      label: '素材',
-      children: productData.material,
-      span: 3
     }
   ]
 
   const variants = productData.product_variants.map((pv) => {
     return {
+      key: pv.id,
       id: pv.id,
       title: pv.color,
       thumbnailUrl: pv?.product_images[0]?.image_url || ''
@@ -125,7 +128,10 @@ export default async function Page({ params }: Props) {
           title="商品情報"
           style={{ marginBottom: 16 }}
           extra={[
-            <Button href={toHref(ADMIN_PRODUCTS_DETAIL_EDIT_ROUTE, { id: params.id })}>
+            <Button
+              key="productDetail"
+              href={toHref(ADMIN_PRODUCTS_DETAIL_EDIT_ROUTE, { id: params.id })}
+            >
               編集する
             </Button>
           ]}
@@ -157,7 +163,10 @@ export default async function Page({ params }: Props) {
         <Card
           title="バリエーション"
           extra={[
-            <Link href={toHref(ADMIN_PRODUCTS_DETAIL_VARIANT_CREATE_ROUTE, { id: params.id })}>
+            <Link
+              key="variation"
+              href={toHref(ADMIN_PRODUCTS_DETAIL_VARIANT_CREATE_ROUTE, { id: params.id })}
+            >
               <Button block>バリエーションを追加する</Button>
             </Link>
           ]}
@@ -166,6 +175,12 @@ export default async function Page({ params }: Props) {
         </Card>
       </Col>
       <Col span={6}>
+        <Card style={{ marginBottom: 16 }}>
+          <UpdateProductPublishStatusButton
+            publish_status={productData.publish_status}
+            productId={params.id}
+          />
+        </Card>
         <Card>
           <DeleteProductButton productId={params.id} />
         </Card>

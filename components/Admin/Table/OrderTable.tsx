@@ -112,13 +112,11 @@ export const OrderTable: FC<Props> = ({ dataSource, pagination, searchParams }) 
   }
 
   return (
-    <Card>
-      <Table
-        columns={columns}
-        dataSource={tableData}
-        pagination={pagination}
-        onChange={onPaginationChange}
-      />
-    </Card>
+    <Table
+      columns={columns}
+      dataSource={tableData}
+      pagination={pagination}
+      onChange={onPaginationChange}
+    />
   )
 }

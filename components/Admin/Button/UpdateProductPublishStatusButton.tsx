@@ -6,11 +6,11 @@ import { useRouter } from 'next/navigation'
 import { FC } from 'react'
 
 type Props = {
-  variantId: string
+  productId: string
   publish_status: number
 }
 
-export const UpdateVariantPublishStatusButton: FC<Props> = ({ variantId, publish_status }) => {
+export const UpdateProductPublishStatusButton: FC<Props> = ({ productId, publish_status }) => {
   const isPublished = publish_status === PRODUCT_PUBLISH_STATUS.Public ? true : false
   const supabase = createClient()
   const router = useRouter()
@@ -23,13 +23,13 @@ export const UpdateVariantPublishStatusButton: FC<Props> = ({ variantId, publish
       content: '',
       async onOk() {
         const { error } = await supabase
-          .from('product_variants')
+          .from('products')
           .update({
             publish_status: isPublished
               ? PRODUCT_PUBLISH_STATUS.Private
               : PRODUCT_PUBLISH_STATUS.Public
           })
-          .eq('id', variantId)
+          .eq('id', productId)
 
         if (error) {
           message.error('予期せぬエラーが発生しました')

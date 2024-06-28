@@ -14,9 +14,9 @@ export async function login(_: string | null, formData: FormData) {
     password: formData.get('password') as string
   }
 
-  const { error, data } = await supabase.auth.signInWithPassword(payload)
+  const { error } = await supabase.auth.signInWithPassword(payload)
   if (error) {
-    return '予期せぬエラーが発生しました'
+    return 'ログイン情報が間違っています'
   }
 
   const userData = await supabase
@@ -30,7 +30,7 @@ export async function login(_: string | null, formData: FormData) {
     (userData.data && userData.data.user_role !== USER_ROLE.Admin)
   ) {
     await supabase.auth.signOut()
-    return '予期せぬエラーが発生しました'
+    return 'ログイン情報が間違っています'
   }
 
   revalidatePath('/', 'layout')

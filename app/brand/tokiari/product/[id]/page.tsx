@@ -17,7 +17,6 @@ const Page: FC<Props> = async ({ params }) => {
       <div className={style.series}>{decodeURI(params.id)}</div>
       <div className={style.infoWrapper}>
         <div>値段　：{product?.model[0].sellingPrice}</div>
-        <div>素材　：{product?.model[0].material}</div>
         <div>発売日：{product?.model[0].salesStartedAt}</div>
       </div>
       <div className={style.modelWrapper}>

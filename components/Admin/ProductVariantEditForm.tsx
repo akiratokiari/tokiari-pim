@@ -14,7 +14,6 @@ import { PageHeader } from './PageHeader'
 import { createClient } from '@/utils/supabase/client'
 import toHref from '@/helper/toHref'
 import { ColorArray } from '@/constants/color'
-import { SizeArray } from '@/constants/size'
 import { ProductVariantsRowType, ProductVariantsSizeRowType } from '@/utils/supabase/type'
 
 type Props = {
@@ -79,13 +78,7 @@ export const ProductVariantEditForm: FC<Props> = ({ variantId, productId }) => {
       form.setFieldsValue({
         color: productData.color,
         series_number: productData.series_number,
-        price: productData.price,
-        variant:
-          productData.product_variants_size.map((pvs: any) => ({
-            product_size: pvs.product_size,
-            model_number: pvs.model_number,
-            gtin_code: pvs.gtin_code
-          })) || []
+        price: productData.price
       })
     }
   }, [productData, form, setProductData])
@@ -102,35 +95,28 @@ export const ProductVariantEditForm: FC<Props> = ({ variantId, productId }) => {
       price: values.price,
       series_number: values.series_number
     }
-    const { error } = await supabase
+    const { error: variantError } = await supabase
       .from('product_variants')
       .update({ ..._productVariant })
       .eq('id', productData.id)
       .select()
 
-    if (error) {
-      return message.error('予期せぬエラーが発生しました')
+    if (variantError) {
+      setIsSending(false)
+      return message.error(variantError.message)
     }
 
-    await supabase.from('product_variants_size').delete().eq('product_variant_id', productData.id)
+    const { error: deleteError } = await supabase
+      .from('product_variants_size')
+      .delete()
+      .eq('product_variant_id', productData.id)
 
-    // variant_sizeのupdate
-    const _size = values.variant.map((v: any) => {
-      return {
-        product_variant_id: productData.id,
-        product_size: v.product_size,
-        model_number: v.model_number,
-        gtin_code: v.gtin_code
-      }
-    })
+    if (deleteError) {
+      setIsSending(false)
+      return message.error(deleteError.message)
+    }
 
-    _size.map(async (vs: any) => {
-      await supabase
-        .from('product_variants_size')
-        .insert({ ...vs })
-        .eq('model_number', vs.model_number)
-    })
-
+    message.error('編集されました')
     router.push(
       toHref(ADMIN_PRODUCT_VARIANT_DETAIL_ROUTE, { id: productId, variantId: productData.id })
     )
@@ -160,59 +146,12 @@ export const ProductVariantEditForm: FC<Props> = ({ variantId, productId }) => {
           </Card>
           <Card title="値段情報" style={{ marginBottom: '16px' }}>
             <Form.Item name="price" label="販売価格" rules={[{ required: true }]}>
-              <InputNumber style={{ width: '100%' }} />
-            </Form.Item>
-          </Card>
-          <Card title="サイズ展開">
-            <Form.Item name="variant" style={{ marginBottom: -24 }}>
-              <Form.List name="variant">
-                {(fields, { add, remove }, { errors }) => (
-                  <>
-                    {fields.map((field) => (
-                      <div key={field.key} style={{ display: 'flex' }}>
-                        <Form.Item
-                          name={[field.name, 'product_size']}
-                          rules={[{ required: true, message: 'サイズは必須項目です' }]}
-                          style={{ width: '33.3%' }}
-                        >
-                          <Select placeholder="サイズ">
-                            {SizeArray.map((s, index) => {
-                              return (
-                                <Select.Option key={index} value={s}>
-                                  {s}
-                                </Select.Option>
-                              )
-                            })}
-                          </Select>
-                        </Form.Item>
-                        <Form.Item
-                          name={[field.name, 'model_number']}
-                          rules={[{ required: true, message: 'モデル番号は必須項目です' }]}
-                          style={{ width: '33.3%', margin: '0 16px' }}
-                        >
-                          <Input placeholder="モデル番号" />
-                        </Form.Item>
-                        <Form.Item
-                          name={[field.name, 'gtin_code']}
-                          rules={[{ required: true, message: 'GTIN番号は必須項目です' }]}
-                          style={{ width: '33.3%', marginRight: 16 }}
-                        >
-                          <Input placeholder="GTIN番号" />
-                        </Form.Item>
-                        <Button onClick={() => remove(field.name)} type="dashed" danger>
-                          削除
-                        </Button>
-                      </div>
-                    ))}
-                    <Form.Item>
-                      <Button onClick={() => add()} style={{ width: '100%' }}>
-                        サイズを追加する
-                      </Button>
-                      <Form.ErrorList errors={errors} />
-                    </Form.Item>
-                  </>
-                )}
-              </Form.List>
+              <InputNumber<number>
+                defaultValue={1000}
+                formatter={(value) => `¥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                parser={(value) => value?.replace(/\¥\s?|(,*)/g, '') as unknown as number}
+                style={{ width: '100%' }}
+              />
             </Form.Item>
           </Card>
         </Col>

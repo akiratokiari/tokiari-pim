@@ -1,6 +1,6 @@
 import { PageHeader } from '@/components/Admin/PageHeader'
 import { ADMIN_REQUESTS_ROUTE, ADMIN_ROUTE } from '@/constants/route'
-import { Col, Empty, Row } from 'antd'
+import { Card, Col, Empty, Row } from 'antd'
 import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
 import { OrderTable } from '@/components/Admin/Table/OrderTable'
@@ -43,11 +43,13 @@ export default async function Page({ searchParams }: Props) {
     <Row gutter={[24, 24]}>
       <Col span={18}>
         <PageHeader title="注文一覧" routes={routes} />
-        {data ? (
-          <OrderTable dataSource={data} pagination={pagination} searchParams={searchParams} />
-        ) : (
-          <Empty />
-        )}
+        <Card>
+          {data && data?.length > 0 ? (
+            <OrderTable dataSource={data} pagination={pagination} searchParams={searchParams} />
+          ) : (
+            <Empty />
+          )}
+        </Card>
       </Col>
       <Col span={6}>
         <OrdersSearchForm

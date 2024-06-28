@@ -14,9 +14,10 @@ export async function resetUserPassword(
   const supabase = createClient()
   const email = formData.get('email') as string
 
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+  const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${getBaseUrl() + WHOLESALE_UPDATE_PASSWORD}`
   })
+
   if (error) {
     return { isComplete: false, message: '予期せぬエラーが発生しました' }
   }

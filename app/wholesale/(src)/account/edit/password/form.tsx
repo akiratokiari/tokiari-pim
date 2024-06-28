@@ -15,19 +15,19 @@ export const Form = () => {
         <>
           {status.message}
           <form action={formAction}>
-            <label style={{ fontSize: 14, fontWeight: 'bold' }} htmlFor="password">
+            <label style={{ fontSize: 14 }} htmlFor="password">
               新しいパスワード
             </label>
             <div style={{ marginTop: 5, display: 'flex', gap: 10 }}>
               <input id="password" name="password" type="password" required />
             </div>
-            <label style={{ fontSize: 14, fontWeight: 'bold' }} htmlFor="re-password">
-              新しいパスワード
+            <label style={{ fontSize: 14 }} htmlFor="re-password">
+              新しいパスワード(確認用)
             </label>
             <div style={{ marginTop: 5, display: 'flex', gap: 10 }}>
               <input id="re-password" name="re-password" type="password" required />
             </div>
-            <div style={{ marginTop: 20 }}>
+            <div style={{ marginTop: 20, maxWidth: 100 }}>
               <Button color="black" type="submit">
                 変更する
               </Button>

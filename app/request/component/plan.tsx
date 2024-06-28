@@ -116,7 +116,6 @@ export const Plan = () => {
                 <DisplayFormValue label="サイト" value={formData.site_url} />
                 <DisplayFormValue label="メールアドレス" value={formData.email} />
                 <DisplayFormValue label="パスワード" value={formData.password} />
-                <DisplayFormValue label="会社名" value={formData.company} />
                 <DisplayFormValue label="電話番号" value={formData.phone} />
                 <DisplayFormValue label="担当者(お名前)" value={formData.contact_name} />
                 <DisplayFormValue label="担当者(フリガナ)" value={formData.contact_kana} />

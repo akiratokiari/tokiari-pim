@@ -1,5 +1,5 @@
 'use client'
-import { Button, Card, Col, DatePicker, Form, Input,  message, Row, Select } from 'antd'
+import { Button, Card, Col, DatePicker, Form, Input, message, Row, Select } from 'antd'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { FC, useEffect, useState } from 'react'
@@ -14,6 +14,7 @@ import { createClient } from '@/utils/supabase/client'
 import toHref from '@/helper/toHref'
 import moment from 'moment'
 import { CategoryArray } from '@/constants/category'
+import { ProductsUpdateType } from '@/utils/supabase/type'
 
 type Props = {
   productId: string
@@ -49,7 +50,6 @@ export const ProductEditForm: FC<Props> = ({ productId }) => {
         kana: productData.kana,
         description: productData.description,
         category: productData.category,
-        material: productData.material,
         product_code: productData.product_code,
         jicfs_code: productData.jicfs_code,
         gpc_code: productData.gpc_code,
@@ -65,15 +65,15 @@ export const ProductEditForm: FC<Props> = ({ productId }) => {
   }
 
   const onFinish = async (values: any) => {
+    console.log('hi')
     if (isSending) return
     setIsSending(true)
 
-    const _product = {
+    const _product: ProductsUpdateType = {
       // =============================
       title: values.title,
       description: values.description,
       kana: values.kana,
-      material: values.material,
       category: values.category,
       // =============================
       product_code: values.product_code,
@@ -83,16 +83,23 @@ export const ProductEditForm: FC<Props> = ({ productId }) => {
       // =============================
       sales_started_at: values.sales_started_at
     }
-    const { error } = await supabase
+
+    const { data, error } = await supabase
       .from('products')
       .update({ ..._product })
       .eq('id', productData.id)
       .select()
       .single()
+
     if (error) {
-      message.error('エラーが発生しました')
+      message.error(error.message)
+      setIsSending(false)
     }
-    router.push(toHref(ADMIN_PRODUCTS_DETAIL_ROUTE, { id: productId }))
+
+    if (data) {
+      message.success('編集されました')
+      router.push(toHref(ADMIN_PRODUCTS_DETAIL_ROUTE, { id: productId }))
+    }
   }
 
   return (
@@ -112,13 +119,14 @@ export const ProductEditForm: FC<Props> = ({ productId }) => {
             </Form.Item>
             <Form.Item name="category" label="カテゴリー" rules={[{ required: true }]}>
               <Select>
-                {CategoryArray.map((c) => {
-                  return <Select.Option value={c}>{c}</Select.Option>
+                {CategoryArray.map((c, index) => {
+                  return (
+                    <Select.Option key={index} value={c}>
+                      {c}
+                    </Select.Option>
+                  )
                 })}
               </Select>
-            </Form.Item>
-            <Form.Item name="material" label="素材" rules={[{ required: true }]}>
-              <Input />
             </Form.Item>
           </Card>
           <Card title="コード情報" style={{ marginBottom: '16px' }}>

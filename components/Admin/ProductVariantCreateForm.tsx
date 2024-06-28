@@ -1,5 +1,16 @@
 'use client'
-import { Button, Card, Col, Form, Input, InputNumber, message, Row, Select } from 'antd'
+import {
+  Button,
+  Card,
+  Col,
+  Form,
+  Input,
+  InputNumber,
+  InputNumberProps,
+  message,
+  Row,
+  Select
+} from 'antd'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { FC, useState } from 'react'
@@ -14,7 +25,7 @@ import { PageHeader } from './PageHeader'
 import { createClient } from '@/utils/supabase/client'
 import toHref from '@/helper/toHref'
 import { ColorArray } from '@/constants/color'
-import { SizeArray } from '@/constants/size'
+import { ProductVariantsInsertType } from '@/utils/supabase/type'
 
 type Props = {
   productId: string
@@ -42,7 +53,7 @@ export const ProductVariantCreateForm: FC<Props> = ({ productId }) => {
     if (isSending) return
     setIsSending(true)
 
-    const _productVariant = {
+    const _productVariant: ProductVariantsInsertType = {
       product_id: productId,
       color: values.color,
       series_number: values.series_number,
@@ -56,27 +67,16 @@ export const ProductVariantCreateForm: FC<Props> = ({ productId }) => {
       .single()
 
     if (error) {
-      return message.error('予期せぬエラーが発生しました')
+      setIsSending(false)
+      return message.error(error.message)
     }
 
-    const _size = values.variant.map((v: any) => {
-      return {
-        product_variant_id: productVariant.id,
-        product_size: v.product_size,
-        model_number: v.model_number,
-        gtin_code: v.gtin_code
-      }
-    })
-
-    _size.map(async (vs: any) => {
-      await supabase
-        .from('product_variants_size')
-        .insert({ ...vs })
-        .select()
-    })
-
+    message.error('作成されました')
     router.push(
-      toHref(ADMIN_PRODUCT_VARIANT_DETAIL_ROUTE, { id: productId, variantId: productVariant.id })
+      toHref(ADMIN_PRODUCT_VARIANT_DETAIL_ROUTE, {
+        id: productId,
+        variantId: productVariant.id
+      })
     )
     router.refresh()
   }
@@ -89,8 +89,12 @@ export const ProductVariantCreateForm: FC<Props> = ({ productId }) => {
           <Card title="基本情報" style={{ marginBottom: '16px' }}>
             <Form.Item name="color" label="色" rules={[{ required: true }]}>
               <Select placeholder="色">
-                {ColorArray.map((c) => {
-                  return <Select.Option value={c.value}>{c.value}</Select.Option>
+                {ColorArray.map((c, index) => {
+                  return (
+                    <Select.Option key={index} value={c.value}>
+                      {c.value}
+                    </Select.Option>
+                  )
                 })}
               </Select>
             </Form.Item>
@@ -100,55 +104,12 @@ export const ProductVariantCreateForm: FC<Props> = ({ productId }) => {
           </Card>
           <Card title="値段情報" style={{ marginBottom: '16px' }}>
             <Form.Item name="price" label="販売価格" rules={[{ required: true }]}>
-              <InputNumber style={{ width: '100%' }} />
-            </Form.Item>
-          </Card>
-          <Card title="サイズ展開">
-            <Form.Item name="variant" style={{ marginBottom: -24 }}>
-              <Form.List name="variant">
-                {(fields, { add, remove }, { errors }) => (
-                  <>
-                    {fields.map((field) => (
-                      <div key={field.key} style={{ display: 'flex' }}>
-                        <Form.Item
-                          name={[field.name, 'product_size']}
-                          rules={[{ required: true, message: 'サイズは必須項目です' }]}
-                          style={{ width: '33.3%' }}
-                        >
-                          <Select placeholder="サイズ">
-                            {SizeArray.map((s) => {
-                              return <Select.Option value={s}>{s}</Select.Option>
-                            })}
-                          </Select>
-                        </Form.Item>
-                        <Form.Item
-                          name={[field.name, 'model_number']}
-                          rules={[{ required: true, message: 'モデル番号は必須項目です' }]}
-                          style={{ width: '33.3%', margin: '0 16px' }}
-                        >
-                          <Input placeholder="モデル番号" />
-                        </Form.Item>
-                        <Form.Item
-                          name={[field.name, 'gtin_code']}
-                          rules={[{ required: true, message: 'GTIN番号は必須項目です' }]}
-                          style={{ width: '33.3%', marginRight: 16 }}
-                        >
-                          <Input placeholder="GTIN番号" />
-                        </Form.Item>
-                        <Button onClick={() => remove(field.name)} type="dashed" danger>
-                          削除
-                        </Button>
-                      </div>
-                    ))}
-                    <Form.Item>
-                      <Button onClick={() => add()} style={{ width: '100%' }}>
-                        サイズを追加する
-                      </Button>
-                      <Form.ErrorList errors={errors} />
-                    </Form.Item>
-                  </>
-                )}
-              </Form.List>
+              <InputNumber<number>
+                defaultValue={1000}
+                formatter={(value) => `¥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                parser={(value) => value?.replace(/\¥\s?|(,*)/g, '') as unknown as number}
+                style={{ width: '100%' }}
+              />
             </Form.Item>
           </Card>
         </Col>
