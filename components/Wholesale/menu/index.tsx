@@ -8,6 +8,8 @@ import Link from 'next/link'
 import { WHOLESALE_ACCOUNT_ROUTE } from '@/constants/route'
 import MenuSVG from '../../../public/menu_24.svg'
 import Image from 'next/image'
+import { LogoutButton } from '../logoutButton'
+import { Button } from '@/components/button'
 
 export default function Menu() {
   const { isOpen, close, open } = useContext(MenuContext)
@@ -67,9 +69,11 @@ export default function Menu() {
             <Link className={styles.menu} href={'/wholesale/search'}>
               PRODUCTS
             </Link>
-            <Link className={styles.menu} href={WHOLESALE_ACCOUNT_ROUTE}>
-              ACCOUNT
+            <div className={styles.border} />
+            <Link style={{ marginBottom: 10 }} href={WHOLESALE_ACCOUNT_ROUTE}>
+              <Button color="black">アカウント</Button>
             </Link>
+            <LogoutButton />
             <div className={styles.border} />
             <Link className={styles.menu} href={WHOLESALE_ACCOUNT_ROUTE}>
               特定商取引法に基づく表示

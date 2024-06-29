@@ -1,4 +1,5 @@
 'use client'
+import { Button } from '@/components/button'
 import { WHOLESALE_LOGIN_ROUTE } from '@/constants/route'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -6,7 +7,7 @@ import { ButtonHTMLAttributes, FC } from 'react'
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement>
 
-export const LogoutButton: FC<Props> = ({ ...props }) => {
+export const LogoutButton: FC<Props> = () => {
   const router = useRouter()
   const supabase = createClient()
   const signOut = async () => {
@@ -21,8 +22,8 @@ export const LogoutButton: FC<Props> = ({ ...props }) => {
   }
 
   return (
-    <button onClick={signOut} {...props}>
+    <Button color="white" onClick={signOut}>
       ログアウト
-    </button>
+    </Button>
   )
 }

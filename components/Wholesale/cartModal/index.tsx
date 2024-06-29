@@ -76,9 +76,7 @@ export default function CartModal() {
               })
             ) : (
               <div>
-                <div style={{ textAlign: 'center', marginTop: 20, fontWeight: 'bold' }}>
-                  カートは空です
-                </div>
+                <div style={{ textAlign: 'center', marginTop: 40 }}>カートは空です</div>
               </div>
             )}
           </div>
