@@ -31,11 +31,11 @@ export const ShippingStatusButton: FC<Props> = ({ orderId }) => {
           message.error('予期せぬエラーが発生しました')
         }
         if (!error) {
-          message.success('承認しました')
+          message.success('送信しました')
           // router.push(toHref(ADMIN_USERS_DETAIL_ROUTE, { id: data[0].id }))
         }
       },
-      okText: '承認する',
+      okText: '送信する',
       cancelText: 'キャンセル'
     })
   }

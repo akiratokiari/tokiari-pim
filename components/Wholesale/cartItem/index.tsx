@@ -6,6 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { WHOLESALE_PRODUCTS_DETAIL_ROUTE } from '@/constants/route'
 import toHref from '@/helper/toHref'
+import { blurDataURL } from '@/constants/blurDataURL'
 
 type Props = {
   data: CartItemType
@@ -15,7 +16,25 @@ export const CartItem: FC<Props> = ({ data }) => {
   return (
     <div className={style.itemWrapper}>
       <div className={style.imageWrapper}>
-        {data.thumbnail ? <Image src={data.thumbnail} fill alt="" /> : <div />}
+        {data.thumbnail ? (
+          <Image
+            src={data.thumbnail}
+            fill
+            alt=""
+            blurDataURL={blurDataURL}
+            placeholder="blur"
+            priority
+          />
+        ) : (
+          <Image
+            src={blurDataURL}
+            fill
+            alt=""
+            blurDataURL={blurDataURL}
+            placeholder="blur"
+            priority
+          />
+        )}
       </div>
       <div className={style.item}>
         <div className={style.descriptionWrapper}>

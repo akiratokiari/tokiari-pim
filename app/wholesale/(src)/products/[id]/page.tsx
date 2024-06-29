@@ -4,6 +4,8 @@ import { createClient } from '@/utils/supabase/server'
 import style from './style.module.css'
 import { ProductDetailColorSelector } from '@/components/Wholesale/productDetailColorSelector'
 import { PRODUCT_PUBLISH_STATUS } from '@/constants/app'
+import Image from 'next/image'
+import { blurDataURL } from '@/constants/blurDataURL'
 
 type Props = {
   params: {
@@ -50,7 +52,14 @@ export default async function Page({ params, searchParams }: Props) {
             {currentVariants && currentVariants?.product_images.length > 0 ? (
               <ProductGallery data={currentVariants.product_images} />
             ) : (
-              <div style={{ backgroundColor: 'white', width: '100%', aspectRatio: '1/1.25' }} />
+              <Image
+                src={blurDataURL}
+                fill
+                alt=""
+                blurDataURL={blurDataURL}
+                placeholder="blur"
+                priority
+              />
             )}
           </div>
         </div>
@@ -85,7 +94,7 @@ export default async function Page({ params, searchParams }: Props) {
           </div>
           <div className={style.description}>{products.description}</div>
           <div className={style.attention}>
-            ＊ 全国一律700円 ※北海道1,300円・沖縄1,800円 3万円以上のお買上で送料無料
+            ＊ ここに送料に関しても注意書きが入ります
           </div>
         </div>
       </div>

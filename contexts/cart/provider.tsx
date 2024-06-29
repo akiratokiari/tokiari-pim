@@ -26,6 +26,10 @@ export const CartProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
     }
   }, [cart])
 
+  const resetCart = () => {
+    setCart([])
+  }
+
   const addToCart = (addItem: CartItemType) => {
     const isProductExist = cart.find((c) => c.modelId === addItem.modelId)
 
@@ -61,7 +65,8 @@ export const CartProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
     openCart,
     updateQuantity,
     deleteFromCart,
-    closeCart
+    closeCart,
+    resetCart
   }
 
   // CartContext.Provider で子コンポーネントをラップしてコンテキストを提供

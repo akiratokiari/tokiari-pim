@@ -1,7 +1,4 @@
-import { PageHeader } from '@/components/Admin/PageHeader'
-import { ADMIN_ROUTE, ADMIN_SHIPPING_ROUTE } from '@/constants/route'
 import { Card, Col, Empty, Row } from 'antd'
-import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
 import { ShippingTable } from '@/components/Admin/Table/ShippingTable'
 import { ORDER_PAYMENT_STATUS } from '@/constants/app'
@@ -34,28 +31,3 @@ export default async function Page() {
     </Row>
   )
 }
-
-// const PAGE_SIZE = 10
-// const currentPage = Number(searchParams.current) || 1
-// const supabase = createClient()
-
-// let query = supabase.from('users').select('*', { count: 'exact' }).is('user_role', null)
-
-// const from = (currentPage - 1) * PAGE_SIZE
-// const to = from + PAGE_SIZE - 1
-// const { data, count } = await query.range(from, to)
-
-// const pagination = {
-//   current: currentPage,
-//   total: count || 0,
-//   pageSize: PAGE_SIZE
-// }
-
-// return (
-//   <Row gutter={[24, 24]}>
-//     <Col span={24}>
-//       <PageHeader title="リクエスト一覧" routes={routes} />
-//       <RequestTable dataSource={data || []} pagination={pagination} searchParams={searchParams} />
-//     </Col>
-//   </Row>
-// )

@@ -7,7 +7,6 @@
 
 .buttonWrapper {
   margin: 0 auto;
-  max-width: 300px;
 }
 
 .menuWrapper {
@@ -47,5 +46,5 @@
   justify-content: space-between;
   align-items: center;
   background: WHITE;
-  padding: 10px;
+  padding: 10px 20px;
 }

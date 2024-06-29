@@ -8,6 +8,8 @@ import { WHOLESALE_CART_ROUTE } from '@/constants/route'
 import { CartContext } from '@/contexts/cart/context'
 import { Button } from '@/components/button'
 import { CartItem } from '../cartItem'
+import Image from 'next/image'
+import CartSVG from '../../../public/cart.svg'
 
 export default function CartModal() {
   const router = useRouter()
@@ -63,7 +65,7 @@ export default function CartModal() {
   return (
     <>
       <button aria-label="Open cart" onClick={openCart}>
-        🛒
+        <Image src={CartSVG} alt={CartSVG} />
       </button>
       <div id="cartBody" className={styles.body}>
         <div className={styles.contents}>
@@ -84,7 +86,7 @@ export default function CartModal() {
         <div className={styles.buttonWrapper}>
           {cartItems.length > 0 && (
             <Link href={WHOLESALE_CART_ROUTE}>
-              <Button color="black">Check Out</Button>
+              <Button color="black">注文に進む</Button>
             </Link>
           )}
           <Button style={{ marginTop: 10 }} aria-label="Close cart" onClick={closeCart}>

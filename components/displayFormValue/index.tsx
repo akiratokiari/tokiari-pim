@@ -11,7 +11,7 @@ type Props = {
 export const DisplayFormValue: FC<Props> = ({ label, value, first = false, border = true }) => {
   return (
     <div>
-      {!border && first && <div className={style.borderTop} />}
+      {border && first && <div className={style.borderTop} />}
       <div
         className={style.body}
         style={{ borderBottom: border ? 'solid 1px rgb(221, 221, 221)' : 'none' }}

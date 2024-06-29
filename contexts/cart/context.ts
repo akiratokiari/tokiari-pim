@@ -23,6 +23,7 @@ type Context = {
   addToCart: (item: CartItemType) => void
   updateQuantity: (modelId: string, quantity: number) => void
   deleteFromCart: (modelId: string) => void
+  resetCart: () => void
 }
 
 export const CartContext = createContext<Context>({
@@ -32,5 +33,6 @@ export const CartContext = createContext<Context>({
   openCart() {},
   addToCart() {},
   updateQuantity() {},
-  deleteFromCart() {}
+  deleteFromCart() {},
+  resetCart() {}
 })

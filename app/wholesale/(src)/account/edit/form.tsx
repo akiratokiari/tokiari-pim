@@ -82,7 +82,7 @@ export const Form: FC<Props> = () => {
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)} className={style.form}>
-        <div className={style.section}>登録情報</div>
+        <div className={style.sectionTitle}>登録情報</div>
         <Helmet label="会社名" error={errors.company?.message}>
           <Input
             placeholder="会社名を入力してください"
@@ -138,7 +138,7 @@ export const Form: FC<Props> = () => {
             }}
           />
         </Helmet>
-        <div className={style.section}>住所情報</div>
+        <div className={style.sectionTitle}>住所情報</div>
         <Helmet label="郵便番号" error={errors.postal_code?.message}>
           <Input
             type="text"

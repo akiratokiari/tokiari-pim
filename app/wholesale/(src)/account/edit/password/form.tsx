@@ -19,15 +19,27 @@ export const Form = () => {
               新しいパスワード
             </label>
             <div style={{ marginTop: 5, display: 'flex', gap: 10 }}>
-              <input id="password" name="password" type="password" required />
+              <input
+                style={{ width: '100%' }}
+                id="password"
+                name="password"
+                type="password"
+                required
+              />
             </div>
             <label style={{ fontSize: 14 }} htmlFor="re-password">
               新しいパスワード(確認用)
             </label>
             <div style={{ marginTop: 5, display: 'flex', gap: 10 }}>
-              <input id="re-password" name="re-password" type="password" required />
+              <input
+                style={{ width: '100%' }}
+                id="re-password"
+                name="re-password"
+                type="password"
+                required
+              />
             </div>
-            <div style={{ marginTop: 20, maxWidth: 100 }}>
+            <div style={{ marginTop: 20 }}>
               <Button color="black" type="submit">
                 変更する
               </Button>

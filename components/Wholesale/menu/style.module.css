@@ -1,0 +1,111 @@
+.body,
+.openedBody {
+  width: 80%;
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 98;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (min-width: 756px) {
+  .body,
+  .openedBody {
+    max-width: 356px;
+  }
+}
+
+.body {
+  transform: translateX(100%);
+}
+.openedBody {
+  transform: translateX(100%);
+  transition: transform 0.2s ease-out;
+}
+
+.bodyOpen {
+  transform: translateX(0%);
+}
+.bodyClose {
+  transform: translateX(100%);
+}
+
+.background {
+  display: block;
+  position: fixed;
+  background-color: black;
+  opacity: 0;
+  width: 100%;
+  height: 100vh;
+  top: 0;
+  right: 0;
+  z-index: 89;
+  transition: opacity 0.2s ease-out;
+  pointer-events: none;
+}
+.backgroundOpen {
+  opacity: 0.7;
+  pointer-events: all;
+}
+.backgroundClose {
+  opacity: 0;
+}
+
+.contents {
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  background-color: white;
+}
+
+.innerContents {
+  height: 100%;
+  min-height: 100vh;
+  overflow: scroll;
+  display: flex;
+  flex-direction: column;
+}
+
+.image {
+  object-fit: cover;
+}
+
+.menuWrapper {
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 00px;
+  padding: 10px;
+  border-radius: 2px;
+}
+.menu {
+  border-radius: 2px;
+  padding: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: black;
+  font-size: 16px;
+}
+
+.subMenuWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  background-color: beige;
+}
+
+.subMenu {
+  padding: 5px 0;
+  font-size: 14px;
+  color: black;
+}
+
+.border {
+  width: 100%;
+  height: 1px;
+  background-color: gray;
+  margin: 20px 0;
+}

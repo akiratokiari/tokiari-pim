@@ -3,7 +3,7 @@ import { FC, useContext, useEffect, useState } from 'react'
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
 import { useRouter } from 'next/navigation'
-import { WHOLESALE_ROUTE } from '@/constants/route'
+import { WHOLESALE_CART_ROUTE, WHOLESALE_ROUTE } from '@/constants/route'
 import { createClient } from '@/utils/supabase/client'
 import { AccountContext } from '@/contexts/account/context'
 import { ORDER_DELIVERY_OPTION, ORDER_PAYMENT_STATUS } from '@/constants/app'
@@ -13,6 +13,11 @@ import style from './style.module.css'
 import { Button } from '@/components/button'
 import { CartProductAmountInput } from '@/components/Wholesale/cartProductAmountInput'
 import { useFormGuard } from '@/helper/useFormGuard'
+import { toQuery } from '@/helper/toQuery'
+import { PageHeader } from '@/components/Wholesale/pageHeader'
+import { DisplayFormValue } from '@/components/displayFormValue'
+import Link from 'next/link'
+import { blurDataURL } from '@/constants/blurDataURL'
 
 type Props = {
   orderId: any
@@ -79,9 +84,11 @@ const StripeElement = ({ orderId, setOrderId, setStripeClientSecret }: Props) =>
           .update({ payment_intent: result.paymentIntent?.id })
           .eq('id', orderId)
 
-        router.push(WHOLESALE_ROUTE)
+        router.replace(WHOLESALE_CART_ROUTE + toQuery({ orderId }))
+        setStripeClientSecret(null)
       })
   }
+
   return (
     <div className={style.modalElement}>
       <div className={style.modalElementInner}>
@@ -89,10 +96,12 @@ const StripeElement = ({ orderId, setOrderId, setStripeClientSecret }: Props) =>
           <PaymentElement />
           <div style={{ marginTop: 20 }}>
             <div style={{ marginBottom: 20 }}>
-              <Button color="black">支払いをする</Button>
+              <Button isLoading={loading} color="black">
+                支払いをする
+              </Button>
             </div>
             <div>
-              <Button isLoading={loading} color="white" onClick={onBack}>
+              <Button color="white" onClick={onBack}>
                 入力画面に戻る
               </Button>
             </div>
@@ -114,10 +123,16 @@ type InsertDataType = {
   payment_status: number
 }
 
-const Page: FC = () => {
+type PageProps = {
+  searchParams: {
+    orderId?: string
+  }
+}
+
+const Page: FC<PageProps> = ({ searchParams }) => {
   const [cartItems, setCartItems] = useState<CartItemType[]>([])
   const [totalAmount, setTotalAmount] = useState<number | undefined>(undefined)
-  const { cart } = useContext(CartContext)
+  const { cart, resetCart } = useContext(CartContext)
   const supabase = createClient()
   const { account } = useContext(AccountContext)
   const stripe = require('stripe')(
@@ -127,8 +142,6 @@ const Page: FC = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [stripeClientSecret, setStripeClientSecret] = useState(null)
   const [orderId, setOrderId] = useState<string | null>(null)
-  const router = useRouter()
-  const [processing, setProcessing] = useState(false)
   const [isDateInputVisible, setDateInputVisible] = useState(false)
   const [deliveryTime, setDeliveryTime] = useState('指定なし')
   const [deliveryDate, setDeliveryDate] = useState(getFourDaysLater())
@@ -147,7 +160,7 @@ const Page: FC = () => {
     return result.data
   }
 
-  useFormGuard(processing)
+  useFormGuard(isLoading)
 
   useEffect(() => {
     if (cart) {
@@ -238,9 +251,9 @@ const Page: FC = () => {
     }
 
     setIsLoading(false)
-    setProcessing(true)
     const intent = await stripe.paymentIntents.create(params)
     setStripeClientSecret(intent.client_secret)
+    resetCart()
   }
 
   function getFourDaysLater() {
@@ -264,145 +277,181 @@ const Page: FC = () => {
 
   return (
     <div className={style.body}>
-      {cart.length > 0 ? (
-        <div className={style.itemSection}>
-          {cartItems.map((ci, index) => {
-            return (
-              <div className={style.itemWrapper} key={index}>
-                <div className={style.imageWrapper}>
-                  <Image src={ci.thumbnail} fill alt="" />
-                </div>
-                <div className={style.item}>
-                  <div className={style.descriptionWrapper}>
-                    <div className={style.title}>{ci.title}</div>
-                    <div className={style.caption}>
-                      {ci.color} / {ci.size}
-                    </div>
-                    <div className={style.caption}>¥{ci.price.toLocaleString()}円</div>
-                  </div>
-                  <div className={style.inputWrapper}>
-                    <CartProductAmountInput data={ci} />
-                  </div>
-                  <div className={style.subTotalCaption}>
-                    ¥{(ci.price * ci.quantity).toLocaleString()}円
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-
-          <div className={style.footer}>
-            <div className={style.footerContent}>
-              <div className={style.shippingDateWrapper}>
-                <div className={style.label}>お届け先</div>
-                {account && (
-                  <div className={style.defaultAddressValues}>
-                    <div>
-                      <div className={style.addressLabel}>会社名</div>
-                      <div>{account.company} 様</div>
-                    </div>
-                    <div>
-                      <div className={style.addressLabel}>電話番号</div>
-                      <div>{account.phone}</div>
-                    </div>
-                    <div className={style.addressLabel}>住所</div>
-                    <div>
-                      {account.postal_code}
-                      <br />
-                      {account.prefecture}
-                      {account.city}
-                      {account.street_address}
-                      <br />
-                      {account.building_name && account.building_name}
-                    </div>
-                  </div>
-                )}
-                <div className={style.label}>配送希望日</div>
-                <div className={style.radioOptionWrapper}>
-                  <div>
-                    <input
-                      className={style.radioOption}
-                      type="radio"
-                      id="op1"
-                      name="delivery"
-                      value="希望する"
-                      onChange={handleRadioChange}
-                    />
-                    <label className={style.radioOption} htmlFor="op1">
-                      希望する
-                    </label>
-                  </div>
-                  <div>
-                    <input
-                      className={style.radioOption}
-                      type="radio"
-                      id="op2"
-                      name="delivery"
-                      value="希望しない"
-                      defaultChecked
-                      onChange={handleRadioChange}
-                    />
-                    <label className={style.radioOption} htmlFor="op2">
-                      希望しない
-                    </label>
-                  </div>
-                </div>
-                {isDateInputVisible && (
-                  <div>
-                    <input
-                      onChange={(e) => setDeliveryDate(e.target.value)}
-                      className={style.input}
-                      type="date"
-                      defaultValue={defaultDate}
-                      min={defaultDate}
-                    />
-                    <div className={style.label}>配送時間帯</div>
-                    <select
-                      required
-                      onChange={(e) => setDeliveryTime(e.target.value)}
-                      className={style.select}
-                    >
-                      <option value={'指定なし'}>指定なし</option>
-                      <option value={'午前(8:00 ~ 13:00)'}>午前(8:00 ~ 13:00)</option>
-                      <option value={'午後(13:00 ~ 17:00まで)'}>午後(13:00 ~ 17:00まで)</option>
-                    </select>
-                  </div>
-                )}
-              </div>
-              <div className={style.label}>備考欄</div>
-              <textarea
-                onChange={(e) => setTextarea(e.target.value)}
-                placeholder="何かありましたらご記入ください"
-                className={style.textarea}
-              />
-            </div>
-
-            <div className={style.footerContent}>
-              <div className={style.totalAmountWrapper}>
-                合計金額
-                {totalAmount && (
-                  <div className={style.totalAmount}>　¥{totalAmount.toLocaleString()}(税込)</div>
-                )}
-              </div>
-              <Button isLoading={isLoading} color="black" onClick={onSubmit}>
-                決済に進む
-              </Button>
-            </div>
+      <PageHeader>カート</PageHeader>
+      {searchParams.orderId ? (
+        <div>
+          <div style={{ fontWeight: 'bold', marginBottom:20 }}>ご注文ありがとうございました</div>
+          <div style={{marginBottom:20}}>ご登録いただいているメールアドレス宛に、注文詳細メールをお送りしましたので、ご確認ください。</div>
+          <DisplayFormValue first label="注文ID" value={searchParams.orderId} />
+          <div style={{ marginTop: 40 }}>
+            <Link href={WHOLESALE_ROUTE}>
+              <Button color="black">トップページに戻る</Button>
+            </Link>
           </div>
         </div>
       ) : (
-        <div style={{ marginTop: 30 }}>
-          <div className={style.title}>カートは空です</div>
-        </div>
-      )}
-      {!!stripePromise && !!stripeClientSecret && (
-        <Elements stripe={stripePromise} options={{ clientSecret: stripeClientSecret }}>
-          <StripeElement
-            orderId={orderId}
-            setOrderId={setOrderId}
-            setStripeClientSecret={setStripeClientSecret}
-          />
-        </Elements>
+        <>
+          {cart.length > 0 ? (
+            <div className={style.itemSection}>
+              {cartItems.map((ci, index) => {
+                return (
+                  <div className={style.itemWrapper} key={index}>
+                    <div className={style.imageWrapper}>
+                      {ci.thumbnail ? (
+                        <Image
+                          src={ci.thumbnail}
+                          fill
+                          alt=""
+                          blurDataURL={blurDataURL}
+                          placeholder="blur"
+                          priority
+                        />
+                      ) : (
+                        <Image
+                          src={blurDataURL}
+                          fill
+                          alt=""
+                          blurDataURL={blurDataURL}
+                          placeholder="blur"
+                          priority
+                        />
+                      )}
+                    </div>
+                    <div className={style.item}>
+                      <div className={style.descriptionWrapper}>
+                        <div className={style.title}>{ci.title}</div>
+                        <div className={style.caption}>
+                          {ci.color} / {ci.size}
+                        </div>
+                        <div className={style.caption}>¥{ci.price.toLocaleString()}円</div>
+                      </div>
+                      <div className={style.inputWrapper}>
+                        <CartProductAmountInput data={ci} />
+                      </div>
+                      <div className={style.subTotalCaption}>
+                        ¥{(ci.price * ci.quantity).toLocaleString()}円
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+
+              <div className={style.footer}>
+                <div className={style.footerContent}>
+                  <div className={style.shippingDateWrapper}>
+                    <div className={style.label}>お届け先</div>
+                    {account && (
+                      <div className={style.defaultAddressValues}>
+                        <div>
+                          <div className={style.addressLabel}>会社名</div>
+                          <div>{account.company} 様</div>
+                        </div>
+                        <div>
+                          <div className={style.addressLabel}>電話番号</div>
+                          <div>{account.phone}</div>
+                        </div>
+                        <div className={style.addressLabel}>住所</div>
+                        <div>
+                          {account.postal_code}
+                          <br />
+                          {account.prefecture}
+                          {account.city}
+                          {account.street_address}
+                          <br />
+                          {account.building_name && account.building_name}
+                        </div>
+                      </div>
+                    )}
+                    <div className={style.label}>配送希望日</div>
+                    <div className={style.radioOptionWrapper}>
+                      <div>
+                        <input
+                          className={style.radioOption}
+                          type="radio"
+                          id="op1"
+                          name="delivery"
+                          value="希望する"
+                          onChange={handleRadioChange}
+                        />
+                        <label className={style.radioOption} htmlFor="op1">
+                          希望する
+                        </label>
+                      </div>
+                      <div>
+                        <input
+                          className={style.radioOption}
+                          type="radio"
+                          id="op2"
+                          name="delivery"
+                          value="希望しない"
+                          defaultChecked
+                          onChange={handleRadioChange}
+                        />
+                        <label className={style.radioOption} htmlFor="op2">
+                          希望しない
+                        </label>
+                      </div>
+                    </div>
+                    {isDateInputVisible && (
+                      <div>
+                        <input
+                          onChange={(e) => setDeliveryDate(e.target.value)}
+                          className={style.input}
+                          type="date"
+                          defaultValue={defaultDate}
+                          min={defaultDate}
+                        />
+                        <div className={style.label}>配送時間帯</div>
+                        <select
+                          required
+                          onChange={(e) => setDeliveryTime(e.target.value)}
+                          className={style.select}
+                        >
+                          <option value={'指定なし'}>指定なし</option>
+                          <option value={'午前(8:00 ~ 13:00)'}>午前(8:00 ~ 13:00)</option>
+                          <option value={'午後(13:00 ~ 17:00まで)'}>午後(13:00 ~ 17:00まで)</option>
+                        </select>
+                      </div>
+                    )}
+                  </div>
+                  <div className={style.label}>備考欄</div>
+                  <textarea
+                    onChange={(e) => setTextarea(e.target.value)}
+                    placeholder="何かありましたらご記入ください"
+                    className={style.textarea}
+                  />
+                </div>
+
+                <div className={style.footerContent}>
+                  <div className={style.totalAmountWrapper}>
+                    合計金額
+                    {totalAmount && (
+                      <div className={style.totalAmount}>
+                        　¥{totalAmount.toLocaleString()}(税込)
+                      </div>
+                    )}
+                  </div>
+                  <Button isLoading={isLoading} color="black" onClick={onSubmit}>
+                    決済に進む
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div style={{ marginTop: 30 }}>
+              <div className={style.title}>カートは空です</div>
+            </div>
+          )}
+          {!!stripePromise && !!stripeClientSecret && (
+            <Elements stripe={stripePromise} options={{ clientSecret: stripeClientSecret }}>
+              <StripeElement
+                orderId={orderId}
+                setOrderId={setOrderId}
+                setStripeClientSecret={setStripeClientSecret}
+              />
+            </Elements>
+          )}
+        </>
       )}
     </div>
   )

@@ -5,9 +5,7 @@ import Link from 'next/link'
 import { CategoryArray } from '@/constants/category'
 import { useParams, useRouter } from 'next/navigation'
 
-
-
-export const CategoryFilter: FC= () => {
+export const CategoryFilter: FC = () => {
   const router = useRouter()
   const { category } = useParams()
   return (
@@ -32,9 +30,16 @@ export const CategoryFilter: FC= () => {
         <select
           defaultValue={category || 'all'}
           className={style.select}
-          onChange={(e) => router.push(`/wholesale/search/${e.target.value}`)}
+          onChange={(e) => {
+            if (e.target.value === 'all') {
+              return router.push(`/wholesale/search`)
+            }
+            router.push(`/wholesale/search/${e.target.value}`)
+          }}
         >
-          <option className={style.menu}>all</option>
+          <option className={style.menu} value="all">
+            all
+          </option>
           {CategoryArray.map((c, index) => {
             return (
               <option key={index} className={style.menu}>

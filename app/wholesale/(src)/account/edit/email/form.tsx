@@ -18,14 +18,13 @@ export const Form = () => {
       ) : (
         <>
           <DisplayFormValue border={false} label="現在のメールアドレス" value={account?.email} />
-
           <form action={formAction}>
             <label style={{ fontSize: 14, fontWeight: 'bold' }} htmlFor="email">
               新しいメールアドレス
             </label>
-            <div style={{ marginTop: 5, display: 'flex', gap: 10 }}>
+            <div style={{ marginTop: 5, display: 'flex', flexDirection: 'column', gap: 10 }}>
               <input id="email" name="email" type="email" required />
-              <div style={{ maxWidth: 100 }}>
+              <div style={{ marginTop: 5 }}>
                 <Button color="black" type="submit">
                   変更する
                 </Button>

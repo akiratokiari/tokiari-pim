@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   margin: 0 auto;
+  padding: 67px 0px 50px 0px;
 }
 
 .content {
@@ -15,11 +16,14 @@
 }
 
 .right {
-  padding: 20px 0px;
+  padding: 10px;
   width: 100%;
 }
 
 @media (min-width: 756px) {
+  .body {
+    padding: 87px 20px 50px 20px;
+  }
   .content {
     max-width: 1200px;
     display: flex;

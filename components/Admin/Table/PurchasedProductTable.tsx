@@ -1,8 +1,11 @@
 'use client'
+import { ADMIN_PRODUCT_VARIANT_DETAIL_ROUTE } from '@/constants/route'
+import toHref from '@/helper/toHref'
 import { createClient } from '@/utils/supabase/client'
 import { PurchasedProductsRowType } from '@/utils/supabase/type'
 import { Image, Table, Tag } from 'antd'
 import { ColumnsType } from 'antd/es/table'
+import Link from 'next/link'
 import { FC, useEffect, useState } from 'react'
 
 type Props = {
@@ -19,6 +22,8 @@ type ColumnType = {
   price: number
   totalPrice: number
   thumbnail: string
+  productId: string
+  variantId: string
 }
 
 export const PurchasedProductTable: FC<Props> = ({ products }) => {
@@ -37,6 +42,8 @@ export const PurchasedProductTable: FC<Props> = ({ products }) => {
 
           return {
             id: p.id,
+            variantId: data?.product_variant_id || '',
+            productId: data?.product_variants?.products.id || '',
             thumbnail: data?.product_variants?.product_images[0]?.image_url || '',
             title: data?.product_variants?.products?.title || '',
             color: data?.product_variants?.color || '',
@@ -56,14 +63,24 @@ export const PurchasedProductTable: FC<Props> = ({ products }) => {
 
   const columns: ColumnsType<ColumnType> = [
     {
-      title: '商品ID',
-      dataIndex: 'model_number',
-      key: 'model_number'
-    },
-    {
       title: '商品名',
       dataIndex: 'title',
       key: 'title'
+    },
+    {
+      title: '商品ID',
+      dataIndex: 'model_number',
+      key: 'model_number',
+      render: (_, data) => (
+        <Link
+          href={toHref(ADMIN_PRODUCT_VARIANT_DETAIL_ROUTE, {
+            id: data.productId,
+            variantId: data.variantId
+          })}
+        >
+          {data.model_number}
+        </Link>
+      )
     },
     {
       title: '商品画像',

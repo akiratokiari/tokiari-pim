@@ -1,12 +1,11 @@
 .itemWrapper {
   background-color: white;
-  border: solid 1px rgb(237, 237, 237);
   display: flex;
   color: black;
 }
 
 .imageWrapper {
-  min-width: 120px;
+  min-width: 110px;
   position: relative;
   aspect-ratio: 2/3;
 }
@@ -16,11 +15,12 @@
   width: 100%;
   justify-content: space-between;
   flex-direction: column;
-  padding: 20px;
+  padding: 20px 0px 20px 10px;
 }
 
 .title {
   font-size: 14px;
+  color: black;
   font-weight: bold;
 }
 
