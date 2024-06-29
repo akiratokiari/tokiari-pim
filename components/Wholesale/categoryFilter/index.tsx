@@ -3,8 +3,13 @@ import { FC } from 'react'
 import style from './style.module.css'
 import Link from 'next/link'
 import { CategoryArray } from '@/constants/category'
+import { useParams, useRouter } from 'next/navigation'
 
-export const CategoryFilter: FC = () => {
+
+
+export const CategoryFilter: FC= () => {
+  const router = useRouter()
+  const { category } = useParams()
   return (
     <>
       <div className={style.desktop}>
@@ -24,7 +29,11 @@ export const CategoryFilter: FC = () => {
       </div>
 
       <div className={style.mobile}>
-        <select className={style.select}>
+        <select
+          defaultValue={category || 'all'}
+          className={style.select}
+          onChange={(e) => router.push(`/wholesale/search/${e.target.value}`)}
+        >
           <option className={style.menu}>all</option>
           {CategoryArray.map((c, index) => {
             return (

@@ -3,6 +3,7 @@ import { CartContext, CartItemType } from './context'
 
 export const CartProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cart, setCart] = useState<CartItemType[]>([])
+  const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -11,6 +12,13 @@ export const CartProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
       if (storageItems.length > 0) setCart(storageItems)
     }
   }, [])
+
+  const closeCart = () => {
+    setIsOpen(false)
+  }
+  const openCart = () => {
+    setIsOpen(true)
+  }
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -32,6 +40,7 @@ export const CartProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
       const newCart = cart.map((c) => (c.modelId === isProductExist.modelId ? updatedProduct : c))
       setCart(newCart)
     }
+    setIsOpen(true)
   }
 
   const updateQuantity = (modelId: string, quantity: number) => {
@@ -47,9 +56,12 @@ export const CartProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
   // コンテキストプロバイダに渡す値を定義
   const contextValue = {
     cart,
+    isOpen,
     addToCart,
+    openCart,
     updateQuantity,
-    deleteFromCart
+    deleteFromCart,
+    closeCart
   }
 
   // CartContext.Provider で子コンポーネントをラップしてコンテキストを提供

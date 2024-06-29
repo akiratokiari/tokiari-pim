@@ -17,6 +17,10 @@
 
 .select {
   width: 100%;
+  height: 40px;
+  border: solid 1px gray;
+  appearance: none;
+  padding: 0 20px;
   margin: 0 0 20px 0;
 }
 

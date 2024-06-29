@@ -116,7 +116,7 @@ export const ProductVariantEditForm: FC<Props> = ({ variantId, productId }) => {
       return message.error(deleteError.message)
     }
 
-    message.error('編集されました')
+    message.success('編集されました')
     router.push(
       toHref(ADMIN_PRODUCT_VARIANT_DETAIL_ROUTE, { id: productId, variantId: productData.id })
     )

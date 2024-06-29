@@ -1,0 +1,33 @@
+.itemWrapper {
+  background-color: white;
+  border: solid 1px rgb(237, 237, 237);
+  display: flex;
+  color: black;
+}
+
+.imageWrapper {
+  min-width: 120px;
+  position: relative;
+  aspect-ratio: 2/3;
+}
+
+.item {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.caption {
+  font-size: 14px;
+}
+.subTotalCaption {
+  display: none;
+  font-size: 14px;
+}

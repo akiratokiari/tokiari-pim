@@ -17,6 +17,9 @@ export type CartItemType = {
 
 type Context = {
   cart: CartItemType[]
+  isOpen: boolean
+  closeCart: () => void
+  openCart: () => void
   addToCart: (item: CartItemType) => void
   updateQuantity: (modelId: string, quantity: number) => void
   deleteFromCart: (modelId: string) => void
@@ -24,6 +27,9 @@ type Context = {
 
 export const CartContext = createContext<Context>({
   cart: [],
+  isOpen: false,
+  closeCart() {},
+  openCart() {},
   addToCart() {},
   updateQuantity() {},
   deleteFromCart() {}

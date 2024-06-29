@@ -42,8 +42,6 @@ export default async function Page({ searchParams }: Props) {
   const to = from + PAGE_SIZE - 1
   const { data, count } = await query.range(from, to)
 
-  console.log(data)
-
   const pagination = {
     current: currentPage,
     total: count || 0,

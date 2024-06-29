@@ -12,7 +12,7 @@ import Image from 'next/image'
 import style from './style.module.css'
 import { Button } from '@/components/button'
 import { CartProductAmountInput } from '@/components/Wholesale/cartProductAmountInput'
-import { UsersRowType } from '@/utils/supabase/type'
+import { useFormGuard } from '@/helper/useFormGuard'
 
 type Props = {
   orderId: any
@@ -72,6 +72,7 @@ const StripeElement = ({ orderId, setOrderId, setStripeClientSecret }: Props) =>
           )
           setLoading(false)
           onBackNotCancel()
+          return
         }
         await supabase
           .from('orders')
@@ -82,20 +83,23 @@ const StripeElement = ({ orderId, setOrderId, setStripeClientSecret }: Props) =>
       })
   }
   return (
-    <div>
-      <form onSubmit={onCreditSubmit}>
-        <PaymentElement />
-        <div style={{ marginTop: 20 }}>
-          <div style={{ marginBottom: 20 }}>
-            <Button color="black">支払いをする</Button>
+    <div className={style.modalElement}>
+      <div className={style.modalElementInner}>
+        <form onSubmit={onCreditSubmit}>
+          <PaymentElement />
+          <div style={{ marginTop: 20 }}>
+            <div style={{ marginBottom: 20 }}>
+              <Button color="black">支払いをする</Button>
+            </div>
+            <div>
+              <Button isLoading={loading} color="white" onClick={onBack}>
+                入力画面に戻る
+              </Button>
+            </div>
           </div>
-          <div>
-            <Button isLoading={loading} color="white" onClick={onBack}>
-              入力画面に戻る
-            </Button>
-          </div>
-        </div>
-      </form>
+        </form>
+      </div>
+      <div className={style.modalElementBackground} />
     </div>
   )
 }
@@ -124,6 +128,7 @@ const Page: FC = () => {
   const [stripeClientSecret, setStripeClientSecret] = useState(null)
   const [orderId, setOrderId] = useState<string | null>(null)
   const router = useRouter()
+  const [processing, setProcessing] = useState(false)
   const [isDateInputVisible, setDateInputVisible] = useState(false)
   const [deliveryTime, setDeliveryTime] = useState('指定なし')
   const [deliveryDate, setDeliveryDate] = useState(getFourDaysLater())
@@ -142,8 +147,9 @@ const Page: FC = () => {
     return result.data
   }
 
+  useFormGuard(processing)
+
   useEffect(() => {
-    console.log(cart)
     if (cart) {
       checkPrice().then((res: { cartItems: CartItemType[]; totalPrice: number }) => {
         setCartItems(res.cartItems)
@@ -231,6 +237,8 @@ const Page: FC = () => {
       }
     }
 
+    setIsLoading(false)
+    setProcessing(true)
     const intent = await stripe.paymentIntents.create(params)
     setStripeClientSecret(intent.client_secret)
   }

@@ -11,7 +11,12 @@ type Props = {
 
 export const CartProductAmountInput: FC<Props> = ({ data }) => {
   const [value, setValue] = useState<string | number>(data.quantity)
+
   const { updateQuantity, deleteFromCart } = useContext(CartContext)
+
+  useEffect(() => {
+    setValue(data.quantity)
+  }, [data.quantity])
 
   const handleQuantityChange = (amount: number) => {
     const newValue = (typeof value === 'string' ? parseInt(value, 10) : value) + amount

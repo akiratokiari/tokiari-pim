@@ -65,7 +65,6 @@ export const ProductEditForm: FC<Props> = ({ productId }) => {
   }
 
   const onFinish = async (values: any) => {
-    console.log('hi')
     if (isSending) return
     setIsSending(true)
 

@@ -33,12 +33,18 @@ export const ProductCard: FC<Props> = ({ product }) => {
     <div className={style.body}>
       <Link href={toHref(WHOLESALE_PRODUCTS_DETAIL_ROUTE, { id: product.id })}>
         <div className={style.imageWrapper}>
-          {currentProduct?.product_images[0].image_url && (
-            <Image
-              src={currentProduct?.product_images[0].image_url}
-              fill
-              alt={currentProduct?.product_images[0].image_url}
-            />
+          {currentProduct && currentProduct?.product_images.length > 0 ? (
+            <>
+              {currentProduct?.product_images[0].image_url && (
+                <Image
+                  src={currentProduct?.product_images[0].image_url}
+                  fill
+                  alt={currentProduct?.product_images[0].image_url}
+                />
+              )}
+            </>
+          ) : (
+            <div style={{ backgroundColor: '#efefef', height: '100%' }} />
           )}
         </div>
       </Link>

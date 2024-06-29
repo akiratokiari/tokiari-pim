@@ -34,6 +34,13 @@ export default async function Page({ params }: Props) {
     },
     {
       title: (
+        <Link href={toHref(ADMIN_PRODUCTS_DETAIL_ROUTE, { id: params.id })}>
+          バリエーション一覧
+        </Link>
+      )
+    },
+    {
+      title: (
         <Link
           href={toHref(ADMIN_PRODUCT_VARIANT_DETAIL_ROUTE, {
             id: params.id,

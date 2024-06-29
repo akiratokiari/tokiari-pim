@@ -28,7 +28,6 @@ export default async function Page({ params }: Props) {
   const { data } = await supabase.from('users').select().eq('id', params.id)
   if (!data) return
   const userData = data && data[0]
-  console.log(data?.length === 0)
 
   const items: DescriptionsProps['items'] = [
     {

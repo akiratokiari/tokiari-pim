@@ -55,6 +55,7 @@ export const VariantSizeSelector: FC<Props> = ({ data }) => {
     }
 
     addToCart(cartItem)
+    setValue(1)
   }
 
   return (
