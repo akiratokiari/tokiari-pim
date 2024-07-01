@@ -7,7 +7,7 @@ import { WHOLESALE_CART_ROUTE, WHOLESALE_ROUTE } from '@/constants/route'
 import { createClient } from '@/utils/supabase/client'
 import { AccountContext } from '@/contexts/account/context'
 import { ORDER_DELIVERY_OPTION, ORDER_PAYMENT_STATUS } from '@/constants/app'
-import { CartContext, CartItemType } from '@/contexts/cart/context'
+import { CartContext } from '@/contexts/cart/context'
 import Image from 'next/image'
 import style from './style.module.css'
 import { Button } from '@/components/button'
@@ -19,6 +19,9 @@ import { DisplayFormValue } from '@/components/displayFormValue'
 import Link from 'next/link'
 import { blurDataURL } from '@/constants/blurDataURL'
 import { PurchasedProductsInsertType } from '@/utils/supabase/type'
+import { getStripeClientSecret } from '@/utils/api/getStripeClientSecret'
+import { getShippingDefaultDay } from '@/helper/getShippingDefaultDay'
+import { getShippingPrice } from '@/helper/getShippingPrice'
 
 type Props = {
   orderId: any
@@ -28,6 +31,7 @@ type Props = {
 
 const StripeElement = ({ orderId, setOrderId, setStripeClientSecret }: Props) => {
   const supabase = createClient()
+  const { resetCart } = useContext(CartContext)
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const stripe = useStripe()
@@ -85,8 +89,10 @@ const StripeElement = ({ orderId, setOrderId, setStripeClientSecret }: Props) =>
           .update({ payment_intent: result.paymentIntent?.id })
           .eq('id', orderId)
 
-        router.replace(WHOLESALE_CART_ROUTE + toQuery({ orderId }))
+        router.push(WHOLESALE_CART_ROUTE + toQuery({ orderId }))
         setStripeClientSecret(null)
+        resetCart()
+        router.refresh()
       })
   }
 
@@ -114,16 +120,6 @@ const StripeElement = ({ orderId, setOrderId, setStripeClientSecret }: Props) =>
   )
 }
 
-type InsertDataType = {
-  order_id: string
-  model_id: string
-  product_id: string
-  series_id: string
-  quantity: number
-  price: number
-  payment_status: number
-}
-
 type PageProps = {
   searchParams: {
     orderId?: string
@@ -131,55 +127,42 @@ type PageProps = {
 }
 
 const Page: FC<PageProps> = ({ searchParams }) => {
-  const [cartItems, setCartItems] = useState<CartItemType[]>([])
-  const [totalPrice, setTotalPrice] = useState<number | undefined>(undefined)
+  const [subTotalPrice, setSubTotalPrice] = useState<number>(0)
   const [quantity, setQuantity] = useState<number>(0)
-  const { cart, resetCart } = useContext(CartContext)
+  const [shippingPrice, setShippingPrice] = useState<number>(0)
+  const { cart } = useContext(CartContext)
   const supabase = createClient()
   const { account } = useContext(AccountContext)
-  const stripe = require('stripe')(
-    'sk_test_51PJtZKDe7T0wGKDyCCK1mJSIpnwmGL4CK04xKgB2BcsJ5gMzDkmSF2wUAqQyIgifhG7Rsjq5s7vcv2AkzDGxNuoK00yieFFUwB'
-  )
   const [stripePromise, setStripePromise] = useState<any>()
   const [isLoading, setIsLoading] = useState(false)
-  const [stripeClientSecret, setStripeClientSecret] = useState(null)
+  const [stripeClientSecret, setStripeClientSecret] = useState<string | null>(null)
   const [orderId, setOrderId] = useState<string | null>(null)
   const [isDateInputVisible, setDateInputVisible] = useState(false)
   const [deliveryTime, setDeliveryTime] = useState('指定なし')
-  const [deliveryDate, setDeliveryDate] = useState(getFourDaysLater())
+  const [deliveryDate, setDeliveryDate] = useState(getShippingDefaultDay())
   const [textarea, setTextarea] = useState('')
-
-  const checkPrice = async () => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/check-price`, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json, text/plain',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ cart })
-    })
-    const result = await response.json()
-    return result.data
-  }
-
   useFormGuard(isLoading)
 
   useEffect(() => {
-    if (cart) {
-      checkPrice().then((res: { cartItems: CartItemType[]; totalPrice: number }) => {
-        setCartItems(res.cartItems)
-        setTotalPrice(res.totalPrice)
+    if (cart && account) {
+      let _totalPrice = 0
+      cart.forEach((c) => {
+        _totalPrice = _totalPrice + c.price * c.quantity
       })
+      setSubTotalPrice(_totalPrice)
       let _quantity = 0
       cart.forEach((c) => {
         _quantity = _quantity + c.quantity
       })
       setQuantity(_quantity)
+
+      const _shippingPrice = getShippingPrice(_totalPrice, account.prefecture)
+
+      setShippingPrice(_shippingPrice)
     }
-  }, [cart])
+  }, [cart, account])
 
   useEffect(() => {
-    // 販売情報とバイヤー情報を取得・保存
     setStripePromise(
       loadStripe(
         'pk_test_51PJtZKDe7T0wGKDyVM00CZgAYUzDCDKiHRWqD0eL10K4ZQ3IRD0SAHot19UHARG74WFws9M2qJp7miyL67lL2gBY00ueLl2qcp',
@@ -190,11 +173,11 @@ const Page: FC<PageProps> = ({ searchParams }) => {
 
   const onSubmit = async () => {
     setIsLoading(true)
+    console.log(account, subTotalPrice, shippingPrice)
 
     // 販売情報をDBに& StripeCreate
     // 追記　初期値は'card' status 'hold
     if (!account) return
-    if (!totalPrice) return
 
     const { data, error } = await supabase
       .from('orders')
@@ -208,7 +191,9 @@ const Page: FC<PageProps> = ({ searchParams }) => {
         building_name: account.building_name,
         company: account.company,
         phone: account.phone,
-        total_price: totalPrice,
+        sub_total: subTotalPrice,
+        shipping_price: shippingPrice,
+        total_price: shippingPrice + subTotalPrice,
         quantity: quantity,
         // 配送Options
         option: isDateInputVisible ? ORDER_DELIVERY_OPTION.Exist : ORDER_DELIVERY_OPTION.Whenever,
@@ -220,14 +205,16 @@ const Page: FC<PageProps> = ({ searchParams }) => {
         payment_status: ORDER_PAYMENT_STATUS.Hold
       })
       .select()
+      .single()
     if (error || !data) {
-      return
+      setIsLoading(false)
+      return window.alert('予期せぬエラーが発生しました、もう一度やり直してください')
     }
-    const _orderId = data[0].id
+    const _orderId = data.id
     setOrderId(_orderId)
 
     // Prepare data for insertion
-    const dataToInsert: PurchasedProductsInsertType[] = cartItems.map((ci) => {
+    const dataToInsert: PurchasedProductsInsertType[] = cart.map((ci) => {
       return {
         order_id: _orderId,
         product_id: ci.product_id,
@@ -242,38 +229,15 @@ const Page: FC<PageProps> = ({ searchParams }) => {
     const purchasedProductsData = await supabase.from('purchased_products').insert(dataToInsert)
 
     if (purchasedProductsData.error) {
-      console.log(purchasedProductsData.error)
       setIsLoading(false)
-      return window.alert('予期せぬエラーが発生しました')
+      return window.alert('予期せぬエラーが発生しました、もう一度やり直してください')
     }
 
-    const params = {
-      amount: totalPrice,
-      currency: 'jpy',
-      payment_method_types: ['card'],
-      statement_descriptor_suffix: 'ORDER',
-      metadata: {
-        type: 'order',
-        order_id: data[0].id
-      }
-    }
-
-    setIsLoading(false)
-    const intent = await stripe.paymentIntents.create(params)
-    setStripeClientSecret(intent.client_secret)
-    resetCart()
+    getStripeClientSecret({ cartItems: cart, orderId: data.id }).then((res) => {
+      setStripeClientSecret(res.clientSecret)
+      setIsLoading(false)
+    })
   }
-
-  function getFourDaysLater() {
-    const today = new Date()
-    const fourDaysLater = new Date(today.setDate(today.getDate() + 4))
-    const year = fourDaysLater.getFullYear()
-    const month = String(fourDaysLater.getMonth() + 1).padStart(2, '0')
-    const day = String(fourDaysLater.getDate()).padStart(2, '0')
-    return `${year}-${month}-${day}`
-  }
-
-  const defaultDate = getFourDaysLater()
 
   const handleRadioChange = (event: any) => {
     if (event.target.value === '希望する') {
@@ -303,7 +267,7 @@ const Page: FC<PageProps> = ({ searchParams }) => {
         <>
           {cart.length > 0 ? (
             <div className={style.itemSection}>
-              {cartItems.map((ci, index) => {
+              {cart.map((ci, index) => {
                 return (
                   <div className={style.itemWrapper} key={index}>
                     <div className={style.imageWrapper}>
@@ -408,8 +372,8 @@ const Page: FC<PageProps> = ({ searchParams }) => {
                           onChange={(e) => setDeliveryDate(e.target.value)}
                           className={style.input}
                           type="date"
-                          defaultValue={defaultDate}
-                          min={defaultDate}
+                          defaultValue={getShippingDefaultDay()}
+                          min={getShippingDefaultDay()}
                         />
                         <div className={style.label}>配送時間帯</div>
                         <select
@@ -434,10 +398,19 @@ const Page: FC<PageProps> = ({ searchParams }) => {
 
                 <div className={style.footerContent}>
                   <div className={style.totalPriceWrapper}>
-                    合計金額
-                    {totalPrice && (
-                      <div className={style.totalPrice}>　¥{totalPrice.toLocaleString()}(税込)</div>
-                    )}
+                    <div>合計点数</div>
+                    <div className={style.totalPrice}>{quantity}点</div>
+                  </div>
+                  <div className={style.totalPriceWrapper}>
+                    <div>配送料</div>
+                    <div className={style.totalPrice}>{shippingPrice.toLocaleString()}円</div>
+                  </div>
+                  <div className={style.totalPriceWrapper}>
+                    <div>合計金額</div>
+
+                    <div className={style.totalPrice}>
+                      　¥{(subTotalPrice + shippingPrice).toLocaleString()}(税込)
+                    </div>
                   </div>
                   <Button isLoading={isLoading} color="black" onClick={onSubmit}>
                     決済に進む

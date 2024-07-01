@@ -62,6 +62,7 @@ export const ShippingStatusButton: FC<Props> = ({ orderId }) => {
         if (!error) {
           message.success('送信しました')
           router.push(toHref(ADMIN_ORDERS_DETAIL_ROUTE, { id: orderId }))
+          router.refresh()
         }
       },
       okText: '送信する',

@@ -1,4 +1,5 @@
 'use client'
+import { ORDER_PAYMENT_STATUS } from '@/constants/app'
 import { ADMIN_PRODUCT_VARIANT_DETAIL_ROUTE } from '@/constants/route'
 import toHref from '@/helper/toHref'
 import { createClient } from '@/utils/supabase/client'
@@ -29,6 +30,41 @@ type ColumnType = {
 export const PurchasedProductTable: FC<Props> = ({ products }) => {
   const supabase = createClient()
   const [tableData, setTableData] = useState<ColumnType[]>([])
+
+  const data = async () => {
+    const { data: productsData } = await supabase
+      .from('purchased_products')
+      .update({ payment_status: ORDER_PAYMENT_STATUS.Buy })
+      .eq('order_id', '315478ee-11fd-4335-b5e0-f829accfcffe')
+      .select()
+    if (productsData) {
+      const awd = await Promise.all(
+        productsData.map(async (p) => {
+          const { data } = await supabase
+            .from('product_variants_size')
+            .select(`*,product_variants(*,products(*))`)
+            .eq('id', p.product_variant_size_id)
+            .single()
+          console.log('購入した商品情報を取得', data)
+          return {
+            id: p.id,
+            variantId: data?.product_variant_id || '',
+            productId: data?.product_variants?.products?.id || '',
+            title: data?.product_variants?.products?.title || '',
+            color: data?.product_variants?.color || '',
+            size: data?.product_size || '',
+            model_number: data?.model_number || '',
+            price: p.price,
+            quantity: p.quantity,
+            totalPrice: p.quantity * p.price
+          }
+        })
+      )
+      console.log(awd)
+    }
+  }
+
+  data()
 
   useEffect(() => {
     const fetchTableData = async () => {
@@ -86,7 +122,7 @@ export const PurchasedProductTable: FC<Props> = ({ products }) => {
       title: '商品画像',
       dataIndex: 'thumbnail',
       key: 'thumbnail',
-      render: (thumbnail) => <Image width={100} height={150} src={thumbnail} />
+      render: (thumbnail) => <Image width={100} src={thumbnail} />
     },
     {
       title: '色',

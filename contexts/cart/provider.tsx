@@ -64,17 +64,6 @@ export const CartProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
     setIsInitial(true)
   }, [isInitial, account])
 
-  // useEffect(() => {
-  //   if (cart) {
-  //     const fetchCartItems = async () => {
-  //       const cartItems = await getFullCartItem()
-  //       if (cartItems) setCartWithData(cartItems)
-  //     }
-
-  //     fetchCartItems()
-  //   }
-  // }, [cart])
-
   const closeCart = () => {
     setIsOpen(false)
   }
@@ -82,8 +71,15 @@ export const CartProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
     setIsOpen(true)
   }
 
-  const resetCart = () => {
-    setCart([])
+  const resetCart = async () => {
+    if (!account) return
+    const cartItemsJSON = JSON.stringify([])
+    await supabase
+      .from('users')
+      .update({ cart_items: cartItemsJSON })
+      .eq('id', account.id)
+      .select('cart_items')
+      .single()
   }
 
   const updateCart = async (_cart: CartItemsType[] | []) => {

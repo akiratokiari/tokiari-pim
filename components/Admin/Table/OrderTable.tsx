@@ -33,14 +33,15 @@ type columnType = {
   company: string
   payment_status: number
   total_price: number
+  shipping_price: number
 }
 
 export const OrderTable: FC<Props> = ({ dataSource, pagination, searchParams }) => {
   const router = useRouter()
   const tableData: columnType[] = dataSource.map((order) => {
-    let _count = 0
+    let _quantity = 0
     order.purchased_products.map((pp: any) => {
-      _count = _count + pp.total_price
+      _quantity = _quantity + pp.quantity
     })
 
     return {
@@ -49,19 +50,14 @@ export const OrderTable: FC<Props> = ({ dataSource, pagination, searchParams }) 
       company: order.company,
       payment_status: order.payment_status,
       total_price: order.total_price,
+      shipping_price: order.shipping_price,
       created_at: order.created_at,
-      count: _count,
+      quantity: _quantity,
       is_delivered: order.is_delivered
     }
   })
 
   const columns: ColumnsType<columnType> = [
-    // {
-    //   title: '支払い',
-    //   dataIndex: 'payment_status',
-    //   key: 'payment_status',
-    //   render: (payment_status) => DisplayPaymentStatus(payment_status)
-    // },
     {
       title: '購入者',
       dataIndex: '',
@@ -80,15 +76,16 @@ export const OrderTable: FC<Props> = ({ dataSource, pagination, searchParams }) 
     },
     {
       title: '購入点数',
-      dataIndex: 'count',
-      key: 'count',
-      render: (count) => `${count}点`
+      dataIndex: 'quantity',
+      key: 'quantity',
+      render: (quantity) => `${quantity}点`
     },
     {
       title: '合計金額',
       dataIndex: 'total_price',
       key: 'total_price',
-      render: (total_price) => `${total_price.toLocaleString()}円`
+      render: (_, all) =>
+        `${all.total_price.toLocaleString()}円`
     },
     {
       title: '購入時刻',

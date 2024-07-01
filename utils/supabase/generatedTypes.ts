@@ -24,7 +24,9 @@ export type Database = {
           prefecture: string
           quantity: number
           remarks: string | null
+          shipping_price: number | null
           street_address: string
+          sub_total: number
           total_price: number
           updated_at: string
           user_id: string
@@ -49,7 +51,9 @@ export type Database = {
           prefecture: string
           quantity: number
           remarks?: string | null
+          shipping_price?: number | null
           street_address: string
+          sub_total: number
           total_price: number
           updated_at?: string
           user_id: string
@@ -74,7 +78,9 @@ export type Database = {
           prefecture?: string
           quantity?: number
           remarks?: string | null
+          shipping_price?: number | null
           street_address?: string
+          sub_total?: number
           total_price?: number
           updated_at?: string
           user_id?: string
@@ -301,13 +307,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: 'purchased_products_order_id_fkey'
-            columns: ['order_id']
-            isOneToOne: false
-            referencedRelation: 'orders'
-            referencedColumns: ['id']
-          },
           {
             foreignKeyName: 'purchased_products_product_id_fkey'
             columns: ['product_id']

@@ -122,7 +122,7 @@ export default async function Page({ params }: Props) {
     {
       label: '決済金額',
       key: '',
-      children: `${order.total_price.toLocaleString()}円`,
+      children: `${order.total_price.toLocaleString()}円　(配送料${order.shipping_price?.toLocaleString()}円)`,
       span: 3
     },
     {

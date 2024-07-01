@@ -107,13 +107,13 @@
   text-align: center;
 }
 
-.totalAmountWrapper {
+.totalPriceWrapper {
   display: flex;
   justify-content: space-between;
   margin-bottom: 30px;
 }
 
-.totalAmount {
+.totalPrice {
   margin-bottom: 10px;
 }
 

@@ -15,7 +15,7 @@ export async function POST(req: NextRequest, _: any) {
         const { data, error } = await supabase
           .from('product_variants')
           .select('*,products(*),product_images(image_url)')
-          .eq('id', v.seriesId)
+          .eq('id', v.product_variant_id)
           .single()
         if (error) throw error
         if (data) {
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest, _: any) {
     )
 
     const totalPrice = checkedCartItemPrice.reduce((total, ci) => {
-      const subTotal = ci.price * ci.quantity // price * quantity が正しい計算です
+      const subTotal = ci.price * ci.quantity
       return total + subTotal
     }, 0)
 

@@ -20,7 +20,7 @@ export default async function Page({ searchParams }: Props) {
     { title: <Link href={ADMIN_ROUTE}>ダッシュボード</Link> },
     { title: <Link href={ADMIN_REQUESTS_ROUTE}>注文一覧</Link> }
   ]
-  const PAGE_SIZE = 10
+  const PAGE_SIZE = 30
   const currentPage = Number(searchParams.current) || 1
   const supabase = createClient()
 
@@ -28,6 +28,7 @@ export default async function Page({ searchParams }: Props) {
     .from('orders')
     .select('*, purchased_products(*)', { count: 'exact' })
     .in('payment_status', [ORDER_PAYMENT_STATUS.Buy, ORDER_PAYMENT_STATUS.Refund])
+    .order('created_at', { ascending: false })
 
   if (searchParams.orderId) {
     query.eq('id', searchParams.orderId)
