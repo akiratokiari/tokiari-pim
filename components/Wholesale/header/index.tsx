@@ -13,7 +13,7 @@ export const Header: FC<Props> = () => {
   return (
     <div className={style.body}>
       <Link className={style.logo} href={WHOLESALE_ROUTE}>
-        TOKIARI バイヤー販売
+        TOKIARI
       </Link>
       <div className={style.navigation}>
         <div className={style.menuWrapper}>

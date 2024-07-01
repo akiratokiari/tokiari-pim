@@ -38,7 +38,7 @@ export const CartItem: FC<Props> = ({ data }) => {
       </div>
       <div className={style.item}>
         <div className={style.descriptionWrapper}>
-          <Link href={toHref(WHOLESALE_PRODUCTS_DETAIL_ROUTE, { id: data.productId })}>
+          <Link href={toHref(WHOLESALE_PRODUCTS_DETAIL_ROUTE, { id: data.product_id })}>
             <div className={style.title}>{data.title}</div>
           </Link>
           <div className={style.caption}>

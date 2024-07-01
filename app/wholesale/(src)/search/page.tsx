@@ -5,10 +5,12 @@ import { PRODUCT_PUBLISH_STATUS } from '@/constants/app'
 
 export default async function Page() {
   const supabase = createClient()
+  const currentDateTime = new Date().toISOString()
   const { data: products, error } = await supabase
     .from('products')
     .select('*,product_variants(*,product_images(*), product_variants_size(*))')
     .eq('publish_status', PRODUCT_PUBLISH_STATUS.Public)
+    .lt('sales_started_at', currentDateTime)
     .order('created_at', { ascending: false })
 
   if (error) {

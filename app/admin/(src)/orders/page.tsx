@@ -10,7 +10,7 @@ import { ORDER_PAYMENT_STATUS } from '@/constants/app'
 type Props = {
   searchParams: {
     company?: string
-    paymentIntent?: string
+    orderId?: string
     current?: string
   }
 }
@@ -28,6 +28,10 @@ export default async function Page({ searchParams }: Props) {
     .from('orders')
     .select('*, purchased_products(*)', { count: 'exact' })
     .in('payment_status', [ORDER_PAYMENT_STATUS.Buy, ORDER_PAYMENT_STATUS.Refund])
+
+  if (searchParams.orderId) {
+    query.eq('id', searchParams.orderId)
+  }
 
   const from = (currentPage - 1) * PAGE_SIZE
   const to = from + PAGE_SIZE - 1
@@ -52,10 +56,7 @@ export default async function Page({ searchParams }: Props) {
         </Card>
       </Col>
       <Col span={6}>
-        <OrdersSearchForm
-          paymentIntent={searchParams.paymentIntent}
-          company={searchParams.company}
-        />
+        <OrdersSearchForm orderId={searchParams.orderId} company={searchParams.company} />
       </Col>
     </Row>
   )

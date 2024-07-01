@@ -1,19 +1,20 @@
 import { ShippingStatusButton } from '@/components/Admin/Button/ShippingStatusButton'
+import { DisplayDeliveryStatus } from '@/components/Admin/DisplayDeliveryStatus'
 import { DisplayPaymentStatus } from '@/components/Admin/DisplayPaymentStatus'
 import { PageHeader } from '@/components/Admin/PageHeader'
 import { PurchasedProductTable } from '@/components/Admin/Table/PurchasedProductTable'
 import { LabelStyle } from '@/constants/adminCSS'
 import { ORDER_DELIVERY_OPTION } from '@/constants/app'
 import {
+  ADMIN_ORDERS_ROUTE,
   ADMIN_ROUTE,
   ADMIN_SHIPPING_DETAIL_ROUTE,
-  ADMIN_SHIPPING_ROUTE,
   ADMIN_USERS_DETAIL_ROUTE
 } from '@/constants/route'
 import { formatDateTime } from '@/helper/dateFormat'
 import toHref from '@/helper/toHref'
 import { createClient } from '@/utils/supabase/server'
-import { Alert, Card, Col, Descriptions, DescriptionsProps, Row } from 'antd'
+import { Card, Col, Descriptions, DescriptionsProps, Row } from 'antd'
 import Link from 'next/link'
 
 type Props = {
@@ -33,7 +34,7 @@ export default async function Page({ params }: Props) {
 
   const routes = [
     { title: <Link href={ADMIN_ROUTE}>ダッシュボード</Link> },
-    { title: <Link href={ADMIN_SHIPPING_ROUTE}>発送待ち一覧</Link> },
+    { title: <Link href={ADMIN_ORDERS_ROUTE}>注文一覧</Link> },
     {
       title: <Link href={toHref(ADMIN_SHIPPING_DETAIL_ROUTE, { id: params.id })}>詳細</Link>
     }
@@ -76,6 +77,14 @@ export default async function Page({ params }: Props) {
       span: 3
     }
   ]
+  const deliveryStatusItems: DescriptionsProps['items'] = [
+    {
+      key: '1',
+      label: '配送状況',
+      children: DisplayDeliveryStatus(Boolean(order.is_delivered)),
+      span: 3
+    }
+  ]
   const deliveryOptionItems: DescriptionsProps['items'] = [
     {
       key: '1',
@@ -113,7 +122,7 @@ export default async function Page({ params }: Props) {
     {
       label: '決済金額',
       key: '',
-      children: `${order.amount.toLocaleString()}円`,
+      children: `${order.total_price.toLocaleString()}円`,
       span: 3
     },
     {
@@ -127,9 +136,6 @@ export default async function Page({ params }: Props) {
   return (
     <Row gutter={[24, 24]}>
       <Col span={18}>
-        {!order.is_delivered && (
-          <Alert style={{ marginBottom: 16 }} message="決済が完了しています。商品を発送してください。" type="success" />
-        )}
         <PageHeader title="購入履歴詳細" routes={routes} />
         <Card style={{ marginBottom: 16 }}>
           <Descriptions
@@ -142,10 +148,17 @@ export default async function Page({ params }: Props) {
           <Descriptions
             labelStyle={LabelStyle}
             bordered
+            items={deliveryStatusItems}
+            style={{ marginBottom: 16 }}
+          />
+          <Descriptions
+            labelStyle={LabelStyle}
+            bordered
             title="配送オプション"
             items={deliveryOptionItems}
           />
         </Card>
+
         <Card title="購入商品" style={{ marginBottom: 16 }}>
           <PurchasedProductTable products={order.purchased_products} />
         </Card>
@@ -154,9 +167,13 @@ export default async function Page({ params }: Props) {
         </Card>
       </Col>
       <Col span={6}>
-        <Card>
-          <ShippingStatusButton orderId={params.id} />
-        </Card>
+        {!order.is_delivered && (
+          <>
+            <Card>
+              <ShippingStatusButton orderId={params.id} />
+            </Card>
+          </>
+        )}
       </Col>
     </Row>
   )

@@ -65,11 +65,12 @@ export default async function Page({ params, searchParams }: Props) {
         </div>
         <div className={style.right}>
           <div className={style.detail}>
+            
             <div className={style.category}>{products?.category}</div>
             <div className={style.title}>{products?.title}</div>
-            <div className={style.seriesNumber}>
+            {/* <div className={style.seriesNumber}>
               Series Number：{currentVariants?.series_number}
-            </div>
+            </div> */}
             <div className={style.price}>¥{currentVariants?.price.toLocaleString()}</div>
             <div className={style.colorSelector}>
               <ProductDetailColorSelector

@@ -41,7 +41,7 @@
 
 .leftBody {
   width: 100%;
-  aspect-ratio: 2/3;
+  aspect-ratio: 3/4;
   top: 0;
   position: sticky;
   top: 85px;
@@ -81,6 +81,7 @@
 
 .seriesNumber {
   font-size: 14px;
+  color: gray;
 }
 
 .attention {

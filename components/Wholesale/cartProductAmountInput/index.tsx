@@ -18,8 +18,8 @@ export const CartProductAmountInput: FC<Props> = ({ data }) => {
     setValue(data.quantity)
   }, [data.quantity])
 
-  const handleQuantityChange = (amount: number) => {
-    const newValue = (typeof value === 'string' ? parseInt(value, 10) : value) + amount
+  const handleQuantityChange = (quantity: number) => {
+    const newValue = (typeof value === 'string' ? parseInt(value, 10) : value) + quantity
     setValue(newValue < 1 ? 1 : newValue)
   }
 
@@ -46,7 +46,7 @@ export const CartProductAmountInput: FC<Props> = ({ data }) => {
         ...data,
         quantity: value
       }
-      updateQuantity(cartItem.modelId, value)
+      updateQuantity(cartItem.product_variant_size_id, value)
     }
   }, [value])
 
@@ -70,7 +70,7 @@ export const CartProductAmountInput: FC<Props> = ({ data }) => {
       </div>
       <button
         onClick={() => {
-          deleteFromCart(data.modelId)
+          deleteFromCart(data.product_variant_size_id)
         }}
         className={style.deleteButton}
       >

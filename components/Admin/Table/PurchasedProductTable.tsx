@@ -18,7 +18,7 @@ type ColumnType = {
   color: string
   model_number: string
   size: string
-  amount: number
+  quantity: number
   price: number
   totalPrice: number
   thumbnail: string
@@ -37,21 +37,21 @@ export const PurchasedProductTable: FC<Props> = ({ products }) => {
           const { data } = await supabase
             .from('product_variants_size')
             .select(`*,product_variants(*,products(*), product_images(*))`)
-            .eq('model_number', p.model_number)
+            .eq('id', p.product_variant_size_id)
             .single()
 
           return {
             id: p.id,
             variantId: data?.product_variant_id || '',
-            productId: data?.product_variants?.products.id || '',
+            productId: data?.product_variants?.products?.id || '',
             thumbnail: data?.product_variants?.product_images[0]?.image_url || '',
             title: data?.product_variants?.products?.title || '',
             color: data?.product_variants?.color || '',
             size: data?.product_size || '',
-            model_number: p.model_number,
+            model_number: data?.model_number || '',
             price: p.price,
-            amount: p.amount,
-            totalPrice: p.amount * p.price
+            quantity: p.quantity,
+            totalPrice: p.quantity * p.price
           }
         })
       )
@@ -107,9 +107,9 @@ export const PurchasedProductTable: FC<Props> = ({ products }) => {
     },
     {
       title: '数量',
-      dataIndex: 'amount',
-      key: 'amount',
-      render: (amount) => `${amount.toLocaleString()}個`
+      dataIndex: 'quantity',
+      key: 'quantity',
+      render: (quantity) => `${quantity.toLocaleString()}個`
     }
   ]
 

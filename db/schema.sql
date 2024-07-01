@@ -93,11 +93,10 @@ CREATE TABLE public.orders (
   user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
   payment_intent TEXT,
   amount INT NOT NULL,
+  total_price INT NOT NULL,
   payment_status INT NOT NULL,
   company TEXT NOT NULL,
   phone TEXT NOT NULL,
-  contact_name TEXT NOT NULL,
-  contact_kana TEXT NOT NULL,
   postal_code TEXT NOT NULL,
   prefecture TEXT NOT NULL,
   city TEXT NOT NULL,
@@ -111,6 +110,7 @@ CREATE TABLE public.orders (
   -- システム情報
   is_delivered BOOLEAN,
   delivery_code TEXT,
+  delivery_at TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
   deleted_at TIMESTAMP WITH TIME ZONE
@@ -120,12 +120,18 @@ CREATE TABLE public.orders (
 CREATE TABLE public.purchased_products (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   order_id UUID NOT NULL REFERENCES public.orders(id) ON DELETE CASCADE,
-  product_group_code VARCHAR(255) NOT NULL,
-  series_number VARCHAR(255) NOT NULL,
-  model_number VARCHAR(255) NOT NULL,
+
+  -- ProductID
+  productId UUID NOT NULL REFERENCES public.products(id),
+  -- VariantID
+  modelId UUID NOT NULL REFERENCES public.product_variants(id),
+  -- VariantSizeID
+  seriesId UUID NOT NULL REFERENCES public.product_variants_size(id),
+
   amount INT NOT NULL,
   payment_status INT NOT NULL,
   price INT NOT NULL,
+
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
   deleted_at TIMESTAMP WITH TIME ZONE

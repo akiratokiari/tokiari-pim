@@ -18,6 +18,7 @@ import { PageHeader } from '@/components/Wholesale/pageHeader'
 import { DisplayFormValue } from '@/components/displayFormValue'
 import Link from 'next/link'
 import { blurDataURL } from '@/constants/blurDataURL'
+import { PurchasedProductsInsertType } from '@/utils/supabase/type'
 
 type Props = {
   orderId: any
@@ -115,11 +116,11 @@ const StripeElement = ({ orderId, setOrderId, setStripeClientSecret }: Props) =>
 
 type InsertDataType = {
   order_id: string
-  product_group_code: string
-  series_number: string
-  model_number: string
-  price: number // 必要なフィールドを追加
-  amount: number // 必要なフィールドを追加
+  model_id: string
+  product_id: string
+  series_id: string
+  quantity: number
+  price: number
   payment_status: number
 }
 
@@ -131,7 +132,8 @@ type PageProps = {
 
 const Page: FC<PageProps> = ({ searchParams }) => {
   const [cartItems, setCartItems] = useState<CartItemType[]>([])
-  const [totalAmount, setTotalAmount] = useState<number | undefined>(undefined)
+  const [totalPrice, setTotalPrice] = useState<number | undefined>(undefined)
+  const [quantity, setQuantity] = useState<number>(0)
   const { cart, resetCart } = useContext(CartContext)
   const supabase = createClient()
   const { account } = useContext(AccountContext)
@@ -166,8 +168,13 @@ const Page: FC<PageProps> = ({ searchParams }) => {
     if (cart) {
       checkPrice().then((res: { cartItems: CartItemType[]; totalPrice: number }) => {
         setCartItems(res.cartItems)
-        setTotalAmount(res.totalPrice)
+        setTotalPrice(res.totalPrice)
       })
+      let _quantity = 0
+      cart.forEach((c) => {
+        _quantity = _quantity + c.quantity
+      })
+      setQuantity(_quantity)
     }
   }, [cart])
 
@@ -187,13 +194,12 @@ const Page: FC<PageProps> = ({ searchParams }) => {
     // 販売情報をDBに& StripeCreate
     // 追記　初期値は'card' status 'hold
     if (!account) return
-    if (!totalAmount) return
+    if (!totalPrice) return
 
     const { data, error } = await supabase
       .from('orders')
       .insert({
         user_id: account.id,
-        amount: totalAmount,
         // 配送情報
         postal_code: account.postal_code,
         prefecture: account.prefecture,
@@ -202,8 +208,8 @@ const Page: FC<PageProps> = ({ searchParams }) => {
         building_name: account.building_name,
         company: account.company,
         phone: account.phone,
-        contact_name: account.contact_name,
-        contact_kana: account.contact_kana,
+        total_price: totalPrice,
+        quantity: quantity,
         // 配送Options
         option: isDateInputVisible ? ORDER_DELIVERY_OPTION.Exist : ORDER_DELIVERY_OPTION.Whenever,
         delivery_date: isDateInputVisible ? deliveryDate : null,
@@ -221,14 +227,14 @@ const Page: FC<PageProps> = ({ searchParams }) => {
     setOrderId(_orderId)
 
     // Prepare data for insertion
-    const dataToInsert: InsertDataType[] = cartItems.map((ci) => {
+    const dataToInsert: PurchasedProductsInsertType[] = cartItems.map((ci) => {
       return {
         order_id: _orderId,
-        product_group_code: ci.product_group_code,
-        series_number: ci.seriesNumber,
-        model_number: ci.modelNumber,
-        price: ci.price,
-        amount: ci.quantity,
+        product_id: ci.product_id,
+        product_variant_id: ci.product_variant_id,
+        product_variant_size_id: ci.product_variant_size_id,
+        quantity: ci.quantity,
+        price: ci.quantity * ci.price,
         payment_status: ORDER_PAYMENT_STATUS.Hold
       }
     })
@@ -236,11 +242,13 @@ const Page: FC<PageProps> = ({ searchParams }) => {
     const purchasedProductsData = await supabase.from('purchased_products').insert(dataToInsert)
 
     if (purchasedProductsData.error) {
+      console.log(purchasedProductsData.error)
+      setIsLoading(false)
       return window.alert('予期せぬエラーが発生しました')
     }
 
     const params = {
-      amount: totalAmount,
+      amount: totalPrice,
       currency: 'jpy',
       payment_method_types: ['card'],
       statement_descriptor_suffix: 'ORDER',
@@ -280,8 +288,10 @@ const Page: FC<PageProps> = ({ searchParams }) => {
       <PageHeader>カート</PageHeader>
       {searchParams.orderId ? (
         <div>
-          <div style={{ fontWeight: 'bold', marginBottom:20 }}>ご注文ありがとうございました</div>
-          <div style={{marginBottom:20}}>ご登録いただいているメールアドレス宛に、注文詳細メールをお送りしましたので、ご確認ください。</div>
+          <div style={{ fontWeight: 'bold', marginBottom: 20 }}>ご注文ありがとうございました</div>
+          <div style={{ marginBottom: 20 }}>
+            ご登録いただいているメールアドレス宛に、注文詳細メールをお送りしましたので、ご確認ください。
+          </div>
           <DisplayFormValue first label="注文ID" value={searchParams.orderId} />
           <div style={{ marginTop: 40 }}>
             <Link href={WHOLESALE_ROUTE}>
@@ -423,12 +433,10 @@ const Page: FC<PageProps> = ({ searchParams }) => {
                 </div>
 
                 <div className={style.footerContent}>
-                  <div className={style.totalAmountWrapper}>
+                  <div className={style.totalPriceWrapper}>
                     合計金額
-                    {totalAmount && (
-                      <div className={style.totalAmount}>
-                        　¥{totalAmount.toLocaleString()}(税込)
-                      </div>
+                    {totalPrice && (
+                      <div className={style.totalPrice}>　¥{totalPrice.toLocaleString()}(税込)</div>
                     )}
                   </div>
                   <Button isLoading={isLoading} color="black" onClick={onSubmit}>

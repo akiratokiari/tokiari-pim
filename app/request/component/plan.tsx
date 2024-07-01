@@ -1,12 +1,15 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
-import { WHOLESALE_AUTH_ROUTE } from '@/constants/route'
+import { REQUEST_ROUTE, WHOLESALE_AUTH_ROUTE } from '@/constants/route'
 import { Form } from './form'
 import { getBaseUrl } from '@/helper/getBaseUrl'
 import style from './style.module.css'
 import { Button } from '@/components/button'
 import { DisplayFormValue } from '@/components/displayFormValue'
+import { toQuery } from '@/helper/toQuery'
+import { useRouter } from 'next/navigation'
+import { RequestFormType } from '@/app/api/resend/request-complete/route'
 
 type SignUpUserType = {
   password: string
@@ -26,12 +29,13 @@ type SignUpUserType = {
 }
 
 export const Plan = () => {
+  const router = useRouter()
   const [formData, setFormData] = useState<SignUpUserType | undefined>(undefined)
   const [_formData, _setFormData] = useState<SignUpUserType | undefined>(formData)
   const [step, setStep] = useState<number>(1)
   const [isComplete, setIsComplete] = useState(false)
   const [isSending, setIsSending] = useState(false)
-  const [errorMessage,setErrorMessage] = useState("")
+  const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
     if (formData) {
@@ -71,7 +75,36 @@ export const Plan = () => {
           }
         }
       })
+
+      const emailValue: RequestFormType = {
+        email: formData.email,
+        postal_code: formData.postal_code,
+        prefecture: formData.prefecture,
+        city: formData.city,
+        street_address: formData.street_address,
+        company: formData.company,
+        phone: formData.phone,
+        contact_name: formData.contact_name,
+        contact_kana: formData.contact_kana,
+        building_name: formData.building_name,
+        site_url: formData.site_url
+      }
+
       if (!signUpInfo.error) {
+        await fetch(`/api/resend/request-complete`, {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json, text/plain',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(emailValue)
+        })
+          .then(() => {
+            router.push(REQUEST_ROUTE + toQuery({ status: 'complete' }))
+          })
+          .catch(() => {
+            window.alert('エラーが発生しました、もう一度やり直してください。')
+          })
         await supabase.auth.signOut()
         setIsComplete(true)
       }

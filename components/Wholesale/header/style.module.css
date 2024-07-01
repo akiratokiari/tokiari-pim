@@ -11,8 +11,9 @@
   z-index: 99;
   background-color: white;
 }
-
+ 
 .logo {
+  font-size: 15px;
   color: black;
   font-weight: bold;
 }

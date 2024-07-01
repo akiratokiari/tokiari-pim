@@ -6,18 +6,18 @@ import { useRouter } from 'next/navigation'
 import { FC, useEffect } from 'react'
 
 type Props = {
-  paymentIntent?: string
+  orderId?: string
   company?: string
 }
 
-export const OrdersSearchForm: FC<Props> = ({ paymentIntent, company }) => {
+export const OrdersSearchForm: FC<Props> = ({ orderId, company }) => {
   const router = useRouter()
   const [searchForm] = Form.useForm()
 
   useEffect(() => {
-    if (paymentIntent) {
+    if (orderId) {
       searchForm.setFieldsValue({
-        paymentIntent: paymentIntent
+        orderId: orderId
       })
     }
     if (company) {
@@ -25,25 +25,26 @@ export const OrdersSearchForm: FC<Props> = ({ paymentIntent, company }) => {
         company: company
       })
     }
-  }, [paymentIntent, company])
+  }, [orderId, company])
 
   const onSearchSubmit = (values: Props) => {
     const params: Props = {}
 
-    if (values.paymentIntent) {
-      params.paymentIntent = values.paymentIntent
+    if (values.orderId) {
+      params.orderId = values.orderId
     }
     if (values.company) {
       params.company = values.company
     }
 
     router.push(ADMIN_ORDERS_ROUTE + toQuery(params))
+    router.refresh()
   }
   return (
     <Card>
       <Form form={searchForm} onFinish={onSearchSubmit}>
-        <Form.Item name="paymentIntent">
-          <Input placeholder="決済ID" allowClear />
+        <Form.Item name="orderId">
+          <Input placeholder="注文ID" allowClear />
         </Form.Item>
         <Form.Item name="company">
           <Input placeholder="会社名" allowClear />

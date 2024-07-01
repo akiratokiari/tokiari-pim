@@ -25,7 +25,7 @@ export default async function Page({ params }: Props) {
   ]
   if (!params.id) return
   const supabase = createClient()
-  const { data } = await supabase.from('users').select().eq('id', params.id)
+  const { data } = await supabase.from('users').select('*').eq('id', params.id)
   if (!data) return
   const userData = data && data[0]
 
@@ -33,25 +33,25 @@ export default async function Page({ params }: Props) {
     {
       key: '1',
       label: '会社',
-      children: userData?.company,
+      children: userData.company,
       span: 3
     },
     {
       key: 'phone',
       label: '電話番号',
-      children: userData?.phone,
+      children: userData.phone,
       span: 3
     },
     {
       key: 'email',
       label: 'メールアドレス',
-      children: userData?.email,
+      children: userData.email,
       span: 3
     },
     {
       key: 'siteUrl',
       label: 'サイトURL',
-      children: <ExternalLink href={userData?.site_url || ''}>{userData?.site_url}</ExternalLink>,
+      children: <ExternalLink href={userData.site_url || ''}>{userData?.site_url}</ExternalLink>,
       span: 3
     },
     {

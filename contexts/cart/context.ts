@@ -1,26 +1,26 @@
 import { createContext } from 'react'
 
-export type CartItemType = {
-  modelId: string
-  seriesId: string
-  productId: string
-  product_group_code: string
-  seriesNumber: string
-  modelNumber: string
+export type CartItemType = CartItemsType & {
   color: string
   title: string
   size: string
   thumbnail: string
-  quantity: number
   price: number
 }
 
+export type CartItemsType = {
+  product_variant_size_id: string
+  product_variant_id: string
+  product_id: string
+  quantity: number
+}
+
 type Context = {
-  cart: CartItemType[]
+  cart: CartItemType[] | []
   isOpen: boolean
   closeCart: () => void
   openCart: () => void
-  addToCart: (item: CartItemType) => void
+  addToCart: (item: CartItemsType) => void
   updateQuantity: (modelId: string, quantity: number) => void
   deleteFromCart: (modelId: string) => void
   resetCart: () => void

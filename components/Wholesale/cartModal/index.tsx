@@ -70,7 +70,7 @@ export default function CartModal() {
       <div id="cartBody" className={styles.body}>
         <div className={styles.contents}>
           <div className={styles.innerContents}>
-            {cartItems.length > 0 ? (
+            {cartItems && cartItems.length > 0 ? (
               cartItems.map((c, index) => {
                 return <CartItem key={index} data={c} />
               })
@@ -82,7 +82,7 @@ export default function CartModal() {
           </div>
         </div>
         <div className={styles.buttonWrapper}>
-          {cartItems.length > 0 && (
+          {cartItems && cartItems.length > 0 && (
             <Link href={WHOLESALE_CART_ROUTE}>
               <Button color="black">注文に進む</Button>
             </Link>

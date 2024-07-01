@@ -71,7 +71,7 @@ export const ProductVariantCreateForm: FC<Props> = ({ productId }) => {
       return message.error(error.message)
     }
 
-    message.error('作成されました')
+    message.success('作成されました')
     router.push(
       toHref(ADMIN_PRODUCT_VARIANT_DETAIL_ROUTE, {
         id: productId,
@@ -105,7 +105,6 @@ export const ProductVariantCreateForm: FC<Props> = ({ productId }) => {
           <Card title="値段情報" style={{ marginBottom: '16px' }}>
             <Form.Item name="price" label="販売価格" rules={[{ required: true }]}>
               <InputNumber<number>
-                defaultValue={1000}
                 formatter={(value) => `¥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                 parser={(value) => value?.replace(/\¥\s?|(,*)/g, '') as unknown as number}
                 style={{ width: '100%' }}
