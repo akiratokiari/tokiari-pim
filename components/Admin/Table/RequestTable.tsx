@@ -14,16 +14,6 @@ const { Text } = Typography
 
 type Props = {
   dataSource: any[] | []
-  pagination: {
-    current: number
-    total: number
-    pageSize: number
-  }
-  searchParams: {
-    id?: string
-    company?: string
-    email?: string
-  }
 }
 
 type columnType = {
@@ -33,7 +23,7 @@ type columnType = {
   email: string
 }
 
-export const RequestTable: FC<Props> = ({ dataSource, pagination, searchParams }) => {
+export const RequestTable: FC<Props> = ({ dataSource }) => {
   const router = useRouter()
 
   const tableData: columnType[] =
@@ -76,15 +66,15 @@ export const RequestTable: FC<Props> = ({ dataSource, pagination, searchParams }
     }
   ]
 
-  const onPaginationChange = (values: TablePaginationConfig) => {
-    router.push(
-      ADMIN_USERS_ROUTE +
-        toQuery({
-          ...searchParams,
-          current: values.current || 1
-        })
-    )
-  }
+  // const onPaginationChange = (values: TablePaginationConfig) => {
+  //   router.push(
+  //     ADMIN_USERS_ROUTE +
+  //       toQuery({
+  //         ...searchParams,
+  //         current: values.current || 1
+  //       })
+  //   )
+  // }
 
   return (
     <Card>
@@ -92,11 +82,11 @@ export const RequestTable: FC<Props> = ({ dataSource, pagination, searchParams }
         <Table
           columns={columns}
           dataSource={tableData}
-          pagination={pagination}
-          onChange={onPaginationChange}
+          pagination={false}
+          // onChange={onPaginationChange}
         />
       ) : (
-        <Empty/>
+        <Empty />
       )}
     </Card>
   )

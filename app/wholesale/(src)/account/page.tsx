@@ -6,9 +6,8 @@ import {
   WHOLESALE_ACCOUNT_EDIT_PASSWORD_ROUTE,
   WHOLESALE_ACCOUNT_EDIT_ROUTE
 } from '@/constants/route'
-import { toStringPlan } from '@/helper/toStringPlan'
-import { LogoutButton } from '@/components/Wholesale'
-
+import { DisplayFormValue } from '@/components/displayFormValue'
+import { PageHeader } from '@/components/Wholesale/pageHeader'
 
 export default async function Page() {
   const supabase = createClient()
@@ -30,34 +29,49 @@ export default async function Page() {
     return (
       <div>
         <div className={style.menuWrapper}>
-          <Link className={style.menu} href={WHOLESALE_ACCOUNT_EDIT_ROUTE}>
-            アカウント編集
-          </Link>
-          <Link className={style.menu} href={WHOLESALE_ACCOUNT_EDIT_EMAIL_ROUTE}>
-            メールアドレス変更
-          </Link>
-          <Link className={style.menu} href={WHOLESALE_ACCOUNT_EDIT_PASSWORD_ROUTE}>
-            パスワード変更
-          </Link>
-
-          <LogoutButton className={style.menu} />
+          <PageHeader>アカウント情報 確認・編集</PageHeader>
         </div>
-        <div className={style.body}>
-          <div>===現在のプラン===</div>
-          {userData.plan && <div>プラン：{toStringPlan(userData.plan)}</div>}
-          <div>===会社===</div>
-          <div>会社名：{userData.company}</div>
-          <div>サイト：{userData.site_url}</div>
-          <div>メールアドレス：{userData.email}</div>
-          <div>電話番号：{userData.phone}</div>
-          <div>担当者(お名前)：{userData.contact_name}</div>
-          <div>担当者(フリガナ)：{userData.contact_kana}</div>
-          <div>===住所情報===</div>
-          <div>郵便番号：{userData.postal_code}</div>
-          <div>都道府県：{userData.prefecture}</div>
-          <div>市区町村：{userData.city}</div>
-          <div>番地：{userData.street_address}</div>
-          <div>ビル名・部屋番号(任意)：{userData.building_name}</div>
+        <div className={style.title}>登録情報</div>
+        <div className={style.displayValueWrapper}>
+          <DisplayFormValue border={false} label="会社名" value={userData.company} />
+          <DisplayFormValue border={false} label="サイト" value={userData.site_url || ''} />
+          <DisplayFormValue border={false} label="電話番号" value={userData.phone} />
+          <DisplayFormValue
+            border={false}
+            label="担当者様"
+            value={`${userData.contact_name}(${userData.contact_kana})`}
+          />
+
+          <DisplayFormValue
+            border={false}
+            label="住所"
+            value={`${userData.postal_code} ${userData.prefecture} ${userData.city} ${
+              userData.street_address
+            }
+            ${userData.building_name || ''}`}
+          />
+        </div>
+        <div className={style.buttonWrapper}>
+          <Link className={style.menu} href={WHOLESALE_ACCOUNT_EDIT_ROUTE}>
+            登録情報を編集する
+          </Link>
+        </div>
+
+        <div className={style.title}>メールアドレス</div>
+        <div className={style.displayValue}>
+          <div className={style.value}>{userData.email}</div>
+          <Link className={style.menu} href={WHOLESALE_ACCOUNT_EDIT_EMAIL_ROUTE}>
+            変更する
+          </Link>
+        </div>
+
+        <div className={style.title}>パスワード</div>
+        <div className={style.displayValue}>
+          <div className={style.label}>********</div>
+
+          <Link className={style.menu} href={WHOLESALE_ACCOUNT_EDIT_PASSWORD_ROUTE}>
+            変更する
+          </Link>
         </div>
       </div>
     )

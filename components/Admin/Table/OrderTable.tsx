@@ -1,18 +1,18 @@
 'use client'
-import { DisplayPaymentStatus } from '@/components/Admin/DisplayPaymentStatus'
 import {
   ADMIN_ORDERS_DETAIL_ROUTE,
-  ADMIN_USERS_DETAIL_ROUTE,
-  ADMIN_USERS_ROUTE
+  ADMIN_ORDERS_ROUTE,
+  ADMIN_USERS_DETAIL_ROUTE
 } from '@/constants/route'
 import { formatDateTime } from '@/helper/dateFormat'
 import toHref from '@/helper/toHref'
 import { toQuery } from '@/helper/toQuery'
-import { Card, Table } from 'antd'
+import { Table } from 'antd'
 import { ColumnsType, TablePaginationConfig } from 'antd/es/table'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { FC } from 'react'
+import { DisplayDeliveryStatus } from '../DisplayDeliveryStatus'
 
 type Props = {
   dataSource: any[] | []
@@ -32,15 +32,16 @@ type columnType = {
   id: string
   company: string
   payment_status: number
-  amount: number
+  total_price: number
+  shipping_price: number
 }
 
 export const OrderTable: FC<Props> = ({ dataSource, pagination, searchParams }) => {
   const router = useRouter()
   const tableData: columnType[] = dataSource.map((order) => {
-    let _count = 0
+    let _quantity = 0
     order.purchased_products.map((pp: any) => {
-      _count = _count + pp.amount
+      _quantity = _quantity + pp.quantity
     })
 
     return {
@@ -48,15 +49,17 @@ export const OrderTable: FC<Props> = ({ dataSource, pagination, searchParams }) 
       user_id: order.user_id,
       company: order.company,
       payment_status: order.payment_status,
-      amount: order.amount,
+      total_price: order.total_price,
+      shipping_price: order.shipping_price,
       created_at: order.created_at,
-      count: _count
+      quantity: _quantity,
+      is_delivered: order.is_delivered
     }
   })
 
   const columns: ColumnsType<columnType> = [
     {
-      title: '会社名',
+      title: '購入者',
       dataIndex: '',
       key: '',
       render: (column) => (
@@ -66,22 +69,23 @@ export const OrderTable: FC<Props> = ({ dataSource, pagination, searchParams }) 
       )
     },
     {
-      title: '支払いステータス',
-      dataIndex: 'payment_status',
-      key: 'payment_status',
-      render: (payment_status) => DisplayPaymentStatus(payment_status)
+      title: '配送',
+      dataIndex: 'is_delivered',
+      key: 'is_delivered',
+      render: (is_delivered) => DisplayDeliveryStatus(is_delivered)
     },
     {
       title: '購入点数',
-      dataIndex: 'count',
-      key: 'count',
-      render: (count) => `${count}点`
+      dataIndex: 'quantity',
+      key: 'quantity',
+      render: (quantity) => `${quantity}点`
     },
     {
       title: '合計金額',
-      dataIndex: 'amount',
-      key: 'amount',
-      render: (amount) => `${amount.toLocaleString()}円`
+      dataIndex: 'total_price',
+      key: 'total_price',
+      render: (_, all) =>
+        `${all.total_price.toLocaleString()}円`
     },
     {
       title: '購入時刻',
@@ -103,7 +107,7 @@ export const OrderTable: FC<Props> = ({ dataSource, pagination, searchParams }) 
 
   const onPaginationChange = (values: TablePaginationConfig) => {
     router.push(
-      ADMIN_USERS_ROUTE +
+      ADMIN_ORDERS_ROUTE +
         toQuery({
           ...searchParams,
           current: values.current || 1
@@ -112,13 +116,11 @@ export const OrderTable: FC<Props> = ({ dataSource, pagination, searchParams }) 
   }
 
   return (
-    <Card>
-      <Table
-        columns={columns}
-        dataSource={tableData}
-        pagination={pagination}
-        onChange={onPaginationChange}
-      />
-    </Card>
+    <Table
+      columns={columns}
+      dataSource={tableData}
+      pagination={pagination}
+      onChange={onPaginationChange}
+    />
   )
 }

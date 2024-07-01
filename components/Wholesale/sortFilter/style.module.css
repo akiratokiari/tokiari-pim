@@ -1,0 +1,16 @@
+.menus {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.menu {
+  color: black;
+  font-size: 14px;
+}

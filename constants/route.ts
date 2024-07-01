@@ -20,13 +20,15 @@ export const ADMIN_PRODUCT_VARIANT_DETAIL_ROUTE = '/admin/products/[id]/[variant
 export const ADMIN_PRODUCT_VARIANT_DETAIL_EDIT_ROUTE = '/admin/products/[id]/[variantId]/edit'
 export const ADMIN_PRODUCT_VARIANT_DETAIL_EDIT_IMAGE_ROUTE =
   '/admin/products/[id]/[variantId]/edit/images'
+export const ADMIN_PRODUCT_VARIANT_DETAIL_EDIT_SIZE_ROUTE =
+  '/admin/products/[id]/[variantId]/edit/size'
 export const ADMIN_PRODUCTS_CREATE_ROUTE = '/admin/products/create'
 
 export const WHOLESALE_ROUTE = '/wholesale'
 export const WHOLESALE_CART_ROUTE = '/wholesale/cart'
+export const WHOLESALE_CART_COMPLETE_ROUTE = '/wholesale/cart/complete'
 export const WHOLESALE_ACCOUNT_ROUTE = '/wholesale/account'
 export const WHOLESALE_PRODUCTS_DETAIL_ROUTE = '/wholesale/products/[id]'
-export const WHOLESALE_WELCOME_ROUTE = '/wholesale/welcome'
 
 // アカウント編集
 export const WHOLESALE_ACCOUNT_EDIT_ROUTE = '/wholesale/account/edit'

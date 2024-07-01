@@ -25,20 +25,17 @@ export const ProductVariantSelector: FC<Props> = ({ product, variants, currentCo
             <div key={pv.id} className={style.body}>
               {pv.product_variants_size.map((pvs) => {
                 const cartFormatDataWithoutQuantity = {
-                  productId: product.id,
-                  modelId: pvs.id,
-                  seriesId: pv.id,
-                  color: pv.color,
-                  title: product.title,
-                  seriesNumber: pv.series_number,
-                  size: pvs.product_size,
-                  modelNumber: pvs.model_number,
-                  thumbnail: variants[0].product_images[0].image_url,
-                  product_group_code: product.product_group_code,
-                  quantity: 1,
-                  price: pv.price
+                  product_id: product.id,
+                  product_variant_size_id: pvs.id,
+                  product_variant_id: pv.id,
+                  quantity: 1
                 }
-                return <VariantSizeSelector key={pvs.id} data={cartFormatDataWithoutQuantity} />
+                return (
+                  <div>
+                    <div className={style.size}>サイズ : {pvs.product_size}</div>
+                    <VariantSizeSelector key={pvs.id} data={cartFormatDataWithoutQuantity} />
+                  </div>
+                )
               })}
             </div>
           )

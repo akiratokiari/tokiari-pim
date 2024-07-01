@@ -1,6 +1,7 @@
 'use client'
+import { RequestResultFormType } from '@/app/api/resend/request-result/route'
 import { USER_ROLE } from '@/constants/app'
-import { ADMIN_USERS_DETAIL_ROUTE } from '@/constants/route'
+import { ADMIN_ROUTE, ADMIN_USERS_DETAIL_ROUTE } from '@/constants/route'
 import toHref from '@/helper/toHref'
 import { createClient } from '@/utils/supabase/client'
 import { App, Button } from 'antd'
@@ -29,14 +30,38 @@ export const RequestPermissionButtons: FC<Props> = ({ userId }) => {
             permission_at: new Date().toISOString().toLocaleString()
           })
           .eq('id', userId)
-          .select()
+          .select('*')
+          .single()
 
         if (error) {
           message.error('予期せぬエラーが発生しました')
         }
+
+        if (data) {
+          const value: RequestResultFormType = {
+            email: data.email,
+            name: data.contact_name,
+            company: data.company,
+            result: USER_ROLE.Buyer
+          }
+
+          await fetch(`/api/resend/request-result`, {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json, text/plain',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(value)
+          })
+            .then(() => {})
+            .catch(() => {
+              window.alert('エラーが発生しました、もう一度やり直してください。')
+            })
+        }
+
         if (!error) {
           message.success('承認しました')
-          router.push(toHref(ADMIN_USERS_DETAIL_ROUTE, { id: data[0].id }))
+          router.push(toHref(ADMIN_USERS_DETAIL_ROUTE, { id: data.id }))
         }
       },
       okText: '承認する',
@@ -49,15 +74,41 @@ export const RequestPermissionButtons: FC<Props> = ({ userId }) => {
       icon: null,
       content: '',
       async onOk() {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('users')
           .update({ user_role: USER_ROLE.Denied })
           .eq('id', userId)
+          .select('*')
+          .single()
         if (error) {
           message.error('予期せぬエラーが発生しました')
         }
+
+        if (data) {
+          const value: RequestResultFormType = {
+            email: data.email,
+            name: data?.contact_name || '',
+            company: data?.company || '',
+            result: USER_ROLE.Buyer
+          }
+
+          await fetch(`/api/resend/request-result`, {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json, text/plain',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(value)
+          })
+            .then(() => {})
+            .catch(() => {
+              window.alert('エラーが発生しました、もう一度やり直してください。')
+            })
+        }
+
         if (!error) {
           message.success('拒否しました')
+          router.push(ADMIN_ROUTE)
         }
       },
       okText: '拒否する',

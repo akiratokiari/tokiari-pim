@@ -1,5 +1,5 @@
 'use client'
-import { Button, Card, Col, DatePicker, Form, Input, Row, Select } from 'antd'
+import { Button, Card, Col, DatePicker, Form, Input, message, Row, Select } from 'antd'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { FC, useState } from 'react'
@@ -13,6 +13,7 @@ import { PageHeader } from './PageHeader'
 import { createClient } from '@/utils/supabase/client'
 import toHref from '@/helper/toHref'
 import { CategoryArray } from '@/constants/category'
+import { ProductsInsertType } from '@/utils/supabase/type'
 
 export const ProductCreateForm: FC = () => {
   const router = useRouter()
@@ -29,12 +30,11 @@ export const ProductCreateForm: FC = () => {
     if (isSending) return
     setIsSending(true)
 
-    const _product = {
+    const _product: ProductsInsertType = {
       // =============================
       title: values.title,
       description: values.description,
       kana: values.kana,
-      material: values.material,
       category: values.category,
       // =============================
       product_code: values.product_code,
@@ -48,10 +48,16 @@ export const ProductCreateForm: FC = () => {
       .from('products')
       .insert({ ..._product })
       .select()
-    if (error) return
-    router.push(toHref(ADMIN_PRODUCTS_DETAIL_ROUTE, { id: data[0].id }))
-
-    // ここでProduct(親)を作成する
+      .single()
+    if (error) {
+      message.error(error.message)
+      setIsSending(false)
+      return
+    }
+    if (data) {
+      message.success('商品が作成されました')
+      router.push(toHref(ADMIN_PRODUCTS_DETAIL_ROUTE, { id: data.id }))
+    }
   }
 
   return (
@@ -71,13 +77,14 @@ export const ProductCreateForm: FC = () => {
             </Form.Item>
             <Form.Item name="category" label="カテゴリー" rules={[{ required: true }]}>
               <Select>
-                {CategoryArray.map((c) => {
-                  return <Select.Option value={c}>{c}</Select.Option>
+                {CategoryArray.map((c, index) => {
+                  return (
+                    <Select.Option key={index} value={c}>
+                      {c}
+                    </Select.Option>
+                  )
                 })}
               </Select>
-            </Form.Item>
-            <Form.Item name="material" label="素材" rules={[{ required: true }]}>
-              <Input />
             </Form.Item>
           </Card>
 

@@ -5,62 +5,83 @@ export type Database = {
     Tables: {
       orders: {
         Row: {
-          amount: number
           building_name: string | null
           city: string
           company: string
-          contact_kana: string
-          contact_name: string
           created_at: string
           deleted_at: string | null
+          delivery_at: string | null
+          delivery_code: string | null
+          delivery_date: string | null
+          delivery_time: string | null
           id: string
           is_delivered: boolean | null
+          option: number | null
           payment_intent: string | null
           payment_status: number
           phone: string
           postal_code: string
           prefecture: string
+          quantity: number
+          remarks: string | null
+          shipping_price: number | null
           street_address: string
+          sub_total: number
+          total_price: number
           updated_at: string
           user_id: string
         }
         Insert: {
-          amount: number
           building_name?: string | null
           city: string
           company: string
-          contact_kana: string
-          contact_name: string
           created_at?: string
           deleted_at?: string | null
+          delivery_at?: string | null
+          delivery_code?: string | null
+          delivery_date?: string | null
+          delivery_time?: string | null
           id?: string
           is_delivered?: boolean | null
+          option?: number | null
           payment_intent?: string | null
           payment_status: number
           phone: string
           postal_code: string
           prefecture: string
+          quantity: number
+          remarks?: string | null
+          shipping_price?: number | null
           street_address: string
+          sub_total: number
+          total_price: number
           updated_at?: string
           user_id: string
         }
         Update: {
-          amount?: number
           building_name?: string | null
           city?: string
           company?: string
-          contact_kana?: string
-          contact_name?: string
           created_at?: string
           deleted_at?: string | null
+          delivery_at?: string | null
+          delivery_code?: string | null
+          delivery_date?: string | null
+          delivery_time?: string | null
           id?: string
           is_delivered?: boolean | null
+          option?: number | null
           payment_intent?: string | null
           payment_status?: number
           phone?: string
           postal_code?: string
           prefecture?: string
+          quantity?: number
+          remarks?: string | null
+          shipping_price?: number | null
           street_address?: string
+          sub_total?: number
+          total_price?: number
           updated_at?: string
           user_id?: string
         }
@@ -204,9 +225,9 @@ export type Database = {
           id: string
           jicfs_code: string
           kana: string
-          material: string
           product_code: string
           product_group_code: string
+          publish_status: number
           sales_started_at: string
           title: string
           updated_at: string
@@ -220,9 +241,9 @@ export type Database = {
           id?: string
           jicfs_code: string
           kana: string
-          material: string
           product_code: string
           product_group_code: string
+          publish_status?: number
           sales_started_at: string
           title: string
           updated_at?: string
@@ -236,9 +257,9 @@ export type Database = {
           id?: string
           jicfs_code?: string
           kana?: string
-          material?: string
           product_code?: string
           product_group_code?: string
+          publish_status?: number
           sales_started_at?: string
           title?: string
           updated_at?: string
@@ -247,47 +268,64 @@ export type Database = {
       }
       purchased_products: {
         Row: {
-          amount: number
           created_at: string
           deleted_at: string | null
           id: string
-          model_number: string
           order_id: string
+          payment_status: number
           price: number
-          product_group_code: string
-          series_number: string
+          product_id: string
+          product_variant_id: string
+          product_variant_size_id: string
+          quantity: number
           updated_at: string
         }
         Insert: {
-          amount: number
           created_at?: string
           deleted_at?: string | null
           id?: string
-          model_number: string
           order_id: string
+          payment_status: number
           price: number
-          product_group_code: string
-          series_number: string
+          product_id: string
+          product_variant_id: string
+          product_variant_size_id: string
+          quantity: number
           updated_at?: string
         }
         Update: {
-          amount?: number
           created_at?: string
           deleted_at?: string | null
           id?: string
-          model_number?: string
           order_id?: string
+          payment_status?: number
           price?: number
-          product_group_code?: string
-          series_number?: string
+          product_id?: string
+          product_variant_id?: string
+          product_variant_size_id?: string
+          quantity?: number
           updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: 'purchased_products_order_id_fkey'
-            columns: ['order_id']
+            foreignKeyName: 'purchased_products_product_id_fkey'
+            columns: ['product_id']
             isOneToOne: false
-            referencedRelation: 'orders'
+            referencedRelation: 'products'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'purchased_products_product_variant_id_fkey'
+            columns: ['product_variant_id']
+            isOneToOne: false
+            referencedRelation: 'product_variants'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'purchased_products_product_variant_size_id_fkey'
+            columns: ['product_variant_size_id']
+            isOneToOne: false
+            referencedRelation: 'product_variants_size'
             referencedColumns: ['id']
           }
         ]

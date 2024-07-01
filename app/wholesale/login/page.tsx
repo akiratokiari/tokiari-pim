@@ -12,7 +12,7 @@ export default function Page() {
     <div className={style.body}>
       <div className={style.title}>TOKIARI 卸会員ログイン</div>
       <form className={style.formBody} action={formAction}>
-        {state && state}
+        {state && <div className={style.state}>{state}</div>}
         <div className={style.formItem}>
           <label htmlFor="email">メールアドレス</label>
           <input id="email" name="email" type="email" required />
@@ -21,7 +21,6 @@ export default function Page() {
           <label htmlFor="password">パスワード</label>
           <input id="password" name="password" type="password" required />
         </div>
-
         <div className={style.buttonWrapper}>
           <Button color="black" type="submit">
             ログイン

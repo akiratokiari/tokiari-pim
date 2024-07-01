@@ -35,3 +35,8 @@ export const PRODUCT_PUBLISH_STATUS = {
   Public: 1, // 公開中
   Private: 2 // 非公開
 }
+
+export const ORDER_DELIVERY_OPTION = {
+  Exist: 1, // あり
+  Whenever: 2 // なし
+}

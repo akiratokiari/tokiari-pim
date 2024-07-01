@@ -53,7 +53,7 @@ export default async function Page({ searchParams }: Props) {
       <Col span={18}>
         <PageHeader title="商品ー覧" routes={routes} />
         <Card>
-          {data ? (
+          {data && data.length > 0 ? (
             <ProductsTable dataSource={data} pagination={pagination} searchParams={searchParams} />
           ) : (
             <Empty />

@@ -12,10 +12,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  
   return (
     <div>
       <Header />
-      <div style={{ padding: '85px 20px 20px 20px' }}>{children}</div>
+      <div style={{}}>{children}</div>
       <Footer />
     </div>
   )

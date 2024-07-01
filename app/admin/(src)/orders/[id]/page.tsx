@@ -1,7 +1,16 @@
+import { ShippingStatusButton } from '@/components/Admin/Button/ShippingStatusButton'
+import { DisplayDeliveryStatus } from '@/components/Admin/DisplayDeliveryStatus'
 import { DisplayPaymentStatus } from '@/components/Admin/DisplayPaymentStatus'
 import { PageHeader } from '@/components/Admin/PageHeader'
 import { PurchasedProductTable } from '@/components/Admin/Table/PurchasedProductTable'
-import { ADMIN_ORDERS_DETAIL_ROUTE, ADMIN_ORDERS_ROUTE, ADMIN_ROUTE } from '@/constants/route'
+import { LabelStyle } from '@/constants/adminCSS'
+import { ORDER_DELIVERY_OPTION } from '@/constants/app'
+import {
+  ADMIN_ORDERS_ROUTE,
+  ADMIN_ROUTE,
+  ADMIN_SHIPPING_DETAIL_ROUTE,
+  ADMIN_USERS_DETAIL_ROUTE
+} from '@/constants/route'
 import { formatDateTime } from '@/helper/dateFormat'
 import toHref from '@/helper/toHref'
 import { createClient } from '@/utils/supabase/server'
@@ -27,7 +36,7 @@ export default async function Page({ params }: Props) {
     { title: <Link href={ADMIN_ROUTE}>ダッシュボード</Link> },
     { title: <Link href={ADMIN_ORDERS_ROUTE}>注文一覧</Link> },
     {
-      title: <Link href={toHref(ADMIN_ORDERS_DETAIL_ROUTE, { id: params.id })}>詳細</Link>
+      title: <Link href={toHref(ADMIN_SHIPPING_DETAIL_ROUTE, { id: params.id })}>詳細</Link>
     }
   ]
   if (!params.id) return
@@ -35,8 +44,10 @@ export default async function Page({ params }: Props) {
   const items: DescriptionsProps['items'] = [
     {
       key: '1',
-      label: '会社',
-      children: order.company,
+      label: '購入者',
+      children: (
+        <Link href={toHref(ADMIN_USERS_DETAIL_ROUTE, { id: order.user_id })}>{order.company}</Link>
+      ),
       span: 3
     },
     {
@@ -64,17 +75,33 @@ export default async function Page({ params }: Props) {
         </div>
       ),
       span: 3
-    },
+    }
+  ]
+  const deliveryStatusItems: DescriptionsProps['items'] = [
     {
-      key: 'contactName',
-      label: '担当者',
-      children: order.contact_name,
+      key: '1',
+      label: '配送状況',
+      children: DisplayDeliveryStatus(Boolean(order.is_delivered)),
+      span: 3
+    }
+  ]
+  const deliveryOptionItems: DescriptionsProps['items'] = [
+    {
+      key: '1',
+      label: '配送希望日',
+      children: order.option === ORDER_DELIVERY_OPTION.Exist ? order.delivery_date : '指定なし',
       span: 3
     },
     {
-      key: 'contactKana',
-      label: '担当者(フリガナ)',
-      children: order.contact_kana,
+      key: 'phone',
+      label: '配送時間帯',
+      children: order.option === ORDER_DELIVERY_OPTION.Exist ? order.delivery_time : '指定なし',
+      span: 3
+    },
+    {
+      key: 'remarks',
+      label: '備考欄',
+      children: <div style={{ whiteSpace: 'pre-wrap' }}>{order.remarks}</div>,
       span: 3
     }
   ]
@@ -95,7 +122,7 @@ export default async function Page({ params }: Props) {
     {
       label: '決済金額',
       key: '',
-      children: `${order.amount.toLocaleString()}円`,
+      children: `${order.total_price.toLocaleString()}円　(配送料${order.shipping_price?.toLocaleString()}円)`,
       span: 3
     },
     {
@@ -108,17 +135,45 @@ export default async function Page({ params }: Props) {
 
   return (
     <Row gutter={[24, 24]}>
-      <Col span={24}>
+      <Col span={18}>
         <PageHeader title="購入履歴詳細" routes={routes} />
         <Card style={{ marginBottom: 16 }}>
-          <Descriptions bordered title="購入者情報" items={items} />
+          <Descriptions
+            labelStyle={LabelStyle}
+            bordered
+            title="配送先"
+            items={items}
+            style={{ marginBottom: 16 }}
+          />
+          <Descriptions
+            labelStyle={LabelStyle}
+            bordered
+            items={deliveryStatusItems}
+            style={{ marginBottom: 16 }}
+          />
+          <Descriptions
+            labelStyle={LabelStyle}
+            bordered
+            title="配送オプション"
+            items={deliveryOptionItems}
+          />
         </Card>
+
         <Card title="購入商品" style={{ marginBottom: 16 }}>
           <PurchasedProductTable products={order.purchased_products} />
         </Card>
         <Card>
-          <Descriptions bordered title="システム情報" items={systemItems} />
+          <Descriptions labelStyle={LabelStyle} bordered title="決済情報" items={systemItems} />
         </Card>
+      </Col>
+      <Col span={6}>
+        {!order.is_delivered && (
+          <>
+            <Card>
+              <ShippingStatusButton orderId={params.id} />
+            </Card>
+          </>
+        )}
       </Col>
     </Row>
   )

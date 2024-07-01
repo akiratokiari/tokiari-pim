@@ -20,7 +20,6 @@ export async function login(_: string | null, formData: FormData) {
     .select('user_role')
     .eq('id', loginUser.user.id)
     .single()
-  console.log(userData)
 
   if (userData.data && userData.data.user_role !== USER_ROLE.Admin) {
     await supabase.auth.signOut()

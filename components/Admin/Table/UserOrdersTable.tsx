@@ -15,7 +15,7 @@ type Props = {
 type columnType = {
   id: string
   payment_status: number
-  amount: number
+  total_price: number
   created_at: string
   count: number
 }
@@ -23,14 +23,14 @@ type columnType = {
 export const UserOrdersTable: FC<Props> = ({ dataSource }) => {
   const tableData: columnType[] = dataSource.map((order) => {
     let _count = 0
-    order.purchased_products.map((pp: any) => {
-      _count = _count + pp.amount
+    order.purchased_products.map((pp: columnType) => {
+      _count = _count + pp.total_price
     })
 
     return {
       id: order.id,
       payment_status: order.payment_status,
-      amount: order.amount,
+      total_price: order.total_price,
       created_at: order.created_at,
       count: _count
     }
@@ -51,9 +51,9 @@ export const UserOrdersTable: FC<Props> = ({ dataSource }) => {
     },
     {
       title: '合計金額',
-      dataIndex: 'amount',
-      key: 'amount',
-      render: (amount) => `${amount.toLocaleString()}円`
+      dataIndex: 'total_price',
+      key: 'total_price',
+      render: (total_price) => `${total_price.toLocaleString()}円`
     },
     {
       title: '購入時刻',

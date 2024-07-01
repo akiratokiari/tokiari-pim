@@ -28,6 +28,7 @@
     "react-dom": "^18",
     "react-hook-form": "^7.51.3",
     "react-loader-spinner": "^6.1.6",
+    "resend": "^3.4.0",
     "stripe": "^15.8.0",
     "swiper": "^11.1.4",
     "uuid": "^9.0.1",

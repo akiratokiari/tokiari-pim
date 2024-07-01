@@ -1,0 +1,57 @@
+.body {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 16px;
+  margin-top: 20px;
+  margin-bottom: 40px;
+  font-weight: bold;
+}
+
+.state {
+  background: rgb(210, 210, 210);
+  padding: 20px;
+  border-radius: 2px;
+}
+
+.formBody {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formItem {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 14px;
+}
+.formItem > label {
+  font-weight: bold;
+}
+.formItem > input {
+  height: 40px;
+  border: solid 1px black;
+  border-radius: 2px;
+  padding: 0 10px;
+}
+
+.buttonWrapper {
+  margin-top: 20px;
+}
+
+.forgetPassword {
+  font-size: 14px;
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+  color: black;
+  width: fit-content;
+  padding: 4px;
+  margin-top: 10px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

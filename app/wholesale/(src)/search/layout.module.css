@@ -1,0 +1,18 @@
+.body {
+  display: flex;
+  flex-direction: column;
+  padding: 85px 20px 50px 20px;
+}
+.contents {
+  width: 100%;
+}
+
+@media (min-width: 756px) {
+  .body {
+    display: flex;
+    flex-direction: row;
+  }
+  .contents {
+    width: 100%;
+  }
+}

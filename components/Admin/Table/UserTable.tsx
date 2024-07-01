@@ -29,7 +29,6 @@ type Props = {
 type columnType = {
   id: string
   company: string
-  plan: number
   email: string
 }
 
@@ -39,7 +38,6 @@ export const UsersTable: FC<Props> = ({ dataSource, pagination, searchParams }) 
     return {
       id: user.id,
       company: user.company,
-      plan: user.plan || 0,
       email: user.email
     }
   })
@@ -49,12 +47,6 @@ export const UsersTable: FC<Props> = ({ dataSource, pagination, searchParams }) 
       title: '会社名',
       dataIndex: 'company',
       key: 'company'
-    },
-    {
-      title: 'プラン',
-      dataIndex: 'plan',
-      key: 'plan',
-      render: (plan: number) => toStringPlan(plan)
     },
     {
       title: 'メールアドレス',

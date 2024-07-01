@@ -98,7 +98,7 @@ export const ImageUpload: FC<Props> = ({ onChange, file, type = 'gallery' }) => 
     <Card
       title={cardTitle}
       extra={[
-        <ImgCrop key="upload" rotationSlider quality={1} aspect={2 / 3}>
+        <ImgCrop key="upload" rotationSlider quality={1} aspect={3 / 4}>
           <Upload
             style={{ visibility: 'hidden' }}
             maxCount={1}

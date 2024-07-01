@@ -5,9 +5,7 @@ import {
   ADMIN_ORDERS_ROUTE,
   ADMIN_PRODUCTS_CREATE_ROUTE,
   ADMIN_PRODUCTS_ROUTE,
-  ADMIN_REQUESTS_ROUTE,
   ADMIN_ROUTE,
-  ADMIN_SHIPPING_ROUTE,
   ADMIN_USERS_ROUTE
 } from '@/constants/route'
 import { useRouter } from 'next/navigation'
@@ -43,9 +41,7 @@ export const MenuSider: FC = () => {
       getItem('商品一覧', ADMIN_PRODUCTS_ROUTE),
       getItem('新規作成', ADMIN_PRODUCTS_CREATE_ROUTE)
     ]),
-    getItem('注文一覧', ADMIN_ORDERS_ROUTE),
-    getItem('発送待ち', ADMIN_SHIPPING_ROUTE),
-    getItem('バイヤー申請', ADMIN_REQUESTS_ROUTE)
+    getItem('注文一覧', ADMIN_ORDERS_ROUTE)
   ]
 
   return <Menu theme="dark" mode="inline" items={menuItems} onClick={onClick} />

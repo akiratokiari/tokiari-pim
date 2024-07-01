@@ -1,11 +1,20 @@
 .body {
   padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .title {
   font-size: 16px;
   margin-top: 20px;
   margin-bottom: 40px;
+  font-weight: bold;
+}
+
+.state {
+  background: rgb(210, 210, 210);
+  padding: 20px;
+  border-radius: 2px;
 }
 
 .formBody {
@@ -43,4 +52,6 @@
   width: fit-content;
   padding: 4px;
   margin-top: 10px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }

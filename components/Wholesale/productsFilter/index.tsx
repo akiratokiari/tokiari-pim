@@ -5,17 +5,16 @@ import Link from 'next/link'
 import { WHOLESALE_ROUTE } from '@/constants/route'
 import { toQuery } from '@/helper/toQuery'
 import { CategoryArray } from '@/constants/category'
-import { ColorArray } from '@/constants/color'
 
 type Props = {
+  children: React.ReactNode
   searchParams: ProductsFilterSearchParamsType
 }
 
 type ProductsFilterSearchParamsType = {
-  color?: string
+  sort?: string
   keyword?: string
   category?: string
-  current?: string
 }
 
 export const ProductsFilter: FC<Props> = ({ searchParams }) => {
@@ -24,10 +23,11 @@ export const ProductsFilter: FC<Props> = ({ searchParams }) => {
       <div className={style.wrapper}>
         <div className={style.title}>KEYWORD</div>
         <input />
-      </div>
-      <div className={style.wrapper}>
         <div className={style.title}>CATEGORY</div>
         <div className={style.menus}>
+          <Link href={WHOLESALE_ROUTE + toQuery({ category: 'all' })}>
+            <div className={style.menu}>All</div>
+          </Link>
           {CategoryArray.map((c, index) => {
             return (
               <Link key={index} href={WHOLESALE_ROUTE + toQuery({ category: c })}>
@@ -38,17 +38,17 @@ export const ProductsFilter: FC<Props> = ({ searchParams }) => {
         </div>
       </div>
       <div className={style.wrapper}>
-        <div className={style.title}>COLOR</div>
+        <div className={style.title}>Sort</div>
         <div className={style.menus}>
-          {ColorArray.map((c, index) => {
-            if (!c.value.includes('×')) {
-              return (
-                <Link key={index} href={WHOLESALE_ROUTE + toQuery({ color: c.value })}>
-                  <div className={style.menu}>{c.value}</div>
-                </Link>
-              )
-            }
-          })}
+          <Link href={WHOLESALE_ROUTE + toQuery({ sort: 'latest' })}>
+            <div className={style.menu}>Latest </div>
+          </Link>
+          <Link href={WHOLESALE_ROUTE + toQuery({ sort: 'low-to-high' })}>
+            <div className={style.menu}>Price: Low to high</div>
+          </Link>
+          <Link href={WHOLESALE_ROUTE + toQuery({ sort: 'high-to-low' })}>
+            <div className={style.menu}>Price: High to low</div>
+          </Link>
           <div className={style.menu}>その他</div>
         </div>
       </div>

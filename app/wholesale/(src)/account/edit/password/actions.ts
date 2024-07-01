@@ -1,5 +1,6 @@
 'use server'
 import { WHOLESALE_ACCOUNT_ROUTE } from '@/constants/route'
+import { getBaseUrl } from '@/helper/getBaseUrl'
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
@@ -13,13 +14,18 @@ export async function updateUserPassword(
 ) {
   const supabase = createClient()
   const password = formData.get('password') as string
+  const rePassword = formData.get('re-password') as string
 
-  const { error } = await supabase.auth.updateUser(
-    { password: password },
-    { emailRedirectTo: 'http://localhost:3000/wholesale/auth' }
-  )
-  if (error) {
-    return { isComplete: false, message: '予期せぬエラーが発生しました' }
+  if (rePassword === password) {
+    const { error } = await supabase.auth.updateUser(
+      { password: password },
+      { emailRedirectTo: `${getBaseUrl()}/wholesale/auth` }
+    )
+    if (error) {
+      return { isComplete: false, message: '予期せぬエラーが発生しました' }
+    }
+  } else {
+    return { isComplete: false, message: '入力内容に誤りがあります' }
   }
 
   revalidatePath('/', 'layout')

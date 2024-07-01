@@ -6,8 +6,9 @@ import toHref from '@/helper/toHref'
 import { createClient } from '@/utils/supabase/server'
 import { ExternalLink } from '@/components/externalLink'
 import { formatDateTime } from '@/helper/dateFormat'
-import { OrderTable } from '@/components/Admin/Table/OrderTable'
 import { UserOrdersTable } from '@/components/Admin/Table/UserOrdersTable'
+import { ORDER_PAYMENT_STATUS } from '@/constants/app'
+import { LabelStyle } from '@/constants/adminCSS'
 
 type Props = {
   params: {
@@ -35,6 +36,7 @@ export default async function Page({ params }: Props) {
     .from('orders')
     .select('*, purchased_products(*)')
     .eq('user_id', params.id)
+    .in('payment_status', [ORDER_PAYMENT_STATUS.Buy, ORDER_PAYMENT_STATUS.Refund])
 
   const items: DescriptionsProps['items'] = [
     {
@@ -83,8 +85,8 @@ export default async function Page({ params }: Props) {
     },
     {
       key: 'contactName',
-      label: '担当者',
-      children: userData?.contact_name,
+      label: <>担当者名</>,
+      children: `${userData?.contact_name} (${userData?.contact_kana})`,
       span: 3
     }
   ]
@@ -103,10 +105,18 @@ export default async function Page({ params }: Props) {
       <Col span={18}>
         <PageHeader title="ユーザー詳細" routes={routes} descriptions={descriptions} />
         <Card style={{ marginBottom: 16 }}>
-          <Descriptions style={{ marginBottom: 16 }} bordered title="会社情報" items={items} />
-          <Descriptions bordered title="システム情報" items={systemItems} />
+          <Descriptions
+            labelStyle={LabelStyle}
+            style={{ marginBottom: 16 }}
+            bordered
+            title="会社情報"
+            items={items}
+          />
+          <Descriptions labelStyle={LabelStyle} bordered items={systemItems} />
         </Card>
-        <Card title="注文履歴">{orders ? <UserOrdersTable dataSource={orders} /> : <Empty />}</Card>
+        <Card title="注文履歴">
+          {orders && orders?.length > 0 ? <UserOrdersTable dataSource={orders} /> : <Empty />}
+        </Card>
       </Col>
       <Col span={6}>
         <Card>

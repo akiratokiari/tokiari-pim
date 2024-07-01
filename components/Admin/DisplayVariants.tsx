@@ -20,11 +20,13 @@ export const DisplayVariants: FC<Props> = ({ data, productId }) => {
       grid={{ gutter: 16, column: 4 }}
       dataSource={data}
       renderItem={(item) => (
-        <List.Item>
+        <List.Item key={item.id}>
           <Card
+            key={item.id}
             title={item.title}
             extra={[
               <Link
+                key={item.id}
                 href={toHref(ADMIN_PRODUCT_VARIANT_DETAIL_ROUTE, {
                   id: productId,
                   variantId: item.id

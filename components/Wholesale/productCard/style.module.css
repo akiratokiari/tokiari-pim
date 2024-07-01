@@ -1,11 +1,12 @@
 .body {
   border: solid 1px rgb(237, 237, 237);
+  background-color: white;
 }
 
 .imageWrapper {
   width: 100%;
   position: relative;
-  aspect-ratio: 2/3;
+  aspect-ratio: 3/4;
 }
 
 .title {

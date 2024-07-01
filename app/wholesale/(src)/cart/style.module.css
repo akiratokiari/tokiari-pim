@@ -1,18 +1,31 @@
-.itemWrapper {
+.body {
+}
+
+.itemSection {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
+.itemWrapper {
+  background-color: white;
+  border: solid 1px rgb(237, 237, 237);
+  display: flex;
+  padding: 20px;
+}
+
 .imageWrapper {
-  width: 100px;
+  min-width: 120px;
   position: relative;
-  aspect-ratio: 2/3;
+  aspect-ratio: 3/4;
 }
 
 .item {
   display: flex;
-  gap: 20px;
+  width: 100%;
+  justify-content: space-between;
+  flex-direction: column;
+  padding: 20px;
 }
 
 .title {
@@ -23,8 +36,13 @@
 .caption {
   font-size: 14px;
 }
+.subTotalCaption {
+  display: none;
+  font-size: 14px;
+}
 
 .descriptionWrapper {
+  padding: 10px 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -32,4 +50,142 @@
 
 .inputWrapper {
   display: flex;
+}
+.label {
+  margin-bottom: 10px;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.footerContent {
+  width: 100%;
+}
+
+.input {
+  width: 100%;
+  height: 40px;
+  border: solid 1px rgb(237, 237, 237);
+  margin-bottom: 10px;
+  margin-top: 10px;
+  padding: 0 10px;
+  cursor: text;
+}
+.select {
+  width: 100%;
+  height: 40px;
+  border: solid 1px rgb(237, 237, 237);
+  margin-bottom: 10px;
+  appearance: none;
+  padding: 0 10px;
+  cursor: pointer;
+}
+.textarea {
+  resize: none;
+  width: 100%;
+  min-width: 100%;
+  max-width: 100%;
+  border: solid 1px rgb(237, 237, 237);
+  margin-bottom: 10px;
+  padding: 10px;
+  cursor: text;
+}
+
+.policy {
+  width: 100%;
+  padding: 20px;
+  overflow: scroll;
+  border: solid 1px rgb(237, 237, 237);
+  background-color: white;
+  margin-bottom: 20px;
+}
+
+.checkboxWrapper {
+  text-align: center;
+}
+
+.totalPriceWrapper {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.totalPrice {
+  margin-bottom: 10px;
+}
+
+.defaultAddressValues {
+  margin-bottom: 10px;
+}
+
+.addressLabel {
+  color: gray;
+  font-size: 12px;
+  margin-bottom: 2.5px;
+}
+
+.shippingDateWrapper {
+  margin-bottom: 10px;
+}
+
+.radioOptionWrapper {
+  display: flex;
+  gap: 10px;
+}
+
+.radioOption {
+  cursor: pointer;
+}
+
+@media (min-width: 756px) {
+  .item {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 20px;
+  }
+  .subTotalCaption {
+    display: block;
+  }
+  .footer {
+    display: flex;
+    gap: 20px;
+    flex-direction: row;
+  }
+}
+
+.modalElement {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modalElementInner {
+  padding: 40px 20px;
+  border-radius: 2px;
+  background-color: white;
+  z-index: 99999;
+  width: 100%;
+  max-width: 756px;
+  margin: 0 auto;
+}
+
+.modalElementBackground {
+  background-color: black;
+  opacity: 0.8;
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
 }

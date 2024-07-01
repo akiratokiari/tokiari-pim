@@ -1,30 +1,50 @@
 .body {
   display: flex;
   flex-direction: column;
-  width: 1200px;
   margin: 0 auto;
+  padding: 67px 0px 50px 0px;
 }
 
 .content {
-  max-width: 1200px;
   display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .left {
-  width: 50%;
+  width: 100%;
+}
+
+.right {
+  padding: 20px 10px;
+  width: 100%;
+}
+
+@media (min-width: 756px) {
+  .body {
+    padding: 87px 20px 50px 20px;
+  }
+  .content {
+    max-width: 1200px;
+    display: flex;
+    flex-direction: row;
+  }
+  .left {
+    width: 50%;
+  }
+
+  .right {
+    padding: 0 20px;
+    width: 50%;
+  }
 }
 
 .leftBody {
   width: 100%;
-  aspect-ratio: 2/3;
+  aspect-ratio: 3/4;
   top: 0;
   position: sticky;
-  top: 20px;
-}
-
-.right {
-  padding: 0 20px;
-  width: 50%;
+  top: 85px;
 }
 
 .description {
@@ -61,6 +81,7 @@
 
 .seriesNumber {
   font-size: 14px;
+  color: gray;
 }
 
 .attention {

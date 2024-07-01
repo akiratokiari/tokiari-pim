@@ -14,16 +14,23 @@ export async function login(_: string | null, formData: FormData) {
     password: formData.get('password') as string
   }
 
-  const { error, data } = await supabase.auth.signInWithPassword(payload)
+  const { error } = await supabase.auth.signInWithPassword(payload)
   if (error) {
-    return '予期せぬエラーが発生しました'
+    return 'ログイン情報が間違っています'
   }
 
-  const userData = await supabase.from('users').select('user_role').eq('id', data.user.id).single()
+  const userData = await supabase
+    .from('users')
+    .select('user_role')
+    .in('user_role', [USER_ROLE.Buyer, USER_ROLE.Admin])
+    .single()
 
-  if (userData.data && userData.data.user_role !== USER_ROLE.Buyer) {
+  if (
+    (userData.data && userData.data.user_role !== USER_ROLE.Buyer) ||
+    (userData.data && userData.data.user_role !== USER_ROLE.Admin)
+  ) {
     await supabase.auth.signOut()
-    return '予期せぬエラーが発生しました'
+    return 'ログイン情報が間違っています'
   }
 
   revalidatePath('/', 'layout')

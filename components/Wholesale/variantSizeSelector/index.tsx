@@ -1,4 +1,4 @@
-import { CartContext, CartItemType } from '@/contexts/cart/context'
+import { CartContext, CartItemsType } from '@/contexts/cart/context'
 import React, { FC, useContext, useState } from 'react'
 import style from './style.module.css'
 import Image from 'next/image'
@@ -6,51 +6,65 @@ import AddSVG from '../../../public/add.svg'
 import RemoveSVG from '../../../public/remove.svg'
 
 type Props = {
-  data: CartItemType
+  data: CartItemsType
 }
 
 export const VariantSizeSelector: FC<Props> = ({ data }) => {
-  const [value, setValue] = useState(data.quantity)
+  const [value, setValue] = useState<string | number>(data.quantity)
   const { addToCart } = useContext(CartContext)
 
-  const handleQuantityChange = (amount: number) => {
-    const newValue = value + amount
+  const handleQuantityChange = (quantity: number) => {
+    const newValue = (typeof value === 'string' ? parseInt(value, 10) : value) + quantity
     setValue(newValue < 1 ? 1 : newValue)
   }
 
   const handleQuantityInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = Number(e.target.value)
-    setValue(inputValue)
+    const inputValue = e.target.value
+    if (inputValue === '') {
+      setValue('')
+      setTimeout(() => {
+        if (e.target.value === '') {
+          setValue(1)
+        }
+      }, 1000) // 1 second delay
+    } else {
+      const numericValue = parseInt(inputValue, 10)
+      if (!isNaN(numericValue) && numericValue >= 1) {
+        setValue(numericValue)
+      }
+    }
   }
 
   const handleAddToCart = () => {
-    const cartItem: CartItemType = {
+    const quantity = typeof value === 'string' ? parseInt(value, 10) : value
+
+    const cartItem: CartItemsType = {
       // 基準(SKU)
-      productId: data.productId,
-      modelId: data.modelId,
-      seriesId: data.seriesId,
-      product_group_code: data.product_group_code,
-      seriesNumber: data.seriesNumber,
-      modelNumber: data.modelNumber,
-      quantity: value,
-      color: data.color,
-      price: data.price,
-      size: data.size,
-      title: data.title,
-      thumbnail: data.thumbnail
+      product_id: data.product_id,
+      product_variant_id: data.product_variant_id,
+      product_variant_size_id: data.product_variant_size_id,
+      quantity: quantity
     }
 
     addToCart(cartItem)
+    setValue(1)
   }
 
   return (
     <div className={style.body}>
-      <div className={style.size}>size : {data.size}</div>
+     
       <div className={style.counter}>
         <button className={style.counterButton} onClick={() => handleQuantityChange(-1)}>
           <Image src={RemoveSVG} alt={RemoveSVG} />
         </button>
-        <input className={style.input} type="number" value={value} onChange={handleQuantityInput} />
+        <input
+          className={style.input}
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          value={value}
+          onChange={handleQuantityInput}
+        />
         <button className={style.counterButton} onClick={() => handleQuantityChange(1)}>
           <Image src={AddSVG} alt={AddSVG} />
         </button>

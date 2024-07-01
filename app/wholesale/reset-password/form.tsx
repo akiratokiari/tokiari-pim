@@ -10,11 +10,12 @@ export const Form = () => {
     message: ''
   })
   return (
-    <div>
+    <div className={style.body}>
+      <div className={style.title}>TOKIARI 卸会員パスワード再設定</div>
       {status && status.isComplete ? (
         `${status.message}宛にパスワード再設定用のメールをお送りしました。`
       ) : (
-        <div className={style.body}>
+        <div>
           <div className={style.description}>
             ご登録済みのメールアドレス宛に再設定用のリンクをお送りします。
           </div>

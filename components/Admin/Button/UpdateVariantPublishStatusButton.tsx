@@ -18,7 +18,7 @@ export const UpdateVariantPublishStatusButton: FC<Props> = ({ variantId, publish
 
   const updateConfirm = () => {
     modal.confirm({
-      title: `${isPublished ? '非公開にする' : '公開する'}`,
+      title: `商品を${isPublished ? '非公開にする' : '公開する'}`,
       icon: null,
       content: '',
       async onOk() {

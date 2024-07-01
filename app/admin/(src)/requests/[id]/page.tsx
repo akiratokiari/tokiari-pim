@@ -7,6 +7,7 @@ import { createClient } from '@/utils/supabase/server'
 import { ExternalLink } from '@/components/externalLink'
 import { formatDateTime } from '@/helper/dateFormat'
 import { RequestPermissionButtons } from '@/components/Admin/Button/RequestPermissionButtons'
+import { LabelStyle } from '@/constants/adminCSS'
 
 type Props = {
   params: {
@@ -24,34 +25,33 @@ export default async function Page({ params }: Props) {
   ]
   if (!params.id) return
   const supabase = createClient()
-  const { data } = await supabase.from('users').select().eq('id', params.id)
+  const { data } = await supabase.from('users').select('*').eq('id', params.id)
   if (!data) return
   const userData = data && data[0]
-  console.log(data?.length === 0)
 
   const items: DescriptionsProps['items'] = [
     {
       key: '1',
       label: '会社',
-      children: userData?.company,
+      children: userData.company,
       span: 3
     },
     {
       key: 'phone',
       label: '電話番号',
-      children: userData?.phone,
+      children: userData.phone,
       span: 3
     },
     {
       key: 'email',
       label: 'メールアドレス',
-      children: userData?.email,
+      children: userData.email,
       span: 3
     },
     {
       key: 'siteUrl',
       label: 'サイトURL',
-      children: <ExternalLink href={userData?.site_url || ''}>{userData?.site_url}</ExternalLink>,
+      children: <ExternalLink href={userData.site_url || ''}>{userData?.site_url}</ExternalLink>,
       span: 3
     },
     {
@@ -102,10 +102,10 @@ export default async function Page({ params }: Props) {
       <Col span={18}>
         <PageHeader title="リクエスト詳細" routes={routes} />
         <Card style={{ marginBottom: 16 }}>
-          <Descriptions bordered title="会社情報" items={items} />
+          <Descriptions labelStyle={LabelStyle} bordered title="会社情報" items={items} />
         </Card>
         <Card>
-          <Descriptions bordered title="システム情報" items={systemItems} />
+          <Descriptions labelStyle={LabelStyle} bordered title="システム情報" items={systemItems} />
         </Card>
       </Col>
       <Col span={6}>
