@@ -2,7 +2,7 @@
 import { WHOLESALE_ROUTE } from '@/constants/route'
 
 import Link from 'next/link'
-import { FC } from 'react'
+import { FC, Suspense } from 'react'
 import style from './style.module.css'
 import CartModal from '../cartModal'
 import Menu from '../menu'
@@ -17,7 +17,9 @@ export const Header: FC<Props> = () => {
       </Link>
       <div className={style.navigation}>
         <div className={style.menuWrapper}>
-          <Menu />
+          <Suspense>
+            <Menu />
+          </Suspense>
           <CartModal />
         </div>
       </div>

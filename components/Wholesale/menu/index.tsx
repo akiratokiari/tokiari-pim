@@ -5,11 +5,12 @@ import { useContext, useEffect, useState } from 'react'
 import styles from './style.module.css'
 import { MenuContext } from '@/contexts/menu/context'
 import Link from 'next/link'
-import { WHOLESALE_ACCOUNT_ROUTE } from '@/constants/route'
+import { WHOLESALE_ACCOUNT_ORDERS_ROUTE, WHOLESALE_ACCOUNT_ROUTE } from '@/constants/route'
 import MenuSVG from '../../../public/menu_24.svg'
 import Image from 'next/image'
 import { LogoutButton } from '../logoutButton'
 import { Button } from '@/components/button'
+import { AccountContext } from '@/contexts/account/context'
 
 export default function Menu() {
   const { isOpen, close, open } = useContext(MenuContext)
@@ -17,6 +18,7 @@ export default function Menu() {
   const pathname = usePathname()
   const [isInitial, setIsInitial] = useState(true)
   const searchParams = useSearchParams()
+  const { account } = useContext(AccountContext)
 
   useEffect(() => {
     if (isOpen) {
@@ -66,21 +68,36 @@ export default function Menu() {
       <div id="mobileMenuBody" className={styles.body}>
         <div className={styles.contents}>
           <div className={styles.innerContents}>
+            <div>{account?.company} 様</div>
+            <div className={styles.accountServiceWrapper}>
+              <Link
+                style={{ color: 'black', fontSize: 14, textAlign: 'right' }}
+                href={WHOLESALE_ACCOUNT_ROUTE}
+              >
+                <div>基本情報の確認/変更</div>
+              </Link>
+              <Link
+                style={{ color: 'black', fontSize: 14, textAlign: 'right' }}
+                href={WHOLESALE_ACCOUNT_ORDERS_ROUTE}
+              >
+                <div>注文履歴</div>
+              </Link>
+            </div>
+            <div className={styles.border} />
             <Link className={styles.menu} href={'/wholesale/search'}>
               PRODUCTS
             </Link>
             <div className={styles.border} />
-            <Link style={{ marginBottom: 10 }} href={WHOLESALE_ACCOUNT_ROUTE}>
-              <Button color="black">アカウント</Button>
-            </Link>
-            <LogoutButton />
-            <div className={styles.border} />
+
             <Link className={styles.menu} href={WHOLESALE_ACCOUNT_ROUTE}>
               特定商取引法に基づく表示
             </Link>
             <Link className={styles.menu} href={WHOLESALE_ACCOUNT_ROUTE}>
               プライバシーポリシー
             </Link>
+            <div className={styles.logoutButtonWrapper}>
+              <LogoutButton />
+            </div>
           </div>
         </div>
       </div>

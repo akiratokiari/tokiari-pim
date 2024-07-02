@@ -109,3 +109,13 @@
   background-color: gray;
   margin: 20px 0;
 }
+
+.logoutButtonWrapper {
+  margin-top: 20px;
+}
+
+.accountServiceWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
