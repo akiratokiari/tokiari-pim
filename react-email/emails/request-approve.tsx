@@ -31,7 +31,7 @@ export default function RequestApprove(formData: RequestResultFormType) {
         <Container>
           <Section>
             <Text>{formData.company}</Text>
-            <Text>{formData.name}</Text>
+            <Text>{formData.name} 様</Text>
             <br />
             <br />
             <Text>

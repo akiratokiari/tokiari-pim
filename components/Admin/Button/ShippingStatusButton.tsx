@@ -6,7 +6,7 @@ import { createClient } from '@/utils/supabase/client'
 import { App, Button } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import { useRouter } from 'next/navigation'
-import { FC, useState } from 'react'
+import { FC, useRef } from 'react'
 
 type Props = {
   orderId: string
@@ -15,14 +15,15 @@ type Props = {
 export const ShippingStatusButton: FC<Props> = ({ orderId }) => {
   const supabase = createClient()
   const router = useRouter()
-  const [textarea, setTextarea] = useState('')
+
+  const textareaRef = useRef<string>('')
 
   const { message, modal } = App.useApp()
   const arrowedConfirm = () => {
     modal.confirm({
       title: '配送完了メールを送信する',
       icon: null,
-      content: <TextArea onChange={(e) => setTextarea(e.target.value)} />,
+      content: <TextArea onChange={(e) => (textareaRef.current = e.target.value)} />,
       async onOk() {
         const { data, error } = await supabase
           .from('orders')
@@ -38,7 +39,7 @@ export const ShippingStatusButton: FC<Props> = ({ orderId }) => {
             email: data.users.email,
             name: data.users.contact_name,
             company: data.users.company,
-            textarea: textarea,
+            textarea: textareaRef.current,
             orderId: orderId
           }
 

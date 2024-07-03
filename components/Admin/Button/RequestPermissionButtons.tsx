@@ -19,7 +19,7 @@ export const RequestPermissionButtons: FC<Props> = ({ userId }) => {
   const { message, modal } = App.useApp()
   const arrowedConfirm = () => {
     modal.confirm({
-      title: 'リクエストを承認する',
+      title: '申請を承認する',
       icon: null,
       content: '',
       async onOk() {
@@ -70,7 +70,7 @@ export const RequestPermissionButtons: FC<Props> = ({ userId }) => {
   }
   const deniedConfirm = () => {
     modal.confirm({
-      title: 'リクエストを拒否する',
+      title: '申請を拒否する',
       icon: null,
       content: '',
       async onOk() {
@@ -89,7 +89,7 @@ export const RequestPermissionButtons: FC<Props> = ({ userId }) => {
             email: data.email,
             name: data?.contact_name || '',
             company: data?.company || '',
-            result: USER_ROLE.Buyer
+            result: USER_ROLE.Denied
           }
 
           await fetch(`/api/resend/request-result`, {

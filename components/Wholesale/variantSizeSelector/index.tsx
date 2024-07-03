@@ -1,17 +1,18 @@
 import { CartContext, CartItemsType } from '@/contexts/cart/context'
-import React, { FC, useContext, useState } from 'react'
+import React, { FC, useContext, useEffect, useState } from 'react'
 import style from './style.module.css'
 import Image from 'next/image'
 import AddSVG from '../../../public/add.svg'
 import RemoveSVG from '../../../public/remove.svg'
 
 type Props = {
-  data: CartItemsType
+  data: CartItemsType & { size: string }
 }
 
 export const VariantSizeSelector: FC<Props> = ({ data }) => {
   const [value, setValue] = useState<string | number>(data.quantity)
-  const { addToCart } = useContext(CartContext)
+
+  const { addToCart, isOpen, isPending } = useContext(CartContext)
 
   const handleQuantityChange = (quantity: number) => {
     const newValue = (typeof value === 'string' ? parseInt(value, 10) : value) + quantity
@@ -52,7 +53,7 @@ export const VariantSizeSelector: FC<Props> = ({ data }) => {
 
   return (
     <div className={style.body}>
-     
+      <div className={style.size}>Size {data.size}</div>
       <div className={style.counter}>
         <button className={style.counterButton} onClick={() => handleQuantityChange(-1)}>
           <Image src={RemoveSVG} alt={RemoveSVG} />
@@ -69,8 +70,9 @@ export const VariantSizeSelector: FC<Props> = ({ data }) => {
           <Image src={AddSVG} alt={AddSVG} />
         </button>
       </div>
+
       <button className={style.button} onClick={handleAddToCart}>
-        カートに追加する
+        {isPending ? '...' : 'カートに追加'}
       </button>
     </div>
   )

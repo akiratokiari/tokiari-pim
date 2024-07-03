@@ -68,7 +68,7 @@ export default function Menu() {
       <div id="mobileMenuBody" className={styles.body}>
         <div className={styles.contents}>
           <div className={styles.innerContents}>
-            <div>{account?.company} 様</div>
+            <div className={styles.accountName}>{account?.company} 様</div>
             <div className={styles.accountServiceWrapper}>
               <Link
                 style={{ color: 'black', fontSize: 14, textAlign: 'right' }}
@@ -82,22 +82,20 @@ export default function Menu() {
               >
                 <div>注文履歴</div>
               </Link>
+              <LogoutButton />
             </div>
             <div className={styles.border} />
             <Link className={styles.menu} href={'/wholesale/search'}>
               PRODUCTS
             </Link>
+            <Link className={styles.menu} href={'/wholesale/cart'}>
+              CART
+            </Link>
             <div className={styles.border} />
 
-            <Link className={styles.menu} href={WHOLESALE_ACCOUNT_ROUTE}>
+            <Link className={styles.menu} href="/wholesale/trade-law">
               特定商取引法に基づく表示
             </Link>
-            <Link className={styles.menu} href={WHOLESALE_ACCOUNT_ROUTE}>
-              プライバシーポリシー
-            </Link>
-            <div className={styles.logoutButtonWrapper}>
-              <LogoutButton />
-            </div>
           </div>
         </div>
       </div>

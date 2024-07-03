@@ -12,9 +12,10 @@ import {
 import { PageHeader } from './PageHeader'
 import { createClient } from '@/utils/supabase/client'
 import toHref from '@/helper/toHref'
-import moment from 'moment'
 import { CategoryArray } from '@/constants/category'
 import { ProductsUpdateType } from '@/utils/supabase/type'
+import { formatDate } from '@/helper/dateFormat'
+import dayjs from 'dayjs'
 
 type Props = {
   productId: string
@@ -54,7 +55,7 @@ export const ProductEditForm: FC<Props> = ({ productId }) => {
         jicfs_code: productData.jicfs_code,
         gpc_code: productData.gpc_code,
         product_group_code: productData.product_group_code,
-        sales_started_at: moment(productData.sales_started_at)
+        sales_started_at: dayjs(productData.sales_started_at)
       })
     }
   }, [productData, form, setProductData])
@@ -80,7 +81,7 @@ export const ProductEditForm: FC<Props> = ({ productId }) => {
       gpc_code: values.gpc_code,
       product_group_code: values.product_group_code,
       // =============================
-      sales_started_at: values.sales_started_at
+      sales_started_at: formatDate(values.sales_started_at)
     }
 
     const { data, error } = await supabase
@@ -114,7 +115,7 @@ export const ProductEditForm: FC<Props> = ({ productId }) => {
               <Input />
             </Form.Item>
             <Form.Item name="description" label="説明" rules={[{ required: true }]}>
-              <Input.TextArea rows={6} style={{ width: '100%', height: '60px' }} />
+              <Input.TextArea rows={6} style={{ width: '100%' }} />
             </Form.Item>
             <Form.Item name="category" label="カテゴリー" rules={[{ required: true }]}>
               <Select>
@@ -149,9 +150,9 @@ export const ProductEditForm: FC<Props> = ({ productId }) => {
           <Card title="システム情報" style={{ marginBottom: '16px' }}>
             <Form.Item name="sales_started_at" label="販売開始日時" rules={[{ required: true }]}>
               <DatePicker
-                showTime={{ format: 'HH:mm' }}
-                format="YYYY年MM月DD日 HH:mm"
+                format="YYYY年MM月DD日"
                 placeholder=""
+                showTime={false}
                 style={{ width: '100%' }}
               />
             </Form.Item>

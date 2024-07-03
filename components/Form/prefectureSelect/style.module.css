@@ -4,12 +4,14 @@
   height: 40px;
   padding: 0px 8px;
   border: none;
-  border-radius: 6px;
+  width: 100%;
+  border-radius: 2px;
   appearance: none;
   border: solid 1px black;
   color: black;
 }
 .bodyWrapper {
+  width: 100%;
   position: relative;
 }
 .image {

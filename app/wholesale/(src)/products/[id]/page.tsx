@@ -12,46 +12,63 @@ type Props = {
     id: string
   }
   searchParams: {
-    color: string
+    color?: string
   }
 }
 
 export default async function Page({ params, searchParams }: Props) {
   const supabase = createClient()
-  const { data: products, error } = await supabase
+
+  // Fetch the product details
+  const { data: product, error: productError } = await supabase
     .from('products')
     .select('*')
     .eq('id', params.id)
     .eq('publish_status', PRODUCT_PUBLISH_STATUS.Public)
-    .order('created_at', { ascending: false })
     .single()
 
-  if (!products || error) return
+  if (!product || productError) {
+    console.error('Error fetching product:', productError)
+    return <div>商品の取得中にエラーが発生しました。</div>
+  }
 
+  // Fetch the product variants
   const { data: productVariants, error: productVariantError } = await supabase
     .from('product_variants')
     .select('*,product_images(*), product_variants_size(*)')
-    .eq('product_id', products?.id)
+    .eq('product_id', product.id)
     .eq('publish_status', PRODUCT_PUBLISH_STATUS.Public)
     .order('created_at', { ascending: false })
 
-  if (productVariantError) return
+  if (productVariantError) {
+    console.error('Error fetching product variants:', productVariantError)
+    return <div>商品の取得中にエラーが発生しました。</div>
+  }
 
-  const currentVariants = productVariants.find((pv) => {
-    if (!searchParams.color) return pv
-    if (pv.color === searchParams.color) {
-      return pv
-    }
-  })
+  // Filter the product variants to ensure they have sizes
+  const filteredProductVariants = productVariants.filter(
+    (pv) => pv.product_variants_size.length > 0
+  )
+
+  // Find the current variant based on searchParams.color
+  const currentVariant =
+    filteredProductVariants.find((pv) => {
+      if (!searchParams.color) return true
+      return pv.color === searchParams.color
+    }) || filteredProductVariants[0]
+
+  if (!currentVariant) {
+    return <div>該当する商品がありません。</div>
+  }
 
   return (
     <div className={style.body}>
       <div className={style.content}>
         <div className={style.left}>
-          <div className={style.leftBody}>
-            {currentVariants && currentVariants?.product_images.length > 0 ? (
-              <ProductGallery data={currentVariants.product_images} />
-            ) : (
+          {currentVariant.product_images.length > 0 ? (
+            <ProductGallery data={currentVariant.product_images} />
+          ) : (
+            <div className={style.imageWrapper}>
               <Image
                 src={blurDataURL}
                 fill
@@ -60,42 +77,44 @@ export default async function Page({ params, searchParams }: Props) {
                 placeholder="blur"
                 priority
               />
-            )}
-          </div>
+            </div>
+          )}
         </div>
         <div className={style.right}>
-          <div className={style.detail}>
-            
-            <div className={style.category}>{products?.category}</div>
-            <div className={style.title}>{products?.title}</div>
-            {/* <div className={style.seriesNumber}>
-              Series Number：{currentVariants?.series_number}
-            </div> */}
-            <div className={style.price}>¥{currentVariants?.price.toLocaleString()}</div>
-            <div className={style.colorSelector}>
-              <ProductDetailColorSelector
-                variants={productVariants}
-                productId={params.id}
-                currentColor={currentVariants?.color || productVariants[0].color}
-              />
-            </div>
-            <div>
-              {currentVariants && (
+          <div style={{ position: 'sticky', top: 77 }}>
+            <div className={style.detail}>
+              <div className={style.category}>{product.category}</div>
+              <div className={style.title}>{product.title}</div>
+              <div className={style.priceWrapper}>
+                <div className={style.price}>¥{currentVariant.price.toLocaleString()}</div>
+                <div className={style.wholesalePrice}>
+                  　¥{(currentVariant.price / 2).toLocaleString()}
+                </div>
+              </div>
+              <div className={style.colorSelector}>
+                <ProductDetailColorSelector
+                  variants={filteredProductVariants}
+                  productId={params.id}
+                  currentColor={currentVariant.color}
+                />
+              </div>
+              <div>
                 <ProductVariantSelector
                   product={{
-                    title: products.title,
-                    id: products.id,
-                    product_group_code: products.product_group_code
+                    title: product.title,
+                    id: product.id,
+                    product_group_code: product.product_group_code
                   }}
-                  currentColor={currentVariants?.color || productVariants[0].color}
-                  variants={productVariants}
+                  currentColor={currentVariant.color}
+                  variants={filteredProductVariants}
                 />
-              )}
+              </div>
             </div>
-          </div>
-          <div className={style.description}>{products.description}</div>
-          <div className={style.attention}>
-            ＊ ここに送料に関しても注意書きが入ります
+            <div className={style.description}>{product.description}</div>
+            <div className={style.attention}>【送料】</div>
+            <div className={style.attention}>
+              全国一律700円 ※北海道1,300円・沖縄1,800円 3万円以上のお買上で送料無料
+            </div>
           </div>
         </div>
       </div>

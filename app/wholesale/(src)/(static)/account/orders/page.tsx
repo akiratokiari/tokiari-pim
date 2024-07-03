@@ -64,9 +64,15 @@ export default async function Page() {
           <PageHeader>購入履歴</PageHeader>
         </div>
         <div className={style.orderWrapper}>
-          {orderWithProductData.map((order, index) => {
-            return <OrderItem key={index} order={order} />
-          })}
+          {orderWithProductData.length > 0 ? (
+            <>
+              {orderWithProductData.map((order, index) => {
+                return <OrderItem key={index} order={order} />
+              })}
+            </>
+          ) : (
+            <div className={style.empty}> 購入履歴はありません</div>
+          )}
         </div>
       </div>
     )

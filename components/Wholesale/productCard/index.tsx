@@ -51,9 +51,16 @@ export const ProductCard: FC<Props> = ({ product }) => {
       <div className={style.details}>
         <div className={style.title}>{product.title}</div>
         <div className={style.price}>
-          {maxPrice === minPrice
-            ? `¥${maxPrice.toLocaleString()}`
-            : `¥${minPrice.toLocaleString()} 〜 ¥${maxPrice.toLocaleString()}`}
+          <div className={style.salesPrice}>
+            {maxPrice === minPrice
+              ? `¥${maxPrice.toLocaleString()}`
+              : `¥${minPrice.toLocaleString()} 〜 ¥${maxPrice.toLocaleString()}`}{' '}
+          </div>
+          <div>
+            {maxPrice === minPrice
+              ? `¥${(maxPrice / 2).toLocaleString()}`
+              : `¥${(minPrice / 2).toLocaleString()} 〜 ¥${(maxPrice / 2).toLocaleString()}`}
+          </div>
         </div>
         <div className={style.colorSelector}>
           <ProductColorSelector

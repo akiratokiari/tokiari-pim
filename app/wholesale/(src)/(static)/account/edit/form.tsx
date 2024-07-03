@@ -8,6 +8,7 @@ import { AccountContext } from '@/contexts/account/context'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import { WHOLESALE_ACCOUNT_ROUTE } from '@/constants/route'
+import { PrefectureSelect } from '@/components/Form/prefectureSelect'
 
 type Props = {
   setFormData?: any
@@ -151,9 +152,7 @@ export const Form: FC<Props> = () => {
           />
         </Helmet>
         <Helmet label="都道府県" error={errors.prefecture?.message}>
-          <Input
-            type="text"
-            placeholder="都道府県を入力してください"
+          <PrefectureSelect
             name="prefecture"
             register={register}
             registerOptions={{

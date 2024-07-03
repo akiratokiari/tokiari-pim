@@ -1,5 +1,5 @@
 import { CartContext, CartItemType } from '@/contexts/cart/context'
-import React, { FC, useContext, useEffect, useState } from 'react'
+import React, { FC, useContext, useEffect, useState, useRef } from 'react'
 import style from './style.module.css'
 import Image from 'next/image'
 import AddSVG from '../../../public/add.svg'
@@ -11,8 +11,8 @@ type Props = {
 
 export const CartProductAmountInput: FC<Props> = ({ data }) => {
   const [value, setValue] = useState<string | number>(data.quantity)
-
-  const { updateQuantity, deleteFromCart } = useContext(CartContext)
+  const { updateQuantity, deleteFromCart, isPending } = useContext(CartContext)
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     setValue(data.quantity)
@@ -21,6 +21,9 @@ export const CartProductAmountInput: FC<Props> = ({ data }) => {
   const handleQuantityChange = (quantity: number) => {
     const newValue = (typeof value === 'string' ? parseInt(value, 10) : value) + quantity
     setValue(newValue < 1 ? 1 : newValue)
+    if (typeof newValue === 'number') {
+      updateQuantityWithDebounce(newValue)
+    }
   }
 
   const handleQuantityInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,24 +39,33 @@ export const CartProductAmountInput: FC<Props> = ({ data }) => {
       const numericValue = parseInt(inputValue, 10)
       if (!isNaN(numericValue) && numericValue >= 1) {
         setValue(numericValue)
+        updateQuantityWithDebounce(numericValue)
       }
     }
   }
 
-  useEffect(() => {
-    if (typeof value === 'number') {
+  const updateQuantityWithDebounce = (quantity: number) => {
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current)
+    }
+
+    debounceTimeout.current = setTimeout(() => {
       const cartItem: CartItemType = {
         ...data,
-        quantity: value
+        quantity
       }
-      updateQuantity(cartItem.product_variant_size_id, value)
-    }
-  }, [value])
+      updateQuantity(cartItem.product_variant_size_id, quantity)
+    }, 500) // 500ミリ秒の遅延
+  }
 
   return (
     <div className={style.body}>
       <div className={style.counter}>
-        <button className={style.counterButton} onClick={() => handleQuantityChange(-1)}>
+        <button
+          className={style.counterButton}
+          onClick={() => !isPending && handleQuantityChange(-1)}
+          disabled={isPending}
+        >
           <Image src={RemoveSVG} alt="remove" />
         </button>
         <input
@@ -63,16 +75,20 @@ export const CartProductAmountInput: FC<Props> = ({ data }) => {
           pattern="[0-9]*"
           value={value}
           onChange={handleQuantityInput}
+          disabled={isPending}
         />
-        <button className={style.counterButton} onClick={() => handleQuantityChange(1)}>
+        <button
+          className={style.counterButton}
+          onClick={() => !isPending && handleQuantityChange(1)}
+          disabled={isPending}
+        >
           <Image src={AddSVG} alt="add" />
         </button>
       </div>
       <button
-        onClick={() => {
-          deleteFromCart(data.product_variant_size_id)
-        }}
+        onClick={() => !isPending && deleteFromCart(data.product_variant_size_id)}
         className={style.deleteButton}
+        disabled={isPending}
       >
         Delete
       </button>

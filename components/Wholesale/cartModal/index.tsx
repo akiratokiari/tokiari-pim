@@ -15,12 +15,8 @@ export default function CartModal() {
   const router = useRouter()
   const [isInitial, setIsInitial] = useState(true)
   const { cart, isOpen, openCart, closeCart } = useContext(CartContext)
-  const [cartItems, setCartItems] = useState(cart)
-  const pathname = usePathname()
 
-  useEffect(() => {
-    setCartItems(cart)
-  }, [cart, setCartItems])
+  const pathname = usePathname()
 
   useEffect(() => {
     if (isOpen) {
@@ -70,19 +66,19 @@ export default function CartModal() {
       <div id="cartBody" className={styles.body}>
         <div className={styles.contents}>
           <div className={styles.innerContents}>
-            {cartItems && cartItems.length > 0 ? (
-              cartItems.map((c, index) => {
+            {cart && cart.length > 0 ? (
+              cart.map((c, index) => {
                 return <CartItem key={index} data={c} />
               })
             ) : (
               <div>
-                <div style={{ textAlign: 'center', marginTop: 40 }}>カートは空です</div>
+                <div style={{ textAlign: 'center', marginTop: 40 }}>カートが空です</div>
               </div>
             )}
           </div>
         </div>
         <div className={styles.buttonWrapper}>
-          {cartItems && cartItems.length > 0 && (
+          {cart && cart.length > 0 && (
             <Link href={WHOLESALE_CART_ROUTE}>
               <Button color="black">注文に進む</Button>
             </Link>

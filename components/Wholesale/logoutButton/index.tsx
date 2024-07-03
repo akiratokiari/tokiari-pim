@@ -22,8 +22,11 @@ export const LogoutButton: FC<Props> = () => {
   }
 
   return (
-    <Button color="white" onClick={signOut}>
+    <a
+      style={{ color: 'black', fontSize: 14, textAlign: 'right', cursor: 'pointer' }}
+      onClick={signOut}
+    >
       ログアウト
-    </Button>
+    </a>
   )
 }

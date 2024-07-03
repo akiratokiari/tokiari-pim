@@ -10,12 +10,24 @@
   aspect-ratio: 3/4;
 }
 
+.imageWrapper > img {
+  height: auto !important;
+}
+
 .item {
   display: flex;
   width: 100%;
-  justify-content: space-between;
+  justify-content: space-evenly;
+
   flex-direction: column;
-  padding: 20px 0px 20px 10px;
+  padding: 0px 0px 0px 10px;
+}
+
+.descriptionWrapper {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: space-evenly;
 }
 
 .title {
@@ -25,8 +37,17 @@
 }
 
 .caption {
+  display: flex;
+  flex-direction: column;
   font-size: 14px;
 }
+
+.salesPrice {
+  text-decoration: line-through;
+  font-style: italic;
+  color: gray;
+}
+
 .subTotalCaption {
   display: none;
   font-size: 14px;

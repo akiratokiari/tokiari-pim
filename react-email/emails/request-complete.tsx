@@ -21,7 +21,7 @@ export default function RequestComplete(formData: RequestFormType) {
           <Section>
             <Text>
               <Text>{formData.company}</Text>
-              <Text>{formData.contact_name}</Text>
+              <Text>{formData.contact_name} 様</Text>
               <br />
               <br />
               新規取引申請の受付を承りました。
@@ -35,10 +35,10 @@ export default function RequestComplete(formData: RequestFormType) {
           </Section>
           <div style={{ width: '100%', height: 1, background: 'gray', margin: '10px 0px' }} />
           <Section>
-            <Text>基本情報</Text>
+            <Text>会社情報</Text>
             <div>
               <div>会社名: {formData.company}</div>
-              <div>サイト: {formData.site_url}</div>
+              <div>サイトURL: {formData.site_url}</div>
               <div>メールアドレス: {formData.email}</div>
               <div>電話番号: {formData.phone}</div>
               <div>担当者(お名前): {formData.contact_name}</div>
@@ -46,7 +46,7 @@ export default function RequestComplete(formData: RequestFormType) {
             </div>
           </Section>
           <Section>
-            <Text>住所</Text>
+            <Text>住所(お届け先)</Text>
             <div>
               <div>郵便番号: {formData.postal_code}</div>
               <div>都道府県: {formData.prefecture}</div>

@@ -3,3 +3,46 @@
   position: relative;
   aspect-ratio: 3/4;
 }
+
+/* style.module.css */
+.galleryContainer {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3/4;
+}
+
+.swiper-pagination-custom {
+  text-align: center;
+  margin-top: 10px; /* 画像の下に間隔を設けて配置 */
+  text-align: center;
+}
+
+.swiper-pagination-bullet {
+  background: black !important;
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3/4;
+}
+
+.desktop {
+  display: none;
+}
+.mobile {
+  display: block;
+  text-align: center;
+}
+
+@media (min-width: 756px) {
+  .desktop {
+    display: block;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .mobile {
+    display: none;
+  }
+}

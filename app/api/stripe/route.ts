@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     const subTotalPrice = checkedCartItemPrice.reduce((total, ci) => {
       const subTotalPrice = ci.price * ci.quantity
       return total + subTotalPrice
-    }, 0)
+    }, 0) / 2
 
     // 配送料の計算
     const user = await supabase.auth.getUser()
@@ -50,7 +50,6 @@ export async function POST(req: NextRequest) {
     const shippingPrice = getShippingPrice(subTotalPrice, userTableData?.prefecture)
     const totalPrice = subTotalPrice + shippingPrice
 
-    console.log(subTotalPrice, shippingPrice)
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: totalPrice,
