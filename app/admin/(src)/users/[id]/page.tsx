@@ -37,6 +37,7 @@ export default async function Page({ params }: Props) {
     .select('*, purchased_products(*)')
     .eq('user_id', params.id)
     .in('payment_status', [ORDER_PAYMENT_STATUS.Buy, ORDER_PAYMENT_STATUS.Refund])
+    .order('created_at', { ascending: false })
 
   const items: DescriptionsProps['items'] = [
     {

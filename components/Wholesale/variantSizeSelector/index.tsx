@@ -51,8 +51,6 @@ export const VariantSizeSelector: FC<Props> = ({ data }) => {
     setValue(1)
   }
 
-  console.log(isPending)
-
   return (
     <div className={style.body}>
       <div className={style.size}>Size {data.size}</div>

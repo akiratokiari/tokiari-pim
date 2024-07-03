@@ -3,13 +3,18 @@ import { DisplayPaymentStatus } from '@/components/Admin/DisplayPaymentStatus'
 import { ADMIN_ORDERS_DETAIL_ROUTE } from '@/constants/route'
 import { formatDateTime } from '@/helper/dateFormat'
 import toHref from '@/helper/toHref'
+import { OrdersRowType, PurchasedProductsRowType } from '@/utils/supabase/type'
 import { Table } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import Link from 'next/link'
 import { FC } from 'react'
 
 type Props = {
-  dataSource: any[]
+  dataSource: DataSource[]
+}
+
+type DataSource = OrdersRowType & {
+  purchased_products?: PurchasedProductsRowType[]
 }
 
 type columnType = {
@@ -17,22 +22,24 @@ type columnType = {
   payment_status: number
   total_price: number
   created_at: string
-  count: number
+  quantity: number
 }
 
 export const UserOrdersTable: FC<Props> = ({ dataSource }) => {
   const tableData: columnType[] = dataSource.map((order) => {
-    let _count = 0
-    order.purchased_products.map((pp: columnType) => {
-      _count = _count + pp.total_price
-    })
+    let _quantity = 0
+    order.purchased_products &&
+      order.purchased_products.map((pp) => {
+        _quantity = _quantity + pp.quantity
+      })
 
     return {
+      key: order.id,
       id: order.id,
       payment_status: order.payment_status,
       total_price: order.total_price,
       created_at: order.created_at,
-      count: _count
+      quantity: _quantity
     }
   })
 
@@ -45,9 +52,9 @@ export const UserOrdersTable: FC<Props> = ({ dataSource }) => {
     },
     {
       title: '購入点数',
-      dataIndex: 'count',
-      key: 'count',
-      render: (count) => `${count}点`
+      dataIndex: 'quantity',
+      key: 'quantity',
+      render: (quantity) => `${quantity}点`
     },
     {
       title: '合計金額',

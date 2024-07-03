@@ -20,13 +20,13 @@ export default function Delivery(formData: DeliveryFormType) {
         <Container>
           <Section>
             <Text>{formData.company}</Text>
-            <Text>{formData.name}</Text>
+            <Text>{formData.name} 様</Text>
             <br />
             <br />
-            <Text>ご注文ID:{formData.orderId}</Text>
+            <Text>ご注文ID：{formData.orderId}</Text>
             <br />
             <br />
-            <Text style={{ whiteSpace: 'pre-wrap' }}>{formData.textarea}</Text>
+            <div style={{ whiteSpace: 'pre-wrap' }}>{formData.textarea}</div>
             <br />
             <br />
             <Text>今後とも「TOKIARI 卸販売」をご愛顧賜りますようお願い申し上げます。</Text>

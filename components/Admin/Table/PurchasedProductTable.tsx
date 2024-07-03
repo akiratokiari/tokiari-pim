@@ -45,7 +45,6 @@ export const PurchasedProductTable: FC<Props> = ({ products }) => {
             .select(`*,product_variants(*,products(*))`)
             .eq('id', p.product_variant_size_id)
             .single()
-          console.log('購入した商品情報を取得', data)
           return {
             id: p.id,
             variantId: data?.product_variant_id || '',
@@ -60,7 +59,6 @@ export const PurchasedProductTable: FC<Props> = ({ products }) => {
           }
         })
       )
-      console.log(awd)
     }
   }
 

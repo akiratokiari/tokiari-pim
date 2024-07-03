@@ -146,7 +146,6 @@ const Page: FC<PageProps> = ({ searchParams }) => {
     if (cart && account) {
       let _totalPrice = 0
       cart.forEach((c) => {
-        console.log(c.price)
         _totalPrice = _totalPrice + c.price * c.quantity
       })
       // 割引後の商品の合計金額

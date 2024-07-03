@@ -68,7 +68,6 @@ export default function CartModal() {
           <div className={styles.innerContents}>
             {cart && cart.length > 0 ? (
               cart.map((c, index) => {
-                console.log(c)
                 return <CartItem key={index} data={c} />
               })
             ) : (
