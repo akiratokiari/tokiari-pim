@@ -60,7 +60,11 @@ export default async function Page() {
         <div className={style.title}>メールアドレス</div>
         <div className={style.displayValue}>
           <div className={style.value}>{userData.email}</div>
-          <Link className={style.menu} href={WHOLESALE_ACCOUNT_EDIT_EMAIL_ROUTE}>
+          <Link
+            className={style.menu}
+            style={{ padding: '7px 10px' }}
+            href={WHOLESALE_ACCOUNT_EDIT_EMAIL_ROUTE}
+          >
             変更する
           </Link>
         </div>
@@ -69,7 +73,11 @@ export default async function Page() {
         <div className={style.displayValue}>
           <div className={style.label}>********</div>
 
-          <Link className={style.menu} href={WHOLESALE_ACCOUNT_EDIT_PASSWORD_ROUTE}>
+          <Link
+            className={style.menu}
+            style={{ padding: '7px 10px' }}
+            href={WHOLESALE_ACCOUNT_EDIT_PASSWORD_ROUTE}
+          >
             変更する
           </Link>
         </div>

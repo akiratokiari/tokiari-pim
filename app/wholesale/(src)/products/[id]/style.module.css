@@ -2,7 +2,8 @@
   display: flex;
   flex-direction: column;
   margin: 0 auto;
-  padding: 67px 0px 50px 0px;
+  max-width: 1200px;
+  padding: 0px 0px 50px 0px;
 }
 
 .content {
@@ -11,8 +12,16 @@
   width: 100%;
 }
 
+.imageWrapper {
+  position: absolute;
+  width: 100%;
+  aspect-ratio: 3/4;
+}
+
 .left {
   width: 100%;
+  position: relative;
+  aspect-ratio: 3/4;
 }
 
 .right {
@@ -22,7 +31,7 @@
 
 @media (min-width: 756px) {
   .body {
-    padding: 87px 20px 50px 20px;
+    padding: 20px 20px 50px 20px;
   }
   .content {
     max-width: 1200px;
@@ -42,7 +51,6 @@
 .leftBody {
   width: 100%;
   aspect-ratio: 3/4;
-  top: 0;
   position: sticky;
   top: 85px;
 }
@@ -51,7 +59,7 @@
   font-size: 14px;
   letter-spacing: 0.87px;
   line-height: 22.65px;
-  margin: 20px 0;
+  margin: 30px 0 20px 0;
   white-space: pre-wrap;
 }
 
@@ -70,13 +78,27 @@
   border-radius: 2px;
   width: fit-content;
   background-color: rgb(234, 234, 234);
+  color: #616161;
+  margin-bottom: 20px;
+}
+.priceWrapper {
+  display: flex;
+  margin-bottom: 20px;
 }
 .price {
+  font-size: 16px;
+  color: gray;
+  text-decoration: line-through;
+  font-style: italic;
+}
+
+.wholesalePrice {
   font-size: 16px;
 }
 .colorSelector {
   display: flex;
   gap: 10px;
+  margin-bottom: 20px;
 }
 
 .seriesNumber {
@@ -85,5 +107,5 @@
 }
 
 .attention {
-  font-size: 12px;
+  font-size: 14px;
 }

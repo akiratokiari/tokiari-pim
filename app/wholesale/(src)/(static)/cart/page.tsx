@@ -3,7 +3,7 @@ import { FC, useContext, useEffect, useState } from 'react'
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
 import { useRouter } from 'next/navigation'
-import { WHOLESALE_CART_ROUTE, WHOLESALE_ROUTE } from '@/constants/route'
+import { WHOLESALE_CART_COMPLETE_ROUTE, WHOLESALE_ROUTE } from '@/constants/route'
 import { createClient } from '@/utils/supabase/client'
 import { AccountContext } from '@/contexts/account/context'
 import { ORDER_DELIVERY_OPTION, ORDER_PAYMENT_STATUS } from '@/constants/app'
@@ -89,9 +89,8 @@ const StripeElement = ({ orderId, setOrderId, setStripeClientSecret }: Props) =>
           .update({ payment_intent: result.paymentIntent?.id })
           .eq('id', orderId)
 
-        router.push(WHOLESALE_CART_ROUTE + toQuery({ orderId }))
-        setStripeClientSecret(null)
-        resetCart()
+        await resetCart()
+        router.push(WHOLESALE_CART_COMPLETE_ROUTE + toQuery({ orderId }))
         router.refresh()
       })
   }
@@ -147,16 +146,19 @@ const Page: FC<PageProps> = ({ searchParams }) => {
     if (cart && account) {
       let _totalPrice = 0
       cart.forEach((c) => {
+        console.log(c.price)
         _totalPrice = _totalPrice + c.price * c.quantity
       })
-      setSubTotalPrice(_totalPrice)
+      // 割引後の商品の合計金額
+      setSubTotalPrice(_totalPrice / 2)
+
       let _quantity = 0
       cart.forEach((c) => {
         _quantity = _quantity + c.quantity
       })
       setQuantity(_quantity)
 
-      const _shippingPrice = getShippingPrice(_totalPrice, account.prefecture)
+      const _shippingPrice = getShippingPrice(_totalPrice / 2, account.prefecture)
 
       setShippingPrice(_shippingPrice)
     }
@@ -173,7 +175,6 @@ const Page: FC<PageProps> = ({ searchParams }) => {
 
   const onSubmit = async () => {
     setIsLoading(true)
-    console.log(account, subTotalPrice, shippingPrice)
 
     // 販売情報をDBに& StripeCreate
     // 追記　初期値は'card' status 'hold
@@ -221,7 +222,7 @@ const Page: FC<PageProps> = ({ searchParams }) => {
         product_variant_id: ci.product_variant_id,
         product_variant_size_id: ci.product_variant_size_id,
         quantity: ci.quantity,
-        price: ci.quantity * ci.price,
+        price: ci.quantity * (ci.price / 2),
         payment_status: ORDER_PAYMENT_STATUS.Hold
       }
     })
@@ -249,7 +250,7 @@ const Page: FC<PageProps> = ({ searchParams }) => {
 
   return (
     <div className={style.body}>
-      <PageHeader>カート</PageHeader>
+      <PageHeader>Cart</PageHeader>
       {searchParams.orderId ? (
         <div>
           <div style={{ fontWeight: 'bold', marginBottom: 20 }}>ご注文ありがとうございました</div>
@@ -297,13 +298,25 @@ const Page: FC<PageProps> = ({ searchParams }) => {
                         <div className={style.caption}>
                           {ci.color} / {ci.size}
                         </div>
-                        <div className={style.caption}>¥{ci.price.toLocaleString()}円</div>
+                        <div className={style.caption}>
+                          <div className={style.salesPrice}>
+                            ¥{(ci.price * ci.quantity).toLocaleString()}円
+                          </div>
+                          <div className={style.wholesalePrice}>
+                            ¥{((ci.price * ci.quantity) / 2).toLocaleString()}円
+                          </div>
+                        </div>
                       </div>
                       <div className={style.inputWrapper}>
                         <CartProductAmountInput data={ci} />
                       </div>
                       <div className={style.subTotalCaption}>
-                        ¥{(ci.price * ci.quantity).toLocaleString()}円
+                        <div className={style.salesPrice}>
+                          ¥{(ci.price * ci.quantity).toLocaleString()}円
+                        </div>
+                        <div className={style.wholesalePrice}>
+                          ¥{((ci.price / 2) * ci.quantity).toLocaleString()}円
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -397,16 +410,21 @@ const Page: FC<PageProps> = ({ searchParams }) => {
                 </div>
 
                 <div className={style.footerContent}>
-                  <div className={style.totalPriceWrapper}>
-                    <div>合計点数</div>
-                    <div className={style.totalPrice}>{quantity}点</div>
+                  <div className={style.subTotalWrapper} style={{ marginBottom: 30 }}>
+                    <div className={style.label}>合計点数</div>
+                    <div>{quantity}点</div>
                   </div>
-                  <div className={style.totalPriceWrapper}>
-                    <div>配送料</div>
-                    <div className={style.totalPrice}>{shippingPrice.toLocaleString()}円</div>
+                  <div className={style.subTotalWrapper}>
+                    <div className={style.label}>小計</div>
+                    <div>　¥{subTotalPrice.toLocaleString()}円</div>
                   </div>
+                  <div className={style.subTotalWrapper}>
+                    <div className={style.label}>配送料</div>
+                    <div>{shippingPrice.toLocaleString()}円</div>
+                  </div>
+
                   <div className={style.totalPriceWrapper}>
-                    <div>合計金額</div>
+                    <div className={style.label}>合計金額</div>
 
                     <div className={style.totalPrice}>
                       　¥{(subTotalPrice + shippingPrice).toLocaleString()}(税込)
@@ -415,13 +433,15 @@ const Page: FC<PageProps> = ({ searchParams }) => {
                   <Button isLoading={isLoading} color="black" onClick={onSubmit}>
                     決済に進む
                   </Button>
+                  <div className={style.attention}>
+                    ※ 送料は全国一律700円 ※北海道1,300円・沖縄1,800円
+                    <br /> ※ 3万円以上のお買上で送料無料
+                  </div>
                 </div>
               </div>
             </div>
           ) : (
-            <div style={{ marginTop: 30 }}>
-              <div className={style.title}>カートは空です</div>
-            </div>
+            <div className={style.empty}>カートは空です</div>
           )}
           {!!stripePromise && !!stripeClientSecret && (
             <Elements stripe={stripePromise} options={{ clientSecret: stripeClientSecret }}>

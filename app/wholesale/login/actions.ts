@@ -34,5 +34,5 @@ export async function login(_: string | null, formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect(`${getBaseUrl() + WHOLESALE_ROUTE}`)
+  redirect(WHOLESALE_ROUTE)
 }

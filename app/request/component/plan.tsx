@@ -38,6 +38,15 @@ export const Plan = () => {
   const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.scroll({
+        top: 0,
+        behavior: 'smooth'
+      })
+    }
+  }, [step])
+
+  useEffect(() => {
     if (formData) {
       _setFormData(formData)
     }
@@ -103,10 +112,11 @@ export const Plan = () => {
             router.push(REQUEST_ROUTE + toQuery({ status: 'complete' }))
           })
           .catch(() => {
-            window.alert('エラーが発生しました、もう一度やり直してください。')
+            console.log('申請完了メールを送ることができませんでした')
           })
         await supabase.auth.signOut()
         setIsComplete(true)
+        setIsSending(false)
       }
       if (signUpInfo.error) {
         setIsSending(false)
@@ -143,18 +153,19 @@ export const Plan = () => {
                   フォームの入力に戻る
                 </Button>
               </div>
-              <div className={style.section}>基本情報</div>
+              <div className={style.section}>アカウント情報</div>
+              <DisplayFormValue first label="メールアドレス" value={formData.email} />
+              <DisplayFormValue label="パスワード" value={formData.password} />
+              <div className={style.section}>会社情報</div>
               <div className={style.displayValue}>
                 <DisplayFormValue first label="会社名" value={formData.company} />
                 <DisplayFormValue label="サイト" value={formData.site_url} />
-                <DisplayFormValue label="メールアドレス" value={formData.email} />
-                <DisplayFormValue label="パスワード" value={formData.password} />
                 <DisplayFormValue label="電話番号" value={formData.phone} />
                 <DisplayFormValue label="担当者(お名前)" value={formData.contact_name} />
                 <DisplayFormValue label="担当者(フリガナ)" value={formData.contact_kana} />
               </div>
               <div className={style.displayValue}>
-                <div className={style.section}>住所</div>
+                <div className={style.section}>住所(お届け先)</div>
                 <DisplayFormValue first label="郵便番号" value={formData.postal_code} />
                 <DisplayFormValue label="都道府県" value={formData.prefecture} />
                 <DisplayFormValue label="市区町村" value={formData.city} />
@@ -164,7 +175,7 @@ export const Plan = () => {
                 )}
               </div>
               <div className={style.buttonWrapper}>
-                <Button color="black" onClick={onSubmit}>
+                <Button isLoading={isSending} color="black" onClick={onSubmit}>
                   申し込む
                 </Button>
               </div>

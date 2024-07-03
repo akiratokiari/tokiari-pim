@@ -12,14 +12,14 @@
 .menuWrapper {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: -16px;
 }
 .menu {
   display: flex;
   justify-content: center;
   align-items: center;
   color: black;
-  border: solid 1px black;
+  border: solid 1px #e7e7e7;
   padding: 10px;
   font-size: 12px;
   background-color: white;

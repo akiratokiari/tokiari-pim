@@ -107,3 +107,19 @@ button {
   background-color: inherit;
   color: var(--black);
 }
+
+.swiperContainer {
+  position: relative;
+}
+
+.swiper-pagination {
+  position: absolute;
+  bottom: 10px; /* 画像の下に配置するための位置調整 */
+  left: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.swiper-pagination-bullet {
+  background: black !important;
+}

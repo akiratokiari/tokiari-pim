@@ -14,7 +14,7 @@ export const CategoryFilter: FC = () => {
         <div className={style.title}>CATEGORY</div>
         <div className={style.menus}>
           <Link href={`/wholesale/search`}>
-            <div className={style.menu}>All</div>
+            <div className={style.menu}>All Products</div>
           </Link>
           {CategoryArray.map((c, index) => {
             return (
@@ -28,17 +28,17 @@ export const CategoryFilter: FC = () => {
 
       <div className={style.mobile}>
         <select
-          defaultValue={category || 'all'}
+          defaultValue={category || 'All Products'}
           className={style.select}
           onChange={(e) => {
-            if (e.target.value === 'all') {
+            if (e.target.value === 'All Products') {
               return router.push(`/wholesale/search`)
             }
             router.push(`/wholesale/search/${e.target.value}`)
           }}
         >
-          <option className={style.menu} value="all">
-            all
+          <option className={style.menu} value="All Products">
+            All Products
           </option>
           {CategoryArray.map((c, index) => {
             return (

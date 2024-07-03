@@ -28,11 +28,11 @@ export const ProductVariantSelector: FC<Props> = ({ product, variants, currentCo
                   product_id: product.id,
                   product_variant_size_id: pvs.id,
                   product_variant_id: pv.id,
-                  quantity: 1
+                  quantity: 1,
+                  size: pvs.product_size
                 }
                 return (
                   <div>
-                    <div className={style.size}>サイズ : {pvs.product_size}</div>
                     <VariantSizeSelector key={pvs.id} data={cartFormatDataWithoutQuantity} />
                   </div>
                 )

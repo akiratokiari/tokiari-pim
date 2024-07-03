@@ -1,18 +1,19 @@
 'use client'
-import { useFormState } from 'react-dom'
+
 import { login } from './actions'
 import Link from 'next/link'
 import { WHOLESALE_RESET_PASSWORD } from '@/constants/route'
 import style from './style.module.css'
 import { Button } from '@/components/button'
+import { useForm } from '@/helper/UseFormHook'
 
 export default function Page() {
-  const [state, formAction] = useFormState(login, null)
+  const { isPending, formState, formAction, onSubmit } = useForm(login, null)
   return (
     <div className={style.body}>
       <div className={style.title}>TOKIARI 卸会員ログイン</div>
-      <form className={style.formBody} action={formAction}>
-        {state && <div className={style.state}>{state}</div>}
+      <form className={style.formBody} action={formAction} onSubmit={onSubmit}>
+        {!isPending && formState && <div className={style.state}>{formState}</div>}
         <div className={style.formItem}>
           <label htmlFor="email">メールアドレス</label>
           <input id="email" name="email" type="email" required />
@@ -22,7 +23,7 @@ export default function Page() {
           <input id="password" name="password" type="password" required />
         </div>
         <div className={style.buttonWrapper}>
-          <Button color="black" type="submit">
+          <Button isLoading={isPending} color="black" type="submit">
             ログイン
           </Button>
         </div>

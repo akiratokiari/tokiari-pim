@@ -4,6 +4,7 @@ import { Helmet, Input } from '@/components/Form'
 import { FC, useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import style from './style.module.css'
+import { PrefectureSelect } from '@/components/Form/prefectureSelect'
 
 type Props = {
   setFormData?: any
@@ -51,18 +52,7 @@ export const Form: FC<Props> = ({ formData, setFormData }) => {
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)} className={style.body}>
-        <div className={style.section}>基本情報</div>
-        <Helmet label="会社名" error={errors.company?.message}>
-          <Input
-            placeholder="会社名を入力してください"
-            type="text"
-            name="company"
-            register={register}
-            registerOptions={{
-              required: 'は必須項目です'
-            }}
-          />
-        </Helmet>
+        <div className={style.section}>アカウント情報</div>
         <Helmet label="メールアドレス" error={errors.email?.message}>
           <Input
             type="email"
@@ -79,6 +69,18 @@ export const Form: FC<Props> = ({ formData, setFormData }) => {
             type="text"
             placeholder="パスワードを入力してください"
             name="password"
+            register={register}
+            registerOptions={{
+              required: 'は必須項目です'
+            }}
+          />
+        </Helmet>
+        <div className={style.section}>会社情報</div>
+        <Helmet label="会社名" error={errors.company?.message}>
+          <Input
+            placeholder="会社名を入力してください"
+            type="text"
+            name="company"
             register={register}
             registerOptions={{
               required: 'は必須項目です'
@@ -129,7 +131,7 @@ export const Form: FC<Props> = ({ formData, setFormData }) => {
             }}
           />
         </Helmet>
-        <div className={style.section}>住所</div>
+        <div className={style.section}>住所(お届け先)</div>
         <Helmet label="郵便番号" error={errors.postal_code?.message}>
           <Input
             type="text"
@@ -142,9 +144,7 @@ export const Form: FC<Props> = ({ formData, setFormData }) => {
           />
         </Helmet>
         <Helmet label="都道府県" error={errors.prefecture?.message}>
-          <Input
-            type="text"
-            placeholder="都道府県を入力してください"
+          <PrefectureSelect
             name="prefecture"
             register={register}
             registerOptions={{

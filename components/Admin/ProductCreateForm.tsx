@@ -73,7 +73,7 @@ export const ProductCreateForm: FC = () => {
               <Input />
             </Form.Item>
             <Form.Item name="description" label="説明" rules={[{ required: true }]}>
-              <Input.TextArea rows={6} style={{ width: '100%', height: '60px' }} />
+              <Input.TextArea rows={6} style={{ width: '100%' }} />
             </Form.Item>
             <Form.Item name="category" label="カテゴリー" rules={[{ required: true }]}>
               <Select>

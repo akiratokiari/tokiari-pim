@@ -21,15 +21,18 @@ export const ProductDetailColorSelector: FC<Props> = ({ productId, variants, cur
       {variants.map((v) => {
         const colorData = ColorArray.find((c) => c.value === v.color)
         return (
-          <div className={style.buttonWrapper} key={v.id}>
+          <div
+            className={style.buttonWrapper}
+            onClick={() => {
+              router.replace(
+                toHref(WHOLESALE_PRODUCTS_DETAIL_ROUTE, { id: productId }) +
+                  toQuery({ color: v.color })
+              )
+            }}
+            key={v.id}
+          >
             <button
               key={v.id}
-              onClick={() => {
-                router.replace(
-                  toHref(WHOLESALE_PRODUCTS_DETAIL_ROUTE, { id: productId }) +
-                    toQuery({ color: v.color })
-                )
-              }}
               className={`${style.button} ${currentColor === colorData?.value && style.active}`}
               style={{ backgroundColor: `${colorData?.hex}` }}
             />

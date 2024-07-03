@@ -2,79 +2,66 @@ import { FC, SelectHTMLAttributes } from 'react'
 import style from './style.module.css'
 import { UseFormRegister, RegisterOptions } from 'react-hook-form'
 
-type option = {
-  value: string
-}
-
 type Props = {
   name: string
   register: UseFormRegister<any>
   registerOptions?: RegisterOptions
-  placeholder: string
-  options: option[]
 } & SelectHTMLAttributes<HTMLSelectElement>
 
-export const Select: FC<Props> = ({
-  register,
-  name,
-  registerOptions,
-  placeholder,
-  options,
-  ...props
-}) => {
+export const PrefectureSelect: FC<Props> = ({ register, name, registerOptions, ...props }) => {
   return (
     <div className={style.bodyWrapper}>
       <select className={style.body} {...props} {...register(name, registerOptions)}>
         <option disabled value="">
-          選択
+          選択してください
         </option>
-        <option value="Hokkaido">北海道 — Hokkaido</option>
-        <option value="Aomori">青森県 — Aomori</option>
-        <option value="Iwate">岩手県 — Iwate</option>
-        <option value="Miyagi">宮城県 — Miyagi</option>
-        <option value="Akita">秋田県 — Akita</option>
-        <option value="Yamagata">山形県 — Yamagata</option>
-        <option value="Fukushima">福島県 — Fukushima</option>
-        <option value="Ibaraki">茨城県 — Ibaraki</option>
-        <option value="Tochigi">栃木県 — Tochigi</option>
-        <option value="Gunma">群馬県 — Gunma</option>
-        <option value="Saitama">埼玉県 — Saitama</option>
-        <option value="Chiba">千葉県 — Chiba</option>
-        <option value="Tokyo">東京都 — Tokyo</option>
-        <option value="Kanagawa">神奈川県 — Kanagawa</option>
-        <option value="Niigata">新潟県 — Niigata</option>
-        <option value="Toyama">富山県 — Toyama</option>
-        <option value="Ishikawa">石川県 — Ishikawa</option>
-        <option value="Fukui">福井県 — Fukui</option>
-        <option value="Yamanashi">山梨県 — Yamanashi</option>
-        <option value="Nagano">長野県 — Nagano</option>
-        <option value="Gifu">岐阜県 — Gifu</option>
-        <option value="Shizuoka">静岡県 — Shizuoka</option>
-        <option value="Aichi">愛知県 — Aichi</option>
-        <option value="Mie">三重県 — Mie</option>
-        <option value="Shiga">滋賀県 — Shiga</option>
-        <option value="Kyoto">京都府 — Kyoto</option>
-        <option value="Osaka">大阪府 — Osaka</option>
-        <option value="Hyogo">兵庫県 — Hyogo</option>
-        <option value="Nara">奈良県 — Nara</option>
-        <option value="Wakayama">和歌山県 — Wakayama</option>
-        <option value="Tottori">鳥取県 — Tottori</option>
-        <option value="Shimane">島根県 — Shimane</option>
-        <option value="Okayama">岡山県 — Okayama</option>
-        <option value="Hiroshima">広島県 — Hiroshima</option>
-        <option value="Yamaguchi">山口県 — Yamaguchi</option>
-        <option value="Tokushima">徳島県 — Tokushima</option>
-        <option value="Kagawa">香川県 — Kagawa</option>
-        <option value="Ehime">愛媛県 — Ehime</option>
-        <option value="Kochi">高知県 — Kochi</option>
-        <option value="Fukuoka">福岡県 — Fukuoka</option>
-        <option value="Saga">佐賀県 — Saga</option>
-        <option value="Nagasaki">長崎県 — Nagasaki</option>
-        <option value="Kumamoto">熊本県 — Kumamoto</option>
-        <option value="Oita">大分県 — Oita</option>
-        <option value="Miyazaki">宮崎県 — Miyazaki</option>
-        <option value="Kagoshima">鹿児島県 — Kagoshima</option>
-        <option value="Okinawa">沖縄県 — Okinawa</option>)
+        <option value="北海道">北海道</option>
+        <option value="青森県">青森県</option>
+        <option value="岩手県">岩手県</option>
+        <option value="宮城県">宮城県</option>
+        <option value="秋田県">秋田県</option>
+        <option value="山形県">山形県</option>
+        <option value="福島県">福島県</option>
+        <option value="茨城県">茨城県</option>
+        <option value="栃木県">栃木県</option>
+        <option value="群馬県">群馬県</option>
+        <option value="埼玉県">埼玉県</option>
+        <option value="千葉県">千葉県</option>
+        <option value="東京都">東京都</option>
+        <option value="神奈川県">神奈川県</option>
+        <option value="新潟県">新潟県</option>
+        <option value="富山県">富山県</option>
+        <option value="石川県">石川県</option>
+        <option value="福井県">福井県</option>
+        <option value="山梨県">山梨県</option>
+        <option value="長野県">長野県</option>
+        <option value="岐阜県">岐阜県</option>
+        <option value="静岡県">静岡県</option>
+        <option value="愛知県">愛知県</option>
+        <option value="三重県">三重県</option>
+        <option value="滋賀県">滋賀県</option>
+        <option value="京都府">京都府</option>
+        <option value="大阪府">大阪府</option>
+        <option value="兵庫県">兵庫県</option>
+        <option value="奈良県">奈良県</option>
+        <option value="和歌山県">和歌山県</option>
+        <option value="鳥取県">鳥取県</option>
+        <option value="島根県">島根県</option>
+        <option value="岡山県">岡山県</option>
+        <option value="広島県">広島県</option>
+        <option value="山口県">山口県</option>
+        <option value="徳島県">徳島県</option>
+        <option value="香川県">香川県</option>
+        <option value="愛媛県">愛媛県</option>
+        <option value="高知県">高知県</option>
+        <option value="福岡県">福岡県</option>
+        <option value="佐賀県">佐賀県</option>
+        <option value="長崎県">長崎県</option>
+        <option value="熊本県">熊本県</option>
+        <option value="大分県">大分県</option>
+        <option value="宮崎県">宮崎県</option>
+        <option value="鹿児島県">鹿児島県</option>
+        <option value="沖縄県">沖縄県</option>
       </select>
     </div>
   )

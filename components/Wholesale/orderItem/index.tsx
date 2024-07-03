@@ -2,7 +2,7 @@ import style from './style.module.css'
 import { FC } from 'react'
 import Image from 'next/image'
 import { blurDataURL } from '@/constants/blurDataURL'
-import { OrderWithPurchasedProductType } from '@/app/wholesale/(src)/account/orders/page'
+import { OrderWithPurchasedProductType } from '@/app/wholesale/(src)/(static)/account/orders/page'
 import { formatDateTime } from '@/helper/dateFormat'
 import { ORDER_DELIVERY_OPTION } from '@/constants/app'
 

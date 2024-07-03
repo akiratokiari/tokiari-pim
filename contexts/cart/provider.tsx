@@ -18,10 +18,11 @@ export type CartItemWithDataType = {
 
 export const CartProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cart, setCart] = useState<CartItemType[]>([])
-  const { account } = useContext(AccountContext)
+  const { account, refresh } = useContext(AccountContext)
   const supabase = createClient()
   const [isOpen, setIsOpen] = useState(false)
   const [isInitial, setIsInitial] = useState(false)
+  const [isPending, setIsPending] = useState(false)
 
   const getFullCartItem = async (cartItems: CartItemType[]) => {
     const data = await Promise.all(
@@ -39,7 +40,11 @@ export const CartProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
           color: cartItem?.product_variants?.color || '',
           title: cartItem?.product_variants?.products?.title || '',
           size: cartItem?.product_size || '',
-          thumbnail: cartItem?.product_variants?.product_images[0].image_url || '',
+          thumbnail:
+            cartItem?.product_variants?.product_images &&
+            cartItem?.product_variants?.product_images.length > 0
+              ? cartItem?.product_variants?.product_images[0].image_url
+              : '' || '',
           quantity: c.quantity || 0,
           price: cartItem?.product_variants?.price || 0
         }
@@ -60,7 +65,6 @@ export const CartProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
     }
 
     fetchCartItems()
-    setCart(data)
     setIsInitial(true)
   }, [isInitial, account])
 
@@ -73,6 +77,7 @@ export const CartProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
 
   const resetCart = async () => {
     if (!account) return
+    setIsPending(true)
     const cartItemsJSON = JSON.stringify([])
     await supabase
       .from('users')
@@ -80,10 +85,14 @@ export const CartProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
       .eq('id', account.id)
       .select('cart_items')
       .single()
+
+    refresh()
+    setIsPending(false)
   }
 
   const updateCart = async (_cart: CartItemsType[] | []) => {
     if (!account) return
+    setIsPending(true)
     const cartItemsJSON = JSON.stringify(_cart)
     const { data, error } = await supabase
       .from('users')
@@ -94,17 +103,18 @@ export const CartProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
 
     if (error) {
       console.error('Error updating cart items:', error)
+      setIsPending(false)
       return
     }
 
-    getFullCartItem
-
     if (data && typeof data.cart_items === 'string') {
       const parsedJSON = JSON.parse(data.cart_items)
-      const cartItems = getFullCartItem(parsedJSON)
+      const cartItems = await getFullCartItem(parsedJSON)
+      setIsPending(false)
       return cartItems
     }
 
+    setIsPending(false)
     return []
   }
 
@@ -112,6 +122,7 @@ export const CartProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
     if (!cart) return window.alert('カート情報取得中')
     if (!account) return window.alert('カート情報取得中')
 
+    setIsPending(true)
     const isProductExist = cart.find(
       (c) => c.product_variant_size_id === addItem.product_variant_size_id
     )
@@ -132,31 +143,37 @@ export const CartProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
     const updatedCart = await updateCart(newCart)
     setCart(updatedCart || [])
     setIsOpen(true)
+    setIsPending(false)
   }
 
   const updateQuantity = async (product_variant_size_id: string, quantity: number) => {
     if (!cart) return window.alert('カート情報取得中')
 
+    setIsPending(true)
     const newCart = cart.map((item) =>
       item.product_variant_size_id === product_variant_size_id ? { ...item, quantity } : item
     )
 
     const updatedCart = await updateCart(newCart)
     setCart(updatedCart || [])
+    setIsPending(false)
   }
 
   const deleteFromCart = async (product_variant_size_id: string) => {
     if (!cart) return window.alert('カート情報取得中')
 
+    setIsPending(true)
     const newCart = cart.filter((item) => item.product_variant_size_id !== product_variant_size_id)
 
     const updatedCart = await updateCart(newCart)
     setCart(updatedCart || [])
+    setIsPending(false)
   }
 
   // コンテキストプロバイダに渡す値を定義
   const contextValue = {
     cart,
+    isPending,
     isOpen,
     addToCart,
     openCart,

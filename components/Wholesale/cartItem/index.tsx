@@ -38,19 +38,23 @@ export const CartItem: FC<Props> = ({ data }) => {
       </div>
       <div className={style.item}>
         <div className={style.descriptionWrapper}>
-          <Link href={toHref(WHOLESALE_PRODUCTS_DETAIL_ROUTE, { id: data.product_id })}>
+          <Link
+            style={{ display: 'block' }}
+            href={toHref(WHOLESALE_PRODUCTS_DETAIL_ROUTE, { id: data.product_id })}
+          >
             <div className={style.title}>{data.title}</div>
           </Link>
           <div className={style.caption}>
             {data.color} / {data.size}
           </div>
-          <div className={style.caption}>¥{data.price.toLocaleString()}円</div>
+          <div className={style.caption}>
+            <div className={style.salesPrice}>¥{(data.price * data.quantity).toLocaleString()}円</div>
+            <div>¥{((data.price * data.quantity) / 2).toLocaleString()}円</div>
+          </div>
         </div>
-        <div className={style.inputWrapper}>
-          <CartProductAmountInput data={data} />
-        </div>
+        <CartProductAmountInput data={data} />
         <div className={style.subTotalCaption}>
-          ¥{(data.price * data.quantity).toLocaleString()}円
+          ¥{((data.price * data.quantity) / 2).toLocaleString()}円
         </div>
       </div>
     </div>

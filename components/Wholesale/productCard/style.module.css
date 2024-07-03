@@ -14,7 +14,16 @@
 }
 
 .price {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
   font-size: 12px;
+}
+
+.salesPrice {
+  text-decoration: line-through;
+  font-style: italic;
+  color: gray;
 }
 
 .details {
