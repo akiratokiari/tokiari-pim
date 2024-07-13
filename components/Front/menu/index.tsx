@@ -5,12 +5,10 @@ import { useContext, useEffect, useState } from 'react'
 import styles from './style.module.css'
 import { MenuContext } from '@/contexts/menu/context'
 import Link from 'next/link'
-import { WHOLESALE_ACCOUNT_ORDERS_ROUTE, WHOLESALE_ACCOUNT_ROUTE } from '@/constants/route'
 import MenuSVG from '../../../public/menu_24.svg'
 import Image from 'next/image'
-import { LogoutButton } from '../logoutButton'
 import { Button } from '@/components/button'
-import { AccountContext } from '@/contexts/account/context'
+import { ExternalLink } from '@/components/externalLink'
 
 export default function Menu() {
   const { isOpen, close, open } = useContext(MenuContext)
@@ -18,7 +16,6 @@ export default function Menu() {
   const pathname = usePathname()
   const [isInitial, setIsInitial] = useState(true)
   const searchParams = useSearchParams()
-  const { account } = useContext(AccountContext)
 
   useEffect(() => {
     if (isOpen) {
@@ -68,29 +65,19 @@ export default function Menu() {
       <div id="mobileMenuBody" className={styles.body}>
         <div className={styles.contents}>
           <div className={styles.innerContents}>
-            <div className={styles.accountName}>{account?.company} 様</div>
-            <div className={styles.accountServiceWrapper}>
-              <Link
-                style={{ color: 'black', fontSize: 14, textAlign: 'right' }}
-                href={WHOLESALE_ACCOUNT_ROUTE}
-              >
-                <div>基本情報の確認/変更</div>
-              </Link>
-              <Link
-                style={{ color: 'black', fontSize: 14, textAlign: 'right' }}
-                href={WHOLESALE_ACCOUNT_ORDERS_ROUTE}
-              >
-                <div>注文履歴</div>
-              </Link>
-              <LogoutButton />
-            </div>
             <div className={styles.border} />
-            <Link className={styles.menu} href={'/wholesale/search'}>
+            <Link className={styles.menu} href={'/search'}>
               PRODUCTS
             </Link>
-            <Link className={styles.menu} href={'/wholesale/cart'}>
-              CART
+            <ExternalLink className={styles.menu} href="https://tokiari.com/about/tokiari/">
+              ABOUT
+            </ExternalLink>
+
+            <div className={styles.border} />
+            <Link href="/request">
+              <Button>申請を行う</Button>
             </Link>
+
             <div className={styles.border} />
 
             <Link className={styles.menu} href="/trade-law">
