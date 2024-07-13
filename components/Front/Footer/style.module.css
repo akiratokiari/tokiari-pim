@@ -1,0 +1,15 @@
+.body {
+  border-top: solid 1px black;
+  padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.menu {
+  width: 300px;
+}
+
+.copyrightWrapper {
+  text-align: center;
+  width: 100%;
+}

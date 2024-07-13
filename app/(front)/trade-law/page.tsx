@@ -3,7 +3,7 @@ import { PageHeader } from '@/components/Wholesale/pageHeader'
 
 export default async function Page() {
   return (
-    <div>
+    <div style={{ padding: 20 }}>
       <PageHeader>特定商取引法に基づく表示</PageHeader>
       <div className={style.title}>販売事業者の名称</div>
       <div className={style.description}>合同会社時在服飾設</div>
